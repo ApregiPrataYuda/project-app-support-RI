@@ -8,7 +8,7 @@
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
-<!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
+<li class="breadcrumb-item"><a href="{{ route('menu.view') }}">Kembali</a></li>
 <li class="breadcrumb-item active"><?= $title ?></li>
 </ol>
 </div>
@@ -23,9 +23,6 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-header bg-secondary">
-            <a href="{{ route('menu.create') }}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Tambah Data</a>
-            <a href="{{ route('restore.data.menu') }}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
-
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                 <i class="fas fa-minus"></i>
@@ -36,12 +33,12 @@
             </div>
           </div>
           <div class="card-body">
-          <table class="table table-bordered" id="menuTable">
+          <table class="table table-bordered" id="menuRestoreTable">
   <thead>
   <tr>
-                        <th style="width: 4%;">No</th>
+                        <th style="width: 5%;">No</th>
                         <th>Menu</th>
-                        <th style="width: 5%;">Action</th>
+                        <th style="width: 20%;">Action</th>
   </tr>
   </thead>
   <tbody>
@@ -51,15 +48,16 @@
         </div>
         <!-- /.card -->
   </section>
-  <!--start view for end -->
+<!--start view for end -->
 
-<script type="text/javascript">
+
+    <script type="text/javascript">
   $(document).ready(function() {
-    var table = $('#menuTable').DataTable({
+    var table = $('#menuRestoreTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('get.menu') }}",
+            url: "{{ route('get.menu.restore.data') }}",
             type: 'GET',
         },
         columns: [
@@ -86,8 +84,9 @@
         }
     });
   });
-
-  function confirmDelete(menuid) {
+</script>
+<script>
+    function confirmDelete(menuid) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You won\'t be able to revert this!',
@@ -98,12 +97,11 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Form ID harus sesuai dengan ID form di PHP
                 document.getElementById('delete-form-menu-' + menuid).submit();
             }
         });
     }
-  
 </script>
-
 
 @endsection

@@ -42,8 +42,21 @@ Route::get('/logout', [Auth::class, 'logout'])->name('logout');
 
 
 Route::get('/Administrator/DashboardIT', [Administrator::class, 'index'])->name('Administrator');
-Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view');
 
+Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view');
+Route::get('/Administrator/get-menu', [Administrator::class, 'get_menu_data'])->name('get.menu');
+Route::get('/Administrator/create-menu', [Administrator::class, 'create_menu'])->name('menu.create');
+Route::post('/Administrator/store-menu', [Administrator::class, 'store_menu'])->name('store.menu');
+Route::get('/Administrator/views-menu-update/{id}', [Administrator::class, 'view_menu_update'])->name('menu.view.update');
+Route::put('/Administrator/update-menu/{id}', [Administrator::class, 'update_menu'])->name('update.menu');
+Route::delete('/Administrator/delete-menu/{id}', [Administrator::class, 'destroy_menu'])->name('delete.menu');
+Route::get('/Administrator/restore-data-menu', [Administrator::class, 'restore_menu'])->name('restore.data.menu');
+Route::get('/Administrator/get-data-menu-restore', [Administrator::class, 'get_menu_data_restore'])->name('get.menu.restore.data');
+Route::post('/Administrator/restore-menu/{id}', [Administrator::class, 'restore'])->name('restore.menu');
+Route::delete('/Administrator/delete-menu-permanent/{id}', [Administrator::class, 'destroy_menu_permanent'])->name('delete.menu.permanent');
+
+Route::get('/Administrator/List-submenu', [Administrator::class, 'submenu_management'])->name('submenu.view');
+Route::get('/Administrator/get-submenu', [Administrator::class, 'get_submenu_data'])->name('get.submenu');
 
 
 Route::get('/Admin/Dashboard-Admin', [Admin::class, 'index'])->name('Admin');
