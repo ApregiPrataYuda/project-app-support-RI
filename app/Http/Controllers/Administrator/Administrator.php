@@ -13,4 +13,11 @@ class Administrator extends Controller
          ];
          return view('Administrator/Dashboard/Data/file',$data);
     }
+
+    public function menu_management ()  {
+        $data = [
+            'title' => 'Menu Management'
+         ];
+         return view('Administrator/Menu-management/Data/file',$data);
+    }
 }

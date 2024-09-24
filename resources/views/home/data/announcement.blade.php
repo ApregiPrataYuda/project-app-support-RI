@@ -27,7 +27,7 @@
       <div class="row justify-content-center">
         <div class="col-md-12">
           <div class="card mb-2">
-            <div class="card-header bg-danger text-white">
+            <div class="card-header bg-secondary text-white">
               List Announcement <i class="fa fa-volume-up" aria-hidden="true"></i>
             </div>
             <div class="card-body">

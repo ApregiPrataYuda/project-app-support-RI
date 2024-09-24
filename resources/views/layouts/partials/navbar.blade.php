@@ -31,7 +31,7 @@ $menu = DB::table('ms_menu AS A')
         @foreach ($submenu as $sm)
             <li class="nav-item">
                 <a style="color: RGB(206, 207, 198);" href="{{ url($sm->url) }}" class="nav-link">
-                    <i class="{{ $sm->icon }}"></i>
+                    <i class="{{ $sm->icon }}" style="color: rgb(0, 0, 0);"></i>
                     <p style="color: RGB(245, 245, 245);" class="text-capitalize">
                         {{ $sm->title }}
                     </p>

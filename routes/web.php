@@ -27,7 +27,7 @@ Route::get('/', [Home::class, 'About'])->name('about');
 Route::get('/Home/Form-visitor', [Home::class, 'Form_visitor'])->name('form.visitor');
 Route::post('/Home/submission-send', [Home::class, 'store_data_visit_submission'])->name('submission.store');
 
-Route::get('/Home/Management-Tools', [Home::class, 'view_tools_management'])->name('tools.management');
+Route::get('/Home/Management-Borrow-Item', [Home::class, 'view_borrow_management'])->name('borrow.management');
 
 Route::get('/Home/Announcement', [Home::class, 'Announcement'])->name('Announcement.index');
 
@@ -42,6 +42,8 @@ Route::get('/logout', [Auth::class, 'logout'])->name('logout');
 
 
 Route::get('/Administrator/DashboardIT', [Administrator::class, 'index'])->name('Administrator');
+Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view');
+
 
 
 Route::get('/Admin/Dashboard-Admin', [Admin::class, 'index'])->name('Admin');
@@ -50,8 +52,6 @@ Route::get('/Admin/get-visitor', [Admin::class, 'get_visitor_data'])->name('get.
 Route::get('/Admin/Idcard-visitor/{id}', [Admin::class, 'idcard_visitor_data'])->name('idcard.visitor');
 Route::get('/Admin/Idcard-visitor-print/{id}', [Admin::class, 'idcard_visitor_data_print'])->name('idcard.visitor.print');
 Route::get('/Admin/Add-visitor', [Admin::class, 'Add_visitor'])->name('add.visitor');
-
-
 
 
 Route::get('/Admin/List-Paket', [Admin::class, 'daftar_paket'])->name('Admin.paket');

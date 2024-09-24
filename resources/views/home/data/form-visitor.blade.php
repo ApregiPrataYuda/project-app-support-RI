@@ -26,7 +26,7 @@
 <div class="container">
 <div class="row">
 <div class="card mb-2" style="width: 100%; max-width: 600px; margin: auto;">
-  <div class="card-header card card-primary card-outline">
+  <div class="card-header card card-secondary card-outline">
     FORM FOR VISITOR
   </div>
   <div class="card-body">

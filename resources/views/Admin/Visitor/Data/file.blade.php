@@ -22,9 +22,9 @@
 <section class="content">
         <!-- Default box -->
         <div class="card">
-          <div class="card-header" style="background-color:RGB(40, 178, 170);">
-            <a href="{{route('add.visitor')}}" class="btn btn-sm btn-secondary" style="background-color:RGB(40, 178, 170);"> <i class="fa fa-plus"></i> Tambah Data</a>
-            <a href="" class="btn btn-sm btn-secondary" style="background-color:RGB(40, 178, 170);"> <i class="fa fa-window-restore"></i> Restore Data</a>
+          <div class="card-header bg-secondary">
+            <a href="{{route('add.visitor')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Tambah Data</a>
+            <a href="" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
 
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

@@ -27,14 +27,14 @@
   <!-- Site wrapper -->
   <div class="wrapper">
     <!-- Navbar -->
-    <nav style="background-color:RGB(40, 178, 170);" class="main-header navbar navbar-expand navbar-light navbar-light">
+    <nav class="main-header navbar navbar-expand navbar-light navbar-secondary">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="#" style="color: RGB(245, 245, 245);" class="nav-link">Support App </a>
+          <a href="#" style="color: RGB(245, 245, 245);" class="nav-link">PT RINNAI INDONESIA </a>
         </li>
       </ul>
 
@@ -50,11 +50,11 @@
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside style="background-color:RGB(40, 178, 170);" class="main-sidebar sidebar-light elevation-4">
+    <aside class="main-sidebar sidebar-light elevation-4 bg-secondary">
       <!-- Brand Logo -->
       <a href="#" class="brand-link">
         <img src="{{ asset('assets/backend/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image">
-        <span style="color: RGB(245, 245, 245); font-style: bold;" class="brand-text font-weight-dark">Support APP</span>
+        <span style="color: RGB(245, 245, 245); font-style: bold;" class="brand-text font-weight-dark">PT RINNAI <small>INDONESIA</small></span>
       </a>
 
 

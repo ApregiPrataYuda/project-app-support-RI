@@ -22,7 +22,7 @@
 <section class="content">
         <!-- Default box -->
 <div class="card">
-<div class="card-header" style="background-color:RGB(40, 178, 170);">
+<div class="card-header bg-secondary">
 <h3 class="card-title"><?= $title ?></h3>
 <div class="card-tools">
 <button type="button" class="btn btn-tool" data-card-widget="collapse">

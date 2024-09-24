@@ -114,11 +114,11 @@ class Home extends Controller
 // ------------------------------------------batas-------------------------------------//
 
 // start code untuk pinjam barang
-  public  function view_tools_management()  {
+  public  function view_borrow_management()  {
     $data  = [
-        'title' => 'Tools Management'
+        'title' => 'Borrow Items'
      ];
-     return view('home/data/tools-view',$data);
+     return view('home/data/borrow-item-view',$data);
    }
 // end code untuk pinjam barang
 

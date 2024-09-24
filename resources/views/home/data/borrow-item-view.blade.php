@@ -28,18 +28,15 @@
 <div class="row justify-content-center">
   <!-- Card 1 -->
   <div class="col-md-6 col-lg-5 mb-5">
-   
-
 <div class="row">
     <div class="col-sm-6">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title mb-4">Tool Usage Registration Form</h5>
+          <h5 class="card-title mb-4">Item Usage Registration Form</h5>
           <br>
           <br>
-          
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loanModal">
-           Form Registration Tools
+           Form Registration Item
           </button>
           
         </div>
@@ -54,15 +51,12 @@
           <br>
           <br>
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-             Form Return Tools
+             Form Return Item
           </button>
         </div>
       </div>
     </div>
   </div>
-
-
-
 
 </div>
 </div>
@@ -76,13 +70,22 @@
     </div>
   </div>
 <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
   <!-- Modal loan-->
 <div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">{{$title}}</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Form {{$title}}</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -98,14 +101,21 @@
                    
                     <div class="row justify-content-center">
                     <div class="col-md-6 mt-2">
-                        <label for="msbrg"><span class="text-uppercase"> Name Tools *</span> </label>
-                        <select name="nama_barang[]" id="msbrg" class="form-control">
+                        <label for="msbrg"><span class="text-uppercase"> Code Item *</span> </label>
+                        <select name="code_item[]" id="msbrg" class="form-control">
                          <option value="">-via QR code-</option>
                           
                         </select> 
                        </div>
                         <p id="p" class="font-italic text-danger"></p>
                     </div>
+
+                    <div class="row justify-content-center">
+                      <div class="col-md-6 mt-2">
+                      <label for="name_Item"><span class="text-uppercase"> Name Item *</span> </label>
+                      <input type="text" class="form-control" value="" id="name_Item" name="name_Item" id="name_Item" placeholder="" readonly>
+                      </div>
+                      </div>
 
                     <div class="row justify-content-center">
                       <div class="col-md-6 mt-2">
@@ -149,32 +159,56 @@
 
 <!-- Modal return-->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Return Item</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Return Item Form</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="formPinjam" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Barang</th>
-                            <th>Nama Peminjam</th>
-                            <th>Tanggal Dipinjam</th>
-                            <!-- <th>Tanggal Kembali</th> -->
-                            <th>Status Saat ini</th>
-                            <th>Keterangan</th>
-                            <th>Kembalikan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+          
+       
+
+    <div class="row justify-content-center">
+
+    
+    <!-- Card 1 -->
+    <div class="col-md-6 mr-2">
+        <div class="card" style="width: 18rem;">
+            <div class="card-header">
+            <input type="text" class="form-control focus-primary" placeholder="Scan QR code" focus>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Card 2 -->
+    <div class="col-md-6 mr-2">
+        <div class="card" style="width: 18rem;">
+            <div class="card-header">
+                <span class="font-weight-bold">Detail Item</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Name Item: </li>
+                <li class="list-group-item">Employe Borrow: </li>
+                <li class="list-group-item">Location Usage: </li>
+                <li class="list-group-item">From Time: </li>
+                <li class="list-group-item">End Time: </li>
+                <li class="list-group-item">status: </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+              
         </div>
         <div class="modal-footer">
         </div>
