@@ -57,17 +57,23 @@
         <span style="color: RGB(245, 245, 245); font-style: bold;" class="brand-text font-weight-dark">PT RINNAI <small>INDONESIA</small></span>
       </a>
 
+      @php
+      $user = getUserData();
+      $fullNameUser = $user->fullname;
+      $imageUser = $user->image;
+    @endphp
+
 
       <!-- Sidebar -->
       <div class="sidebar">
         <!-- Sidebar user (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <img src="{{ asset('assets/backend/dist/img/avatar.png') }}" class="img-circle elevation-2" alt="User Image">
+            <img src="{{ asset('/assets/backend/dist/img/avatar/' . $imageUser) }}" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
             <a style="color: RGB(245, 245, 245);" href="#" class="d-block">| 
-              {{ session('fullname') }}
+              {{ $fullNameUser }}
           </a>
           </div>
         </div>
@@ -123,17 +129,7 @@
   <script src="{{ asset('assets/backend/vendors/jquery-ui/jquery-ui.min.js') }}"></script>
   <link href="{{ asset('assets/backend/vendors/jquery-ui/jquery-ui.css') }}" rel="stylesheet">
   <script>
-     $(document).ready(function() {
-      $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": true,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
-      });
-        })
+    
         document.addEventListener('DOMContentLoaded', function () {
             var flashMessage = document.getElementById('flash').dataset.flash;
             if (flashMessage) {

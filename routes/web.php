@@ -57,6 +57,46 @@ Route::delete('/Administrator/delete-menu-permanent/{id}', [Administrator::class
 
 Route::get('/Administrator/List-submenu', [Administrator::class, 'submenu_management'])->name('submenu.view');
 Route::get('/Administrator/get-submenu', [Administrator::class, 'get_submenu_data'])->name('get.submenu');
+Route::get('/Administrator/Create-submenu', [Administrator::class, 'create_submenu'])->name('create.submenu');
+Route::post('/Administrator/Store-submenu', [Administrator::class, 'store_submenu'])->name('store.submenu');
+Route::get('/Administrator/view-submenu-update/{id}', [Administrator::class, 'view_submenu_update'])->name('submenu.view.update');
+Route::put('/Administrator/update-submenu/{id}', [Administrator::class, 'update_submenu'])->name('update.submenu');
+Route::delete('/Administrator/delete-submenu/{id}', [Administrator::class, 'destroy_submenu'])->name('delete.submenu');
+Route::get('/Administrator/restore-data-submenu', [Administrator::class, 'restore_submenu'])->name('restore.data.submenu');
+Route::get('/Administrator/get-data-submenu-restore', [Administrator::class, 'get_submenu_data_restore'])->name('get.submenu.restore.data');
+Route::post('/Administrator/restore-submenu/{id}', [Administrator::class, 'restore_submenu_data'])->name('restore.submenu');
+Route::delete('/Administrator/delete-submenu-permanent/{id}', [Administrator::class, 'destroy_submenu_permanent'])->name('delete.submenu.permanent');
+
+
+Route::get('/Administrator/Management-role', [Administrator::class, 'Role_management'])->name('role.index');
+Route::get('/Administrator/get-role', [Administrator::class, 'get_role_data'])->name('get.role');
+Route::get('/Administrator/create-role', [Administrator::class, 'create_role'])->name('role.create');
+Route::post('/Administrator/store-role', [Administrator::class, 'store_role'])->name('store.role');
+Route::get('/Administrator/view-role/{id}', [Administrator::class, 'view_role'])->name('role.view');
+Route::put('/Administrator/update-role/{id}', [Administrator::class, 'update_role'])->name('update.role');
+Route::delete('/Administrator/delete-role/{id}', [Administrator::class, 'destroy_role'])->name('delete.role');
+Route::get('/Administrator/restore-data-role', [Administrator::class, 'restore_role'])->name('restore.data.role');
+Route::get('/Administrator/get-data-role-restore', [Administrator::class, 'get_role_data_restore'])->name('get.role.restore.data');
+Route::post('/Administrator/restore-role/{id}', [Administrator::class, 'restore_role_data'])->name('restore.role');
+Route::delete('/Administrator/delete-role-permanent/{id}', [Administrator::class, 'destroy_role_permanent'])->name('delete.role.permanent');
+Route::get('/Administrator/access-menu/{id}', [Administrator::class, 'access_menu'])->name('menu.access');
+Route::post('/change-access-menu', [Administrator::class, 'ubahAccessmenu'])->name('change.access.menu');
+
+
+
+Route::get('/Administrator/Management-user', [Administrator::class, 'Manajemen_pengguna'])->name('user.index');
+Route::get('/Administrator/get-user', [Administrator::class, 'get_user_data'])->name('get.user');
+Route::get('/Administrator/create-user', [Administrator::class, 'create_user'])->name('user.create');
+Route::post('/Administrator/store-user', [Administrator::class, 'store_user'])->name('store.user');
+Route::get('/Administrator/edit-user/{id}', [Administrator::class, 'edit_user'])->name('user.edit');
+Route::put('/update-user/{id}', [Administrator::class, 'update_user'])->name('update.user');
+Route::delete('/Administrator/delete-user/{id}', [Administrator::class, 'destroy_user'])->name('delete.user');
+Route::get('/Administrator/access-user/{id}', [Administrator::class, 'access_user'])->name('user.access');
+Route::post('change-access', [Administrator::class, 'ubahAccesssubmenu'])->name('change.access');
+
+
+
+
 
 
 Route::get('/Admin/Dashboard-Admin', [Admin::class, 'index'])->name('Admin');

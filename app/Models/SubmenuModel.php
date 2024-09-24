@@ -36,4 +36,19 @@ class SubmenuModel extends Model
 
         return $query->count();
     }
+
+
+    public function checksubmenuurl($url, $idsub = null)
+    {
+        $query = $this->where('url', $url);
+        // Jika ada idcat, kecualikan idcat dari hasil
+        if ($idsub) {
+            $query->where('id', '!=', $idsub);
+        }
+
+        return $query->count();
+    }
+
+
+    
 }

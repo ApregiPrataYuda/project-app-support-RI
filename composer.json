@@ -30,7 +30,9 @@
         },
         "files": [
         "app/Helpers/date_helper.php",
-        "app/Helpers/user_helper.php"
+        "app/Helpers/user_helper.php",
+        "app/Helpers/AccessMenuHelpers.php",
+        "app/Helpers/AccessSubMenuHelpers.php"
     ]
     },
     "autoload-dev": {

@@ -42,16 +42,15 @@
 
 
 <li class="nav-item dropdown">
-<a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Others Menu</a>
+<a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Menu Lainnya</a>
 <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
 <li><a href="" class="dropdown-item">Here New Menu 1</a></li>
 <li><a href="" class="dropdown-item">Here New Menu 2</a></li>
-<li><a href="" class="dropdown-item">Here New Menu 3</a></li>
 <li><a href="{{ route('login')}}" class="dropdown-item">Login</a></li>
 </ul>
 
 <li class="nav-item">
-    <a href="{{ route('login')}}" class="nav-link brand-text font-weight-bold text-danger">
+    <a href="" class="nav-link brand-text font-weight-bold text-danger">
         <i class="fa fa-cloud" aria-hidden="true"></i> Login</a> 
 </li>
 </li>

@@ -18,20 +18,16 @@
 
 
 <section class="content">
-<div class="card text-center">
-  <div class="card-header">
-    Featured
-  </div>
   <div class="card-body">
-    <h5 class="card-title">Wellcome</h5>
-    <p class="card-text">Wellcome user.name.</p>
-    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+    <div class="alert alert-danger alert-dismissible w-75 mx-auto">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-ban"></i> WELLCOME APREGI!</h5>
+      Setiap hari adalah kesempatan baru untuk menciptakan keajaiban. Jangan ragu untuk mengejar impianmu, karena langkah kecil hari ini bisa membawa perubahan besar di masa depan. Semangat!
+    </div>
   </div>
-  <div class="card-footer text-muted">
-    2 days ago
-  </div>
-</div>
-        </section>
+</section>
+
+
 
 
 

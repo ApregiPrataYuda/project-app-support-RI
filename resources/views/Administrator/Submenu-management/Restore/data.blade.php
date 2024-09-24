@@ -4,12 +4,12 @@
 <div class="container-fluid">
 <div class="row mb-2">
 <div class="col-sm-6">
-<h1><?= $title ?></h1>
+<h1>{{$title}}</h1>
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
-<!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
-<li class="breadcrumb-item active"><?= $title ?></li>
+<li class="breadcrumb-item"><a href="{{route('submenu.view')}}">Kembali</a></li>
+<li class="breadcrumb-item active">{{$title}}</li>
 </ol>
 </div>
 </div>
@@ -22,19 +22,9 @@
 <div id="flashError" data-flash="{{ session('error') }}"></div>
 <!--start view for user -->
 <section class="content">
-
-@if (session('message'))
-            <div class="alert alert-danger">
-                {{ session('message') }}
-            </div>
-@endif
-
         <!-- Default box -->
         <div class="card">
           <div class="card-header bg-secondary">
-            <a href="{{route('create.submenu')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Tambah Data</a>
-            <a href="{{route('restore.data.submenu')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
-
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                 <i class="fas fa-minus"></i>
@@ -45,7 +35,7 @@
             </div>
           </div>
           <div class="card-body">
-          <table class="table table-bordered" id="submenu">
+          <table class="table table-bordered" id="submenuRestore">
   <thead>
   <tr>
                         <th style="width: 4%;">No</th>
@@ -55,7 +45,7 @@
                         <th>icon</th>
                         <th>status</th>
                         <th>catatan</th>
-                        <th style="width: 25px;">Action</th>
+                        <th style="width: 15%;">Action</th>
   </tr>
   </thead>
   <tbody>
@@ -69,15 +59,15 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
-    var table = $('#submenu').DataTable({
+    var table = $('#submenuRestore').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('get.submenu') }}",
+            url: "{{ route('get.submenu.restore.data') }}",
             type: 'GET',
         },
         columns: [
-            {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+          {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
             {data: 'menu', name: 'menu'},
             {data: 'title', name: 'title'},
             {data: 'url', name: 'url'},
@@ -105,8 +95,9 @@
         }
     });
   });
-
-  function confirmDelete(Roleid) {
+</script>
+<script>
+    function confirmDelete(submenuid) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You won\'t be able to revert this!',
@@ -118,7 +109,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Form ID harus sesuai dengan ID form di PHP
-                document.getElementById('delete-form-menu-' + Roleid).submit();
+                document.getElementById('delete-form-menu-' + submenuid).submit();
             }
         });
     }

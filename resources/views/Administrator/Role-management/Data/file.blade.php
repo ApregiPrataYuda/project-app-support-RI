@@ -4,36 +4,27 @@
 <div class="container-fluid">
 <div class="row mb-2">
 <div class="col-sm-6">
-<h1><?= $title ?></h1>
+<h1>{{$title}}</h1>
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
 <!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
-<li class="breadcrumb-item active"><?= $title ?></li>
+<li class="breadcrumb-item active">{{$title}}</li>
 </ol>
 </div>
 </div>
 </div>
 </section>
 
-
-
 <div id="flash" data-flash="{{ session('success') }}"></div>
 <div id="flashError" data-flash="{{ session('error') }}"></div>
 <!--start view for user -->
 <section class="content">
-
-@if (session('message'))
-            <div class="alert alert-danger">
-                {{ session('message') }}
-            </div>
-@endif
-
         <!-- Default box -->
         <div class="card">
           <div class="card-header bg-secondary">
-            <a href="{{route('create.submenu')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Tambah Data</a>
-            <a href="{{route('restore.data.submenu')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
+            <a href="{{ route('role.create') }}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Tambah Data</a>
+            <a href="{{ route('restore.data.role') }}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
 
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -45,18 +36,14 @@
             </div>
           </div>
           <div class="card-body">
-          <table class="table table-bordered" id="submenu">
-  <thead>
-  <tr>
-                        <th style="width: 4%;">No</th>
-                        <th>Menu</th>
-                        <th>title</th>
-                        <th>url</th>
-                        <th>icon</th>
-                        <th>status</th>
-                        <th>catatan</th>
-                        <th style="width: 25px;">Action</th>
-  </tr>
+          <table class="table table-bordered" id="roleTable">
+          <thead>
+            <tr>
+            <th scope="col" style="width: 3%;">No</th>
+            <th scope="col">Role</th>
+            <th scope="col" style="width: 8%;">Access Ke Menu</th>
+            <th scope="col" style="width: 5%;">Action</th>
+            </tr>
   </thead>
   <tbody>
 
@@ -66,24 +53,19 @@
         <!-- /.card -->
   </section>
 <!--start view for end -->
-
 <script type="text/javascript">
   $(document).ready(function() {
-    var table = $('#submenu').DataTable({
+    var table = $('#roleTable').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('get.submenu') }}",
+            url: "{{ route('get.role') }}",
             type: 'GET',
         },
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'menu', name: 'menu'},
-            {data: 'title', name: 'title'},
-            {data: 'url', name: 'url'},
-            {data: 'icon', name: 'icon'},
-            {data: 'is_active', name: 'is_active'},
-            {data: 'noted', name: 'noted'},
+            {data: 'role', name: 'role'},
+            {data: 'access', name: 'access', orderable: false, searchable: true},
             {data: 'action', name: 'action', orderable: false, searchable: true},
         ],
         responsive: true,
@@ -105,8 +87,11 @@
         }
     });
   });
+</script>
 
-  function confirmDelete(Roleid) {
+
+<script>
+    function confirmDelete(Roleid) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You won\'t be able to revert this!',
