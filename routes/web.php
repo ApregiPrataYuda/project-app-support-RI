@@ -7,6 +7,8 @@ use App\Http\Controllers\Administrator\Administrator;
 use App\Http\Controllers\Admin\Admin;
 use App\Http\Controllers\User\User;
 use App\Http\Controllers\Others\Others;
+use App\Http\Middleware\CheckMenuAccess;
+use App\Http\Middleware\CheckSubmenuAccess;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,6 +23,10 @@ use App\Http\Controllers\Others\Others;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+Route::get('/block', function () {
+    return view('Err/block');
+});
 
 
 Route::get('/', [Home::class, 'About'])->name('about');
@@ -43,7 +49,7 @@ Route::get('/logout', [Auth::class, 'logout'])->name('logout');
 
 Route::get('/Administrator/DashboardIT', [Administrator::class, 'index'])->name('Administrator');
 
-Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view');
+Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/get-menu', [Administrator::class, 'get_menu_data'])->name('get.menu');
 Route::get('/Administrator/create-menu', [Administrator::class, 'create_menu'])->name('menu.create');
 Route::post('/Administrator/store-menu', [Administrator::class, 'store_menu'])->name('store.menu');
