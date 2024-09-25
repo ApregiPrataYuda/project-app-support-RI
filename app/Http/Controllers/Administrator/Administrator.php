@@ -10,6 +10,7 @@ use App\Models\RoleModel;
 use App\Models\UserModel;
 use App\Models\AccessMenuModel;
 use App\Models\AccesssubMenuModel;
+use App\Models\EmployeModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -27,13 +28,16 @@ class Administrator extends Controller
      protected $AccessMenuModel;
      protected $UserModel;
      protected $AccesssubMenuModel;
-    public function __construct(MenuModel $MenuModel, SubmenuModel $SubmenuModel, RoleModel $RoleModel, AccessMenuModel $AccessMenuModel, UserModel $UserModel, AccesssubMenuModel $AccesssubMenuModel) {
+     protected $EmployeModel;
+    public function __construct(MenuModel $MenuModel, SubmenuModel $SubmenuModel, RoleModel $RoleModel, AccessMenuModel $AccessMenuModel, UserModel $UserModel,
+     AccesssubMenuModel $AccesssubMenuModel, EmployeModel $EmployeModel) {
         $this->MenuModel = $MenuModel;
         $this->SubmenuModel = $SubmenuModel;
         $this->RoleModel = $RoleModel;
         $this->AccessMenuModel = $AccessMenuModel;
         $this->UserModel = $UserModel;
         $this->AccesssubMenuModel = $AccesssubMenuModel;
+        $this->EmployeModel = $EmployeModel;
     }
 
     public  function index() {
@@ -501,7 +505,6 @@ public function restore_submenu_data ($id) {
   }
 
 
-
   public function destroy_submenu_permanent ($id) {
      // Decrypt the ID
         $id = Crypt::decrypt($id);
@@ -777,7 +780,7 @@ public function restore_role() {
 
 public function Manajemen_pengguna()  {
     $data = [
-        'title' => 'Manajemen Pengguna'
+        'title' => 'Management user'
      ];
      return view('Administrator/Manajemen-Pengguna/Data/file',$data);
 }
@@ -785,15 +788,16 @@ public function Manajemen_pengguna()  {
 public function get_user_data(Request $request) {
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
-        $data = $this->UserModel->select('ms_user.user_id','ms_user.fullname','ms_user.username', 'ms_user.image','ms_user.password','ms_user.is_active', 'ms_user.email', 'ms_role.role')
-            ->leftJoin('ms_role', 'ms_user.role_id', '=', 'ms_role.role_id');
+        $data = $this->UserModel->select('ms_user.user_id','ms_user.username', 'ms_user.image','ms_user.password',
+                                         'ms_user.is_active', 'ms_user.email', 'ms_role.role', 'employees_tb.first_name', 'employees_tb.last_name')
+            ->leftJoin('ms_role', 'ms_user.role_id', '=', 'ms_role.role_id')
+            ->leftJoin('employees_tb', 'ms_user.id_employee', '=', 'employees_tb.id_employee');
     
         // Cek apakah ada parameter pencarian
         if ($request->has('search') && !empty($request->input('search')['value'])) {
             $searchTerm = $request->input('search')['value'];
             // Pastikan kolom fullname ada di ms_user
-            $data->where('ms_user.fullname', 'LIKE', "%{$searchTerm}%")
-                 ->orWhere('ms_user.username', 'LIKE', "%{$searchTerm}%")
+            $data->where('ms_user.username', 'LIKE', "%{$searchTerm}%")
                  ->orWhere('ms_user.email', 'LIKE', "%{$searchTerm}%");  // Tambahkan kolom lain jika perlu
         }
     
@@ -812,7 +816,8 @@ public function get_user_data(Request $request) {
             ->addColumn('detail', function ($row) {
                 return '<a id="sets" class="btn btn-outline-primary btn-sm" data-toggle="modal" 
                             data-target="#modals-detail"
-                            data-fullname="' . htmlspecialchars($row->fullname, ENT_QUOTES, 'UTF-8') . '"
+                            data-first_name="' . htmlspecialchars($row->first_name, ENT_QUOTES, 'UTF-8') . '"
+                            data-last_name="' . htmlspecialchars($row->last_name, ENT_QUOTES, 'UTF-8') . '"
                             data-username="' . htmlspecialchars($row->username, ENT_QUOTES, 'UTF-8') . '"
                             data-password="' . htmlspecialchars($row->password, ENT_QUOTES, 'UTF-8') . '"
                             data-email="' . htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8') . '"
@@ -851,7 +856,7 @@ public function access_user($id)  {
             ->first();
 
     $data = [
-        'title' => 'Manajemen user',
+        'title' => 'Manajement user',
         'submenu' => $getdatasubmenu,
         'userID' =>  $getuserbyid
     ];
@@ -867,8 +872,8 @@ public function ubahAccesssubmenu(Request $request)
     
     // Menyiapkan data untuk query
     $data = [
-        'SubmenuID' => $submenu,
-        'UserID' => $userId
+        'submenuid' => $submenu,
+        'userid' => $userId
     ];
     
     // Cek apakah data ada di tabel
@@ -889,5 +894,152 @@ public function ubahAccesssubmenu(Request $request)
     // Mengembalikan response JSON
     return response()->json(['success' => true]);
 }
+
+
+public function create_user () {
+    $getRole = $this->RoleModel->all();
+    // $employe = $this->EmployeModel->all();
+    $employees =  $this->EmployeModel
+    ->leftJoin('ms_user as a', 'employees_tb.id_employee', '=', 'a.id_employee')
+    ->whereNull('a.id_employee')
+    ->select('employees_tb.*')  // Mengambil semua kolom dari employees_tb
+    ->get();
+
+    $data = [
+        'title' => 'Management user',
+        'roles' => $getRole,
+        'employees' => $employees
+     ];
+     return view('Administrator/Manajemen-Pengguna/Form/Add',$data);
+}
+
+
+public function store_user(Request $request) {
+     // Validate the request
+     $validated = $request->validate([
+        'id_employee' => 'required',
+        'email' => 'required|email|unique:ms_user,email', 
+        'password' => [
+            'required',
+            'min:5',
+        ],
+       'konfirmasi_password' => 'required|same:password', // Assuming you want to manually validate this
+        'username' => 'required|max:255|unique:ms_user,username',
+        'role' => 'required',
+        'status' => 'required',
+    ]);
+    $user = $this->UserModel; // Use User model if creating a new user
+    // Assign validated data to the user model
+    $user->id_employee = $validated['id_employee'];
+    $user->username = $validated['username'];
+    $user->email = $validated['email'];
+    $user->password = bcrypt($validated['password']); // Hash the password before saving
+    $user->image = 'default.jpg';
+    $user->role_id = $validated['role'];
+    $user->is_active = $validated['status'];
+    // Save the user
+    $user->save();
+    // Redirect or handle results after saving the data
+    return redirect()->route('user.index')->with('success', 'User created successfully!');
+}
+
+
+
+public function edit_user($id) {
+    $id_user = Crypt::decrypt($id);
+    $userbyid = userModel::findOrFail($id_user);
+    $getRole = $this->RoleModel->all();
+    $employees =  $this->EmployeModel
+    ->leftJoin('ms_user as a', 'employees_tb.id_employee', '=', 'a.id_employee')
+    // ->whereNull('a.id_employee')
+    ->select('employees_tb.*')  // Mengambil semua kolom dari employees_tb
+    ->get();
+   
+      $data = [
+        'title' => 'Form Update user',
+        'row' => $userbyid,
+        'roles' => $getRole,
+        'employees' => $employees
+     ];
+     return view('Administrator/Manajemen-Pengguna/Form/Edit',$data);
+}
+
+
+
+public function update_user(Request $request, $user_id)  {
+    $validated = $request->validate([
+        'id_employee' => 'required|max:255',
+        'email' => [
+            'required',
+            'email',
+        ],
+        'password' => 'nullable|min:5',
+        'passconf' => 'nullable|same:password',
+        'username' => 'required|max:255',
+        'role_id' => 'required',
+        'status' => 'required',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+     // Ambil data user yang ada
+     $user = $this->UserModel->findOrFail($user_id);
+     // Proses password baru jika ada
+        $hashedPassword = $user->password;
+        if (!empty($request->input('password'))) {
+            $hashedPassword = Hash::make($request->input('password'));
+        }
+
+        // ambil data gambar baru dan lama
+        $newImage = $request->file('image');
+        $oldImage = $request->input('imageold');
+        // Jika ada gambar baru
+        if ($newImage) {
+            // Simpan gambar baru di folder 'images' dalam storage 'public'
+            $imagePath = $newImage->store('assets/backend/dist/img/avatar/', 'public');
+            $imageName = basename($imagePath);
+
+            // Hapus gambar lama jika ada dan bukan gambar default
+            if ($oldImage && $oldImage !== 'default.jpg') {
+                $oldImagePath = public_path('assets/backend/dist/img/avatar/' . $oldImage);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+        } else {
+            // Jika tidak ada gambar baru, gunakan gambar lama
+            $imageName = $oldImage;
+        }
+             // Update data di database
+                $user->update([
+                    'username' => $validated['username'],
+                    'id_employee' => $validated['id_employee'],
+                    'email' => $validated['email'],
+                    'role_id' => $validated['role_id'],
+                    'password' => $hashedPassword,
+                    'is_active' => $validated['status'],
+                    'image' => $imageName,
+                ]);
+                // Redirect dengan pesan sukses
+                return redirect()->route('user.index')->with('success', 'update data success');
+        }
+
+
+
+        public function destroy_user($id) {
+            $id_user = Crypt::decrypt($id);
+            $userbyid = UserModel::findOrFail($id_user);
+            $image = $userbyid->image;
+
+            if ($image && $image !== 'default.jpg') {
+                $imagePath = public_path('assets/backend/dist/img/' . $image);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
+            // Delete the user record from the database
+            $userbyid->delete();
+            // Redirect or return a response
+            return redirect()->route('user.index')->with('success', 'User deleted successfully.');
+        }
+
 
 }

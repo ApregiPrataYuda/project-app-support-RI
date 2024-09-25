@@ -39,8 +39,9 @@
   <thead>
   <tr>
                         <th style="width: 4%;">No</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
                         <th>Username</th>
-                        <th>FullName</th>
                         <th style="width: 10%;">Role</th>
                         <th style="width: 15px;">Image</th>
                         <th style="width: 15px;">Detail</th>
@@ -74,7 +75,7 @@
     <article class="card">
         <header class="card-header"> Details Data User </header>
         <div class="card-body">
-            <h6>Nama Pengguna: <span id="fullname"></span></h6>
+            <h6>Nama Pengguna: <span id="first_name"></span> <span id="last_name"></span></h6>
             <article class="card">
                 <div class="card-body row">
                     <div class="col"> <strong>Username:</strong> <br> <p id="username"></p> </div>
@@ -114,8 +115,9 @@
         },
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+            {data: 'first_name', name: 'first_name'},
+            {data: 'last_name', name: 'last_name'},
             {data: 'username', name: 'username'},
-            {data: 'fullname', name: 'fullname'},
             {data: 'role', name: 'role',orderable: false, searchable: false},
             {data: 'image', name: 'image'},
             {data: 'detail', name: 'detail'},
@@ -148,14 +150,16 @@
         $(document).ready(function() {
         $(document).on('click', '#sets', function() {
            var username = $(this).data('username');
-           var fullname = $(this).data('fullname');
+           var first_name = $(this).data('first_name');
+           var last_name = $(this).data('last_name');
            var email = $(this).data('email');
            var status = $(this).data('status');
            var role = $(this).data('role');
            var password = $(this).data('password');
         
           $( '#username').text(username);  
-          $( '#fullname').text(fullname);  
+          $( '#first_name').text(first_name);  
+          $( '#last_name').text(last_name);  
           $( '#email').text(email);  
           $( '#status').text(status);  
           $( '#role').text(role);  

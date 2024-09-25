@@ -32,10 +32,12 @@
 </div>
 </div>
 
-<div class="col-4">
+<div>
 <button type="submit"  id="btnSave" class="btn btn-outline-primary btn-sm"><i class="fas fa-sign-in-alt"></i> Sign In</button>
 </div>
-
+<p class="mt-2">
+<a href="{{'/'}}">Back To Home</a>
+</p>
 </div>
 </form>
 @include('authentikasi.partials.footer')

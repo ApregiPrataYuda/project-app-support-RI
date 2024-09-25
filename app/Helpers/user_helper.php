@@ -12,13 +12,19 @@ if (! function_exists('getUserData')) {
     function getUserData()
     {
         // Mendapatkan ID pengguna dari sesi
-        $userId = Session::get('user_id');
+        // $userId = Session::get('user_id');
+        // if ($userId) {
+        //     // Menemukan model User berdasarkan ID
+        //     return UserModel::find($userId);
+        // }
+        // return null;
 
-        if ($userId) {
-            // Menemukan model User berdasarkan ID
-            return UserModel::find($userId);
-        }
-
-        return null;
+         // Mendapatkan ID pengguna dari sesi
+         $userId = Session::get('user_id');
+         if ($userId) {
+             // Menemukan model User berdasarkan ID, dan juga mengambil relasi employee
+             return UserModel::with('employee')->find($userId);
+         }
+         return null;
     }
 }

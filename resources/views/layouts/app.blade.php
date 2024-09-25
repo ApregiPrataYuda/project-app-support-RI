@@ -59,7 +59,8 @@
 
       @php
       $user = getUserData();
-      $fullNameUser = $user->fullname;
+      $first_name = $user->first_name;
+      $last_name = $user->last_name;
       $imageUser = $user->image;
     @endphp
 
@@ -73,7 +74,7 @@
           </div>
           <div class="info">
             <a style="color: RGB(245, 245, 245);" href="#" class="d-block">| 
-              {{ $fullNameUser }}
+              {{ $user->employee->first_name }}   {{ $user->employee->last_name }}
           </a>
           </div>
         </div>
