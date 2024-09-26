@@ -35,4 +35,7 @@ class UserModel extends Model
     {
         return $this->hasOne(EmployeModel::class, 'id_employee', 'id_employee'); // Sesuaikan dengan nama kolom yang tepat
     }
+
+
+    
 }

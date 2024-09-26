@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Models\visitorModel;
 use App\Models\PaketModel;
+use App\Models\DivisionModel;
+use App\Models\MasterItemModel;
+use Illuminate\Support\Str;
 
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
@@ -18,14 +21,19 @@ use Endroid\QrCode\Label\Label;
 use Endroid\QrCode\Logo\Logo;
 use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
 use Endroid\QrCode\Writer\PngWriter;
+use Termwind\Components\Dd;
 
 class Admin extends Controller
 {
     protected $visitorModel;
     protected $PaketModel;
-    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel) {
+    protected $DivisionModel;
+    protected $MasterItemModel;
+    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
+        $this->DivisionModel = $DivisionModel;
+        $this->MasterItemModel = $MasterItemModel;
     }
 
 // -----------------------------------------Batas---------------------------------------------------------//
@@ -346,4 +354,198 @@ public function destroy_paket($id)  {
 
 // -----------------------------------------Batas---------------------------------------------------------//
 
+
+//start code for item module
+public function Master_item() {
+    $data = [
+        'title' => 'List Master Item Borrow'
+     ];
+     return view('Admin/Master-item/Data/file',$data);
+}
+
+
+
+
+
+
+public function Master_item_add_view ()  {
+    $data = [
+        'title' => 'Add Master Item Borrow'
+     ];
+     return view('Admin/Master-item/Form/Add',$data);
+}
+
+
+public function get_item_data(Request $request) {
+    if ($request->ajax()) {
+        $userData = getUserData();
+    // Memanggil nama divisi
+        $divisiID = $userData->employee->divisi->divisi_id;
+        // Mengambil data dari model dengan join
+        $data = MasterItemModel::select('item_master_borrow.*','ms_divisi.divisi_name')
+        ->leftJoin('ms_divisi','item_master_borrow.divisi_id', '=', 'ms_divisi.divisi_id')
+        ->where('item_master_borrow.divisi_id',$divisiID)
+        ->get();
+    
+        // Cek apakah ada parameter pencarian
+        if ($request->has('search') && !empty($request->input('search')['value'])) {
+            $searchTerm = $request->input('search')['value'];
+            // Pastikan kolom fullname ada di ms_user
+            $data->where('name_item', 'LIKE', "%{$searchTerm}%");
+        }
+    
+        // Menyusun DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('item_code', function($row) {
+                $qrcode = route('qr.print.item', $row->item_code);
+                return '<a href="'.$qrcode.'" class="btn btn-outline-secondary btn-xs mb-2"><i class="fa fa-qrcode" aria-hidden="true"></i> Create QR-CODE '.$row->item_code.'</a>
+                        <a href="'.$qrcode.'" class="btn btn-outline-danger btn-xs"><i class="fa fa-picture-o" aria-hidden="true"></i> Download Image QR '.$row->item_code.'</a>';
+            })
+
+            ->addColumn('status', function($row) {
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">ACTIVE</span>' : '<span class="badge badge-pill badge-success">NOT ACTIVE</span>';
+            })
+
+            ->addColumn('name_item', function($row) {
+                return $row->name_item .' - '. $row->item_code;
+            })
+
+            ->addColumn('status_borrows', function($row) {
+                return $row->status_borrows == 1 ? '<span class="badge badge-danger">Sedang Di pinjam</span>' : '<span class="badge badge-success">Sedang tidak pinjam</span>';
+            })
+
+            ->addColumn('description', function($row) {
+                return '<textarea  rows="2" cols="10" class="form-control" readonly>'.$row->description.'</textarea>';
+            })
+            ->addColumn('action', function($row){
+
+                if ($row->status_borrows == 1) {
+                    // Jika status == 1, tidak ada tombol yang ditampilkan
+                    return '';
+                } else {
+                    // Jika status != 1, tampilkan tombol edit dan hapus
+                    // $editUrl = route('paket.view.data', Crypt::encrypt($row->id));
+                    $btn = '<a href="" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
+                    $btn .= '<form action="" method="POST" style="display:inline;" id="delete-form-paket-' . $row->item_id . '">
+                    ' . csrf_field() . '
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="button" onclick="confirmDelete(' . $row->item_id . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
+                    </form>';
+                    return $btn;
+                }
+            })
+            ->rawColumns(['name_item','item_code','description','status_borrows','status','action'])
+            ->make(true);
+    }
+}
+
+
+// Misalkan ini adalah metode dalam controller
+public function generateCode()
+{
+    $userData = getUserData();
+    // Memanggil nama divisi
+    $divisiName = $userData->employee->divisi->divisi_alias;
+   // Mengambil ID terakhir yang ada di tabel
+   $lastItem = MasterItemModel::orderBy('item_id', 'DESC')->first(); // Mengambil baris terakhir berdasarkan ID
+
+   // Memeriksa apakah ada item yang ditemukan
+   if ($lastItem) {
+       // Mengambil 3 digit terakhir dari ID dan menambahkan 1
+       $kode = intval(substr($lastItem->item_id, -3)) + 1; // Mengambil 3 digit terakhir dari 'id' dan menambah 1
+   } else {
+       $kode = 1; // Jika tidak ada item, mulai dari 1
+   }
+
+   $prefix = Str::random(3);
+   $randomNumber = rand(1000, 9999);
+   $code = strtoupper($prefix) . $randomNumber;
+   
+   // Memformat kode menjadi tiga digit dengan nol di depan
+   $kodeTampil = str_pad($kode, 5, "0", STR_PAD_LEFT);
+   $combined = 'CODE' .$divisiName. $code; // Menggabungkan 'K' dengan kode yang diformat
+   return $combined; // Mengembalikan kode akhir
+}
+
+   
+
+
+
+public function store_item(Request $request) {
+
+    $ItemCode = $this->generateCode();
+   
+    //get seesion
+    $userData = getUserData();
+    // Memanggil nama divisi
+    $divisiID = $userData->employee->divisi->divisi_id;
+    $validatedData = $request->validate([
+        'name_item' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/'
+    ]);
+
+    // Cek apakah qr_item sudah ada
+    if (MasterItemModel::where('item_code', $ItemCode)->exists()) {
+        return response()->json(['error' => 'QR Item sudah ada.'], 409); // Kode 409 untuk konflik
+    }
+
+
+    // try {
+        // Menginisialisasi model secara langsung
+        $Item = new MasterItemModel();
+        $Item->item_code = $ItemCode;
+        $Item->name_item = ucwords($validatedData['name_item']);
+        $Item->divisi_id = $divisiID;
+        $Item->description = $request->input('description');
+        $Item->status = 1;
+        $Item->status_borrows = 0;
+        $Item->save();
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('item.master')->with('success', 'Master Data Item created successfully!');
+    // } catch (\Exception $e) {
+    //     // Tangani kesalahan jika ada masalah saat menyimpan data
+    //     return redirect()->back()->withErrors(['error' => 'Failed to Item Data  Please try again.'])->withInput();
+    // }
+}
+
+public function print_qr_item($code_item) {
+    $builders = $this->MasterItemModel
+    ->where('item_code', $code_item)->first();
+    $code_item = $builders->item_code;
+    $name_item = $builders->name_item;
+    $writer = new PngWriter();
+    // Create QR code
+     $qrCode = QrCode::create($code_item)
+        ->setEncoding(new Encoding('UTF-8'))
+       //  ->setErrorCorrectionLevel(new ErrorCorrectionLevelLow())
+        ->setSize(300)
+        ->setMargin(10)
+       //  ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
+        ->setForegroundColor(new Color(0, 0, 0))
+        ->setBackgroundColor(new Color(255, 255, 255));
+
+    // Create generic logo
+       $logo = Logo::create(public_path('rinnai.png'))
+       ->setResizeToWidth(100)
+       ->setPunchoutBackground(true);
+
+    // Create generic label
+    $label = Label::create($name_item)
+    ->setTextColor(new Color(255, 0, 0));
+    $result = $writer->write($qrCode, $logo, $label);
+    $dataUri = $result->getDataUri();
+  
+    $data = [
+        'title' => 'Print QR-iTEM',
+        'qr' => $dataUri
+     ];
+     return view('Admin/Master-item/QR/file',$data);
+}
+
+
+
+//end code for item module
+
+// -----------------------------------------Batas---------------------------------------------------------//
 }

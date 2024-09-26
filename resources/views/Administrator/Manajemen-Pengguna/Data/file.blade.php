@@ -42,6 +42,8 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Username</th>
+                        <th>Branch</th>
+                        <th>Divisi</th>
                         <th style="width: 10%;">Role</th>
                         <th style="width: 15px;">Image</th>
                         <th style="width: 15px;">Detail</th>
@@ -118,6 +120,8 @@
             {data: 'first_name', name: 'first_name'},
             {data: 'last_name', name: 'last_name'},
             {data: 'username', name: 'username'},
+            {data: 'name_branch', name: 'name_branch'},
+            {data: 'divisi_name', name: 'divisi_name'},
             {data: 'role', name: 'role',orderable: false, searchable: false},
             {data: 'image', name: 'image'},
             {data: 'detail', name: 'detail'},

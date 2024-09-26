@@ -121,8 +121,13 @@ Route::get('/Admin/view-data-paket/{id}', [Admin::class, 'view_data_paket'])->na
 Route::put('/Admin/update-paket/{id}', [Admin::class, 'update_paket'])->name('update.paket');
 Route::delete('/Admin/delete-paket/{id}', [Admin::class, 'destroy_paket'])->name('delete.paket');
 
+Route::get('/Admin/Master-Item', [Admin::class, 'Master_item'])->name('item.master');
+Route::get('/Admin/get-item-master', [Admin::class, 'get_item_data'])->name('get.item');
+Route::get('/Admin/Master-item-add', [Admin::class, 'Master_item_add_view'])->name('add.item');
+Route::post('/Admin/store-item-master', [Admin::class,'store_item'])->name('store.item.master');
+Route::get('/Admin/print-qrcode-item/{id}', [Admin::class,'print_qr_item'])->name('qr.print.item');
+
+
+
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
-
-
-
 Route::get('/Others/Logout', [Others::class, 'logout'])->name('logout');

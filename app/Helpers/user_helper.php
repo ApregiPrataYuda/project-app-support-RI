@@ -23,7 +23,7 @@ if (! function_exists('getUserData')) {
          $userId = Session::get('user_id');
          if ($userId) {
              // Menemukan model User berdasarkan ID, dan juga mengambil relasi employee
-             return UserModel::with('employee')->find($userId);
+             return UserModel::with(['employee.divisi'])->find($userId);
          }
          return null;
     }

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-class EmployeModel extends Model
+class DivisionModel extends Model
 {
     use HasFactory;
     use SoftDeletes;
     // Menentukan nama tabel yang terkait dengan model ini
-    protected $table = 'employees_tb';
+    protected $table = 'ms_divisi';
 
     // Menentukan primary key jika bukan 'id'
-    protected $primaryKey = 'id_employee';
+    protected $primaryKey = 'divisi_id';
 
     // Jika primary key bukan auto-incrementing integer
     // public $incrementing = false;
@@ -23,10 +23,4 @@ class EmployeModel extends Model
     // protected $keyType = 'string';
     // Menentukan apakah timestamps diaktifkan
     public $timestamps = true;
-
-    // Relasi ke tabel ms_divisi
-    public function divisi()
-    {
-        return $this->belongsTo(DivisionModel::class, 'divisi_id', 'divisi_id');
-    }
 }

@@ -789,9 +789,12 @@ public function get_user_data(Request $request) {
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
         $data = $this->UserModel->select('ms_user.user_id','ms_user.username', 'ms_user.image','ms_user.password',
-                                         'ms_user.is_active', 'ms_user.email', 'ms_role.role', 'employees_tb.first_name', 'employees_tb.last_name')
+                                         'ms_user.is_active', 'ms_user.email', 'ms_role.role', 'employees_tb.first_name',
+                                          'employees_tb.last_name', 'employees_tb.branch_id','branch_tb.name_branch', 'ms_divisi.divisi_name')
             ->leftJoin('ms_role', 'ms_user.role_id', '=', 'ms_role.role_id')
-            ->leftJoin('employees_tb', 'ms_user.id_employee', '=', 'employees_tb.id_employee');
+            ->leftJoin('employees_tb', 'ms_user.id_employee', '=', 'employees_tb.id_employee')
+            ->leftJoin('branch_tb','employees_tb.branch_id','=','branch_tb.id_branch')
+            ->leftJoin('ms_divisi','employees_tb.divisi_id','=','ms_divisi.divisi_id');
     
         // Cek apakah ada parameter pencarian
         if ($request->has('search') && !empty($request->input('search')['value'])) {
