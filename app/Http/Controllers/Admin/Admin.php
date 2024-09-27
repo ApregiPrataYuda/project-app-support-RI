@@ -398,13 +398,14 @@ public function get_item_data(Request $request) {
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('item_code', function($row) {
-                $qrcode = route('qr.print.item', $row->item_code);
-                return '<a href="'.$qrcode.'" class="btn btn-outline-secondary btn-xs mb-2"><i class="fa fa-qrcode" aria-hidden="true"></i> Create QR-CODE '.$row->item_code.'</a>
-                        <a href="'.$qrcode.'" class="btn btn-outline-danger btn-xs"><i class="fa fa-picture-o" aria-hidden="true"></i> Download Image QR '.$row->item_code.'</a>';
+                $qrcode = route('qr.generate.item', $row->item_code);
+                $downloadqr = route('qr.download.item', $row->item_code);
+                return '<a href="'.$qrcode.'" class="btn btn-outline-secondary btn-xs mb-2"><i class="fa fa-qrcode" aria-hidden="true"></i> Generate '.$row->item_code.'</a>
+                        <a href="'.$downloadqr.'" class="btn btn-outline-danger btn-xs"><i class="fa fa fa-qrcode" aria-hidden="true"></i> Download '.$row->item_code.'</a>';
             })
 
             ->addColumn('status', function($row) {
-                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">ACTIVE</span>' : '<span class="badge badge-pill badge-success">NOT ACTIVE</span>';
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">ACTIVE</span>' : '<span class="badge badge-pill badge-secondary">NOT ACTIVE</span>';
             })
 
             ->addColumn('name_item', function($row) {
@@ -425,9 +426,9 @@ public function get_item_data(Request $request) {
                     return '';
                 } else {
                     // Jika status != 1, tampilkan tombol edit dan hapus
-                    // $editUrl = route('paket.view.data', Crypt::encrypt($row->id));
-                    $btn = '<a href="" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
-                    $btn .= '<form action="" method="POST" style="display:inline;" id="delete-form-paket-' . $row->item_id . '">
+                    $editUrl = route('edit.item', Crypt::encrypt($row->item_id));
+                    $btn = '<a href="'.$editUrl.'" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
+                    $btn .= '<form action="' . route('delete.item', Crypt::encrypt($row->item_id)) . '" method="POST" style="display:inline;" id="delete-form-item-' . $row->item_id . '">
                     ' . csrf_field() . '
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="button" onclick="confirmDelete(' . $row->item_id . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
@@ -468,14 +469,29 @@ public function generateCode()
    return $combined; // Mengembalikan kode akhir
 }
 
+
+public function download_qr_item ($code_item)  {
+    // Tentukan lokasi file QR code (misalnya di folder 'storage/app/qr_codes/')
+    $filePath = storage_path('app/qr_codes/' . $code_item . '.png');
+    
+    // Cek apakah file ada
+    if (file_exists($filePath)) {
+        // Mengembalikan response download
+        return response()->download($filePath, $code_item . '.png', [
+            'Content-Type' => 'image/png',
+        ]);
+    } else {
+        // Kembalikan response jika file tidak ditemukan
+        return redirect()->back()->with('error', 'QR code not found.');
+    }
+}
+
+
+
+
    
-
-
-
 public function store_item(Request $request) {
-
     $ItemCode = $this->generateCode();
-   
     //get seesion
     $userData = getUserData();
     // Memanggil nama divisi
@@ -489,8 +505,7 @@ public function store_item(Request $request) {
         return response()->json(['error' => 'QR Item sudah ada.'], 409); // Kode 409 untuk konflik
     }
 
-
-    // try {
+    try {
         // Menginisialisasi model secara langsung
         $Item = new MasterItemModel();
         $Item->item_code = $ItemCode;
@@ -503,13 +518,13 @@ public function store_item(Request $request) {
 
         // Redirect dengan pesan sukses
         return redirect()->route('item.master')->with('success', 'Master Data Item created successfully!');
-    // } catch (\Exception $e) {
-    //     // Tangani kesalahan jika ada masalah saat menyimpan data
-    //     return redirect()->back()->withErrors(['error' => 'Failed to Item Data  Please try again.'])->withInput();
-    // }
+    } catch (\Exception $e) {
+        // Tangani kesalahan jika ada masalah saat menyimpan data
+        return redirect()->back()->withErrors(['error' => 'Failed to Item Data  Please try again.'])->withInput();
+    }
 }
 
-public function print_qr_item($code_item) {
+public function generate_qr_item($code_item) {
     $builders = $this->MasterItemModel
     ->where('item_code', $code_item)->first();
     $code_item = $builders->item_code;
@@ -524,27 +539,74 @@ public function print_qr_item($code_item) {
        //  ->setRoundBlockSizeMode(new RoundBlockSizeModeMargin())
         ->setForegroundColor(new Color(0, 0, 0))
         ->setBackgroundColor(new Color(255, 255, 255));
-
     // Create generic logo
        $logo = Logo::create(public_path('rinnai.png'))
        ->setResizeToWidth(100)
        ->setPunchoutBackground(true);
-
     // Create generic label
     $label = Label::create($name_item)
     ->setTextColor(new Color(255, 0, 0));
     $result = $writer->write($qrCode, $logo, $label);
+    // Define the file path in the storage folder
+    $filePath = storage_path('app/qr_codes/' . $code_item . '.png');
+    if (!file_exists(storage_path('app/qr_codes'))) {
+        mkdir(storage_path('app/qr_codes'), 0755, true);
+    }
+    $result->saveToFile($filePath);
     $dataUri = $result->getDataUri();
+    return redirect()->route('item.master')->with('success', 'QR CODE SUCCESS CREATED!');
   
-    $data = [
-        'title' => 'Print QR-iTEM',
-        'qr' => $dataUri
-     ];
-     return view('Admin/Master-item/QR/file',$data);
+    // $data = [
+    //     'title' => 'Print QR-iTEM',
+    //     'qr' => $dataUri
+    //  ];
+    //  return view('Admin/Master-item/QR/file',$data);
 }
 
 
 
+
+public function Master_item_edit_view ($id) {
+    $iditem = Crypt::decrypt($id);
+    $getdataitem = $this->MasterItemModel->findOrFail($iditem);
+    $data = [
+        'title' => 'Edit Master Item Borrow',
+        'basicId' => $id,
+        'item' => $getdataitem
+     ];
+     return view('Admin/Master-item/Form/Edit',$data);
+}
+
+
+
+public function update_item(Request $request, $id) {
+    $iditem = Crypt::decrypt($id);
+    // Validasi input
+    $validatedData = $request->validate([
+        'name_item' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/'
+    ]);
+    // Temukan model yang sesuai
+    $Item = $this->MasterItemModel::findOrFail($iditem);
+    // Perbarui data
+    $Item->name_item = ucwords($validatedData['name_item']);
+    $Item->description = $request->input('description');
+    $Item->status = $request->input('status');
+    $Item->save();
+    // Redirect atau beri respons
+    return redirect()->route('item.master')->with('success', 'Data updated successfully!');
+}
+
+
+public function destroy_item($id)  {
+    // Dekripsi ID
+    $iditem = Crypt::decrypt($id);
+    // Temukan model yang sesuai
+    $paket = $this->MasterItemModel::findOrFail($iditem);
+    // Hapus data
+    $paket->delete();
+    // Redirect atau beri respons jika berhasil
+    return redirect()->route('item.master')->with('success', 'Data deleted successfully!');
+}
 //end code for item module
 
 // -----------------------------------------Batas---------------------------------------------------------//

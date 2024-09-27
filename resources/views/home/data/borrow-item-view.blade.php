@@ -1,6 +1,22 @@
 @extends('frontend.app')
 @section('content')
+<style>
+  .multi-column-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  max-width: 400px; /* Adjust as needed */
+}
 
+.multi-column-list li {
+  width: 50%; /* Two items per row */
+}
+
+.multi-column-list li:nth-child(5n+1) {
+  clear: left; /* Start a new "column" after every 5 items */
+}
+
+</style>
 <div class="content-wrapper">
 <div class="content-header">
 <div class="container">
@@ -91,64 +107,94 @@
           </button>
         </div>
         <div class="modal-body">
-            <form>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <label for="tanggal_dipinjam"><span class="text-uppercase"> Date *</span> </label>
-                        <input type="date" name="tanggal_dipinjam" id="tanggal_dipinjam" class="form-control" value="<?= date('Y-m-d')?>" disabled>
-                       </div>
-                    </div>
-                   
-                    <div class="row justify-content-center">
-                    <div class="col-md-6 mt-2">
-                        <label for="msbrg"><span class="text-uppercase"> Code Item *</span> </label>
-                        <select name="code_item[]" id="msbrg" class="form-control">
-                         <option value="">-via QR code-</option>
-                          
-                        </select> 
-                       </div>
-                        <p id="p" class="font-italic text-danger"></p>
-                    </div>
-
-                    <div class="row justify-content-center">
-                      <div class="col-md-6 mt-2">
-                      <label for="name_Item"><span class="text-uppercase"> Name Item *</span> </label>
-                      <input type="text" class="form-control" value="" id="name_Item" name="name_Item" id="name_Item" placeholder="" readonly>
-                      </div>
-                      </div>
-
-                    <div class="row justify-content-center">
-                      <div class="col-md-6 mt-2">
-                      <label for="nik"><span class="text-uppercase"> Nik *</span> </label>
-                      <input type="text" class="form-control" value="" id="nik" name="nik" id="nik" placeholder="via QR nametag">
-                      </div>
-                      </div>
-
-                    <div class="row justify-content-center">
-                    <div class="col-md-6 mt-2">
-                    <label for="nama_peminjam"><span class="text-uppercase"> tool user name*</span> </label>
-                    <input type="text" class="form-control" value="" id="nama_peminjam" name="nama_peminjam" id="nama_peminjam" placeholder="Name Peminjam..." readonly>
-                    </div>
-                    </div>
-
-                    <div class="row justify-content-center">
-                      <div class="col-md-6 mt-2">
-                      <label for="nama_peminjam"><span class="text-uppercase"> Location (Division)*</span> </label>
-                      <input type="text" class="form-control" value="" id="nama_peminjam" name="nama_peminjam" id="nama_peminjam" placeholder="Name Peminjam..." readonly>
-                      </div>
-                      </div>
-
-                    <div class="row justify-content-center">
-                    <div class="col-md-6 mt-2 mb-2">
-                        <label for="description"><span class="text-uppercase"> statement *</span> </label>
-                       <textarea name="description" id="description" cols="10" rows="2" class="form-control" placeholder="dengan ini saya menyatakan bertanggung jawab atas tools yang saya gunakan" readonly></textarea>
-                    </div>
-                </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+        
+        <div class="row">
+    <!-- Kolom Kiri -->
+    <div class="col-md-5">
+        <div class="form-group">
+            <label for="tanggal_dipinjam"><span class="text-uppercase">Date *</span></label>
+            <input type="date" name="tanggal_dipinjam" id="tanggal_dipinjam" class="form-control" value="<?= date('Y-m-d')?>" disabled>
         </div>
-    </form>
+
+        <div class="form-group">
+            <label for="msbrg"><span class="text-uppercase">Code Item *</span></label>
+            <input type="text" id="code_item" class="form-control" placeholder="Scan or enter code item" />
+        </div>
+
+        <div class="form-group">
+            <label for="nik"><span class="text-uppercase">NIK *</span></label>
+            <input type="text" class="form-control" id="nik" name="nik" placeholder="via QR nametag">
+        </div>
+
+        <div class="form-group">
+            <label for="nama_peminjam"><span class="text-uppercase">Tool User Name *</span></label>
+            <input type="text" class="form-control" id="nama_peminjam" name="nama_peminjam" placeholder="Name Peminjam..." readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="location"><span class="text-uppercase">Location (Division) *</span></label>
+            <input type="text" class="form-control" id="location" name="location" placeholder="Division..." readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="description"><span class="text-uppercase">Statement *</span></label>
+            <textarea name="description" id="description" cols="10" rows="2" class="form-control" placeholder="I declare responsibility for the tools I use" readonly></textarea>
+        </div>
+
+    </div>
+
+
+    <!-- Kolom Kanan -->
+    <!-- <div class="col-md-7"> -->
+        <!-- Kartu untuk Menyimpan Kode -->
+        <!-- <h5 class="card-title">Daftar Kode</h5>
+        <div class="card mb-5" style="width: 100%;">
+                <div class="card-body"> -->
+                   
+                    <!-- <ul id="savedItems"  class="multi-column-list"> -->
+                        <!-- Daftar kode yang disimpan akan muncul di sini -->
+                    <!-- </ul>
+                </div>
+            </div> -->
+    <!-- </div> -->
+
+    <!-- Kolom Kanan -->
+<div class="col-md-7">
+    <!-- Kartu untuk Menyimpan Kode -->
+    <h5 class="card-title">List of items to be borrowed</h5>
+    <div class="card mb-5" style="width: 100%;">
+        <div class="card-body">
+            <table class="table table-bordered" id="savedItemsTable">
+                <thead>
+                    <tr class="table-primary">
+                        <th>No</th>
+                        <th>Kode Produk</th>
+                        <th>Nama Item</th>
+                    </tr>
+                </thead>
+                <tbody id="savedItems">
+                    <!-- Daftar kode yang disimpan akan muncul di sini -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+          <button type="submit" id="save" name="save" class="btn btn-outline-info btn-sm ml-2"> <i class="fa fa-save"></i> save </button>
+        </div>
+    
       </div>
     </div>
   </div>
@@ -215,4 +261,128 @@
       </div>
     </div>
   </div>
+
+
+  
+  <script>
+    $(document).ready(function(){
+        // Inisialisasi array untuk menyimpan kode item
+        let kodeItems = [];
+        // Fokuskan pada input kode item saat halaman siap
+        $('#code_item').val("").focus();
+        
+        // Fungsi untuk memproses kode item yang dipindai
+        function processScannedCode(kodeProduct) {
+            // Periksa apakah kode tidak kosong
+            if(kodeProduct !== ""){
+                // Ambil nama item dari server menggunakan AJAX
+                $.ajax({
+                  url: '/Home/' + kodeProduct,
+                    type: 'GET', 
+                    success: function(response) {
+                        if (response.success) {
+                            // Tambahkan kode item ke array
+                            kodeItems.push(kodeProduct);
+                            // Kosongkan input setelah menyimpan
+                            $('#code_item').val("").focus();
+                            // Tampilkan array di console
+                            console.log(kodeItems);
+                            
+                            // Menampilkan kode item dan nama item di UI
+                            // let itemCount = $('#savedItems li').length + 1;
+                            // $('#savedItems').append('<li><p class="badge badge-primary ml-2 mr-2 mb-2">' + itemCount + '. ' + kodeProduct + ': ' + response.name_item + '</p></li>');
+                            let itemCount = $('#savedItems tr').length + 1; // Update the selector to count table rows
+$('#savedItems').append(`
+    <tr>
+        <td>${itemCount}</td>
+        <td>${kodeProduct}</td>
+        <td>${response.name_item}</td>
+    </tr>
+`);
+                        } else {
+                            alert('Item not found for code: ' + kodeProduct);
+                        }
+                    },
+                    error: function() {
+                        alert('Error retrieving item data.');
+                    }
+                });
+            } else {
+                alert('Please enter a valid code.');
+            }
+        }
+
+        // Menggunakan event 'input' atau 'keyup' untuk menangkap input dari scanner
+        $('#code_item').on('keyup', function(e){
+            let tex = $(this).val();
+            // Periksa jika tombol yang ditekan adalah 'Enter' (kode ASCII 13)
+            if(e.keyCode === 13 && tex !== "") {
+                // Proses kode yang dipindai
+                processScannedCode(tex);
+                // Mencegah perilaku default
+                e.preventDefault();
+            }
+        });
+
+    });
+</script>
+
+
+  
+
+
+<!-- <script>
+    $(document).ready(function(){
+        // Inisialisasi array untuk menyimpan kode item
+        let kodeItems = [];
+        // Fokuskan pada input kode item saat halaman siap
+        $('#code_item').val("").focus();
+        // Fungsi untuk memproses kode item yang dipindai
+        function processScannedCode(kodeProduct) {
+            // Periksa apakah kode tidak kosong
+            if(kodeProduct !== ""){
+                // Tambahkan kode item ke array
+                kodeItems.push(kodeProduct);
+                // Kosongkan input setelah menyimpan
+                $('#code_item').val("").focus();
+                // Tampilkan array di console
+                console.log(kodeItems);
+                // Menampilkan kode item yang disimpan di UI jika perlu
+                // $('#savedItems').append('<li>' + kodeProduct + '</li>');
+                let itemCount = $('#savedItems li').length + 1;
+              $('#savedItems').append('<li>' + itemCount + '. ' + kodeProduct + '</li>');
+              itemCount++;
+            } else {
+                alert('Please enter a valid code.');
+            }
+        }
+
+        // Menggunakan event 'input' atau 'keyup' untuk menangkap input dari scanner
+        $('#code_item').on('keyup', function(e){
+            let tex = $(this).val();
+            // Periksa jika tombol yang ditekan adalah 'Enter' (kode ASCII 13)
+            if(e.keyCode === 13 && tex !== "") {
+                // Proses kode yang dipindai
+                processScannedCode(tex);
+                // Mencegah perilaku default
+                e.preventDefault();
+            }
+        });
+
+    });
+</script> -->
+
+<!-- code untuk simpan -->
+<!-- $.ajax({
+    url: '/save-codes',
+    method: 'POST',
+    data: { codes: kodeItems },
+    success: function(response){
+        alert('Codes saved successfully!');
+    },
+    error: function(error){
+        console.error('Error saving codes:', error);
+    }
+}); -->
+
 @endsection

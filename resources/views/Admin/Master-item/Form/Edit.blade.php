@@ -42,11 +42,13 @@
                 <!-- <div class="card"> -->
                     
                     <div class="card-body">
-                        <form action="{{route('store.item.master')}}" method="post" enctype="multipart/form-data">
+                        <form action="{{route('update.item',$basicId)}}" method="post" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
+
                             <div class="form-group">
                                 <label for="name_item" class="text-capitalize">Name Item*</label>
-                                <input type="text" class="form-control" id="name_item" name="name_item" value="{{old('name_item')}}" placeholder="Enter Name Item">
+                                <input type="text" class="form-control" id="name_item" name="name_item" value="{{ $item->name_item }}" placeholder="Enter Name Item">
                                 @error('name_item')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -55,15 +57,27 @@
 
                             <div class="form-group">
                                 <label for="description" class="text-capitalize">Description Item</label>
-                              <textarea name="description" id="description" class="form-control"></textarea>
+                              <textarea name="description" id="description" class="form-control">{{ $item->description }}</textarea>
                                 @error('description')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
+                            <div class="form-group">
+                                <label class="text-capitalize">status*</label>
+                                <select name="status" id="status" class="form-control">
+                                <option value="">-Pilih-</option>
+                                <option value="1" {{ old('status', $item->status ?? '') == 1 ? 'selected' : '' }}>Aktif</option>
+                                <option value="0" {{ old('status', $item->status ?? '') == 0 ? 'selected' : '' }}>NonAktif</option>
+                                </select>
+                                @error('status')
+                                            <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                </div>
 
 
-                            <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="fa fa-save"></i> Save</button>
+
+                            <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="fa fa-save"></i> update</button>
                             <button type="reset" class="btn btn-outline-warning btn-sm"><i class="fa fa-undo"></i> Reset</button>
                         </form>
                     </div>

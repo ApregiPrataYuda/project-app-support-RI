@@ -40,6 +40,10 @@ Route::get('/Home/Announcement', [Home::class, 'Announcement'])->name('Announcem
 Route::get('/Home/Check-paket', [Home::class, 'check_paket'])->name('check.paket');
 Route::get('/Home/List-paket', [Home::class, 'list_pakets'])->name('lists.paket');
 Route::post('/Home/get-paket-user', [Home::class, 'ambil_paket'])->name('get.paket.user');
+// Route::get('/Home/get-item/{id}', [Home::class, 'getItemByCode'])->name('get.item.by.code');
+// Route::get('/Home/{kode}', 'HomeController@getItemByCode');
+Route::get('/Home/{kode}', [Home::class, 'getItemByCode']);
+
 
 
 Route::get('/Login', [Auth::class, 'views'])->name('login');
@@ -50,58 +54,55 @@ Route::get('/logout', [Auth::class, 'logout'])->name('logout');
 Route::get('/Administrator/DashboardIT', [Administrator::class, 'index'])->name('Administrator');
 
 Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
-Route::get('/Administrator/get-menu', [Administrator::class, 'get_menu_data'])->name('get.menu');
-Route::get('/Administrator/create-menu', [Administrator::class, 'create_menu'])->name('menu.create');
+Route::get('/Administrator/get-menu', [Administrator::class, 'get_menu_data'])->name('get.menu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/create-menu', [Administrator::class, 'create_menu'])->name('menu.create')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/Administrator/store-menu', [Administrator::class, 'store_menu'])->name('store.menu');
-Route::get('/Administrator/views-menu-update/{id}', [Administrator::class, 'view_menu_update'])->name('menu.view.update');
+Route::get('/Administrator/views-menu-update/{id}', [Administrator::class, 'view_menu_update'])->name('menu.view.update')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Administrator/update-menu/{id}', [Administrator::class, 'update_menu'])->name('update.menu');
-Route::delete('/Administrator/delete-menu/{id}', [Administrator::class, 'destroy_menu'])->name('delete.menu');
-Route::get('/Administrator/restore-data-menu', [Administrator::class, 'restore_menu'])->name('restore.data.menu');
-Route::get('/Administrator/get-data-menu-restore', [Administrator::class, 'get_menu_data_restore'])->name('get.menu.restore.data');
-Route::post('/Administrator/restore-menu/{id}', [Administrator::class, 'restore'])->name('restore.menu');
-Route::delete('/Administrator/delete-menu-permanent/{id}', [Administrator::class, 'destroy_menu_permanent'])->name('delete.menu.permanent');
+Route::delete('/Administrator/delete-menu/{id}', [Administrator::class, 'destroy_menu'])->name('delete.menu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/restore-data-menu', [Administrator::class, 'restore_menu'])->name('restore.data.menu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/get-data-menu-restore', [Administrator::class, 'get_menu_data_restore'])->name('get.menu.restore.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Administrator/restore-menu/{id}', [Administrator::class, 'restore'])->name('restore.menu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::delete('/Administrator/delete-menu-permanent/{id}', [Administrator::class, 'destroy_menu_permanent'])->name('delete.menu.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
-Route::get('/Administrator/List-submenu', [Administrator::class, 'submenu_management'])->name('submenu.view');
-Route::get('/Administrator/get-submenu', [Administrator::class, 'get_submenu_data'])->name('get.submenu');
-Route::get('/Administrator/Create-submenu', [Administrator::class, 'create_submenu'])->name('create.submenu');
+Route::get('/Administrator/List-submenu', [Administrator::class, 'submenu_management'])->name('submenu.view')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/get-submenu', [Administrator::class, 'get_submenu_data'])->name('get.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/Create-submenu', [Administrator::class, 'create_submenu'])->name('create.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/Administrator/Store-submenu', [Administrator::class, 'store_submenu'])->name('store.submenu');
-Route::get('/Administrator/view-submenu-update/{id}', [Administrator::class, 'view_submenu_update'])->name('submenu.view.update');
+Route::get('/Administrator/view-submenu-update/{id}', [Administrator::class, 'view_submenu_update'])->name('submenu.view.update')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Administrator/update-submenu/{id}', [Administrator::class, 'update_submenu'])->name('update.submenu');
-Route::delete('/Administrator/delete-submenu/{id}', [Administrator::class, 'destroy_submenu'])->name('delete.submenu');
-Route::get('/Administrator/restore-data-submenu', [Administrator::class, 'restore_submenu'])->name('restore.data.submenu');
-Route::get('/Administrator/get-data-submenu-restore', [Administrator::class, 'get_submenu_data_restore'])->name('get.submenu.restore.data');
-Route::post('/Administrator/restore-submenu/{id}', [Administrator::class, 'restore_submenu_data'])->name('restore.submenu');
-Route::delete('/Administrator/delete-submenu-permanent/{id}', [Administrator::class, 'destroy_submenu_permanent'])->name('delete.submenu.permanent');
+Route::delete('/Administrator/delete-submenu/{id}', [Administrator::class, 'destroy_submenu'])->name('delete.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/restore-data-submenu', [Administrator::class, 'restore_submenu'])->name('restore.data.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/get-data-submenu-restore', [Administrator::class, 'get_submenu_data_restore'])->name('get.submenu.restore.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Administrator/restore-submenu/{id}', [Administrator::class, 'restore_submenu_data'])->name('restore.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::delete('/Administrator/delete-submenu-permanent/{id}', [Administrator::class, 'destroy_submenu_permanent'])->name('delete.submenu.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
 
-Route::get('/Administrator/Management-role', [Administrator::class, 'Role_management'])->name('role.index');
-Route::get('/Administrator/get-role', [Administrator::class, 'get_role_data'])->name('get.role');
-Route::get('/Administrator/create-role', [Administrator::class, 'create_role'])->name('role.create');
+Route::get('/Administrator/Management-role', [Administrator::class, 'Role_management'])->name('role.index')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/get-role', [Administrator::class, 'get_role_data'])->name('get.role')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/create-role', [Administrator::class, 'create_role'])->name('role.create')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/Administrator/store-role', [Administrator::class, 'store_role'])->name('store.role');
-Route::get('/Administrator/view-role/{id}', [Administrator::class, 'view_role'])->name('role.view');
+Route::get('/Administrator/view-role/{id}', [Administrator::class, 'view_role'])->name('role.view')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Administrator/update-role/{id}', [Administrator::class, 'update_role'])->name('update.role');
-Route::delete('/Administrator/delete-role/{id}', [Administrator::class, 'destroy_role'])->name('delete.role');
-Route::get('/Administrator/restore-data-role', [Administrator::class, 'restore_role'])->name('restore.data.role');
-Route::get('/Administrator/get-data-role-restore', [Administrator::class, 'get_role_data_restore'])->name('get.role.restore.data');
-Route::post('/Administrator/restore-role/{id}', [Administrator::class, 'restore_role_data'])->name('restore.role');
-Route::delete('/Administrator/delete-role-permanent/{id}', [Administrator::class, 'destroy_role_permanent'])->name('delete.role.permanent');
-Route::get('/Administrator/access-menu/{id}', [Administrator::class, 'access_menu'])->name('menu.access');
+Route::delete('/Administrator/delete-role/{id}', [Administrator::class, 'destroy_role'])->name('delete.role')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/restore-data-role', [Administrator::class, 'restore_role'])->name('restore.data.role')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/get-data-role-restore', [Administrator::class, 'get_role_data_restore'])->name('get.role.restore.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Administrator/restore-role/{id}', [Administrator::class, 'restore_role_data'])->name('restore.role')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::delete('/Administrator/delete-role-permanent/{id}', [Administrator::class, 'destroy_role_permanent'])->name('delete.role.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/access-menu/{id}', [Administrator::class, 'access_menu'])->name('menu.access')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/change-access-menu', [Administrator::class, 'ubahAccessmenu'])->name('change.access.menu');
 
 
 
-Route::get('/Administrator/Management-user', [Administrator::class, 'Manajemen_pengguna'])->name('user.index');
-Route::get('/Administrator/get-user', [Administrator::class, 'get_user_data'])->name('get.user');
-Route::get('/Administrator/create-user', [Administrator::class, 'create_user'])->name('user.create');
+Route::get('/Administrator/Management-user', [Administrator::class, 'Manajemen_pengguna'])->name('user.index')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/get-user', [Administrator::class, 'get_user_data'])->name('get.user')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/create-user', [Administrator::class, 'create_user'])->name('user.create')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/Administrator/store-user', [Administrator::class, 'store_user'])->name('store.user');
-Route::get('/Administrator/edit-user/{id}', [Administrator::class, 'edit_user'])->name('user.edit');
+Route::get('/Administrator/edit-user/{id}', [Administrator::class, 'edit_user'])->name('user.edit')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/update-user/{id}', [Administrator::class, 'update_user'])->name('update.user');
-Route::delete('/Administrator/delete-user/{id}', [Administrator::class, 'destroy_user'])->name('delete.user');
-Route::get('/Administrator/access-user/{id}', [Administrator::class, 'access_user'])->name('user.access');
+Route::delete('/Administrator/delete-user/{id}', [Administrator::class, 'destroy_user'])->name('delete.user')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Administrator/access-user/{id}', [Administrator::class, 'access_user'])->name('user.access')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('change-access', [Administrator::class, 'ubahAccesssubmenu'])->name('change.access');
-
-
-
 
 
 
@@ -121,11 +122,16 @@ Route::get('/Admin/view-data-paket/{id}', [Admin::class, 'view_data_paket'])->na
 Route::put('/Admin/update-paket/{id}', [Admin::class, 'update_paket'])->name('update.paket');
 Route::delete('/Admin/delete-paket/{id}', [Admin::class, 'destroy_paket'])->name('delete.paket');
 
+
 Route::get('/Admin/Master-Item', [Admin::class, 'Master_item'])->name('item.master');
 Route::get('/Admin/get-item-master', [Admin::class, 'get_item_data'])->name('get.item');
 Route::get('/Admin/Master-item-add', [Admin::class, 'Master_item_add_view'])->name('add.item');
 Route::post('/Admin/store-item-master', [Admin::class,'store_item'])->name('store.item.master');
-Route::get('/Admin/print-qrcode-item/{id}', [Admin::class,'print_qr_item'])->name('qr.print.item');
+Route::get('/Admin/Master-item-edit/{id}', [Admin::class, 'Master_item_edit_view'])->name('edit.item');
+Route::put('/Admin/update-item/{id}', [Admin::class, 'update_item'])->name('update.item');
+Route::delete('/Admin/delete-item/{id}', [Admin::class, 'destroy_item'])->name('delete.item');
+Route::get('/Admin/generate-qrcode-item/{id}', [Admin::class,'generate_qr_item'])->name('qr.generate.item');
+Route::get('/Admin/download-qrcode-item/{id}', [Admin::class,'download_qr_item'])->name('qr.download.item');
 
 
 

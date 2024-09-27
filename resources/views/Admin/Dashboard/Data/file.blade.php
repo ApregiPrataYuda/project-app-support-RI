@@ -16,12 +16,16 @@
 </div>
 </section>
 
-
+@php
+      $user = getUserData();
+      $first_name = $user->first_name;
+      $last_name = $user->last_name;
+  @endphp
 <section class="content">
   <div class="card-body">
     <div class="alert alert-danger alert-dismissible w-75 mx-auto">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <h5><i class="icon fas fa-ban"></i> WELLCOME APREGI!</h5>
+      <h5><i class="icon fas fa-meh"></i> Wellcome {{ $user->employee->first_name }}   {{ $user->employee->last_name }}!</h5>
       Setiap hari adalah kesempatan baru untuk menciptakan keajaiban. Jangan ragu untuk mengejar impianmu, karena langkah kecil hari ini bisa membawa perubahan besar di masa depan. Semangat!
     </div>
   </div>

@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\visitorModel;
 use App\Models\PaketModel;
+use App\Models\MasterItemModel;
 
 class Home extends Controller
 {
@@ -197,4 +198,21 @@ public function Announcement() {
      return view('home/data/announcement',$data);
 }
 // start code untuk Announcement
+
+
+
+public function getItemByCode($kode)
+{
+    // Assuming you have an Item model that corresponds to your items table
+    $item = MasterItemModel::where('item_code', $kode)->first();
+
+    if ($item) {
+        return response()->json([
+            'success' => true,
+            'name_item' => $item->name_item // Adjust according to your item's field name
+        ]);
+    }
+
+    return response()->json(['success' => false]);
+}
 }
