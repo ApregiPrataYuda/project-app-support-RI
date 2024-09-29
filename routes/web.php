@@ -134,7 +134,8 @@ Route::delete('/Admin/delete-item/{id}', [Admin::class, 'destroy_item'])->name('
 Route::get('/Admin/generate-qrcode-item/{id}', [Admin::class,'generate_qr_item'])->name('qr.generate.item');
 Route::get('/Admin/download-qrcode-item/{id}', [Admin::class,'download_qr_item'])->name('qr.download.item');
 
-
+Route::get('/Admin/List-Item-borrow', [Admin::class, 'Transaction_item'])->name('list.item.borrow');
+Route::get('/Admin/get-item-trans', [Admin::class, 'get_item_trans_data'])->name('get.trans.item');
 
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
 Route::get('/Others/Logout', [Others::class, 'logout'])->name('logout');

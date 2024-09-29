@@ -11,6 +11,7 @@ use App\Models\visitorModel;
 use App\Models\PaketModel;
 use App\Models\DivisionModel;
 use App\Models\MasterItemModel;
+use App\Models\TransactionItemModel;
 use Illuminate\Support\Str;
 
 use Endroid\QrCode\Color\Color;
@@ -29,11 +30,13 @@ class Admin extends Controller
     protected $PaketModel;
     protected $DivisionModel;
     protected $MasterItemModel;
-    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel) {
+    protected $TransactionItemModel;
+    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel, TransactionItemModel $TransactionItemModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
         $this->DivisionModel = $DivisionModel;
         $this->MasterItemModel = $MasterItemModel;
+        $this->TransactionItemModel = $TransactionItemModel;
     }
 
 // -----------------------------------------Batas---------------------------------------------------------//
@@ -610,4 +613,58 @@ public function destroy_item($id)  {
 //end code for item module
 
 // -----------------------------------------Batas---------------------------------------------------------//
+
+public function Transaction_item () {
+    $data = [
+        'title' => 'List Item In Borrow',
+     ];
+     return view('Admin/Transaction-item/Data/file',$data);
+}
+
+
+public function get_item_trans_data(Request $request)  {
+    if ($request->ajax()) {
+        // Mengambil data dari model dengan join
+        $data = $this->TransactionItemModel->select('transactions_items_borrow.*','employees_tb.first_name','employees_tb.last_name','ms_divisi.divisi_name', 'item_master_borrow.name_item')
+        ->leftJoin('employees_tb','transactions_items_borrow.nik', '=', 'employees_tb.nik')
+        ->leftJoin('ms_divisi','employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
+        ->leftJoin('item_master_borrow','transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
+        ->orderBy('borrow_id', 'DESC')
+        ->get();
+    
+        // Cek apakah ada parameter pencarian
+        if ($request->has('search') && !empty($request->input('search')['value'])) {
+            $searchTerm = $request->input('search')['value'];
+            // Pastikan kolom fullname ada di ms_user
+            $data->where('item_code', 'LIKE', "%{$searchTerm}%");
+        }
+    
+        // Menyusun DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('name_borrow', function($row) {
+                return '<p class="text-uppercase">'.$row->first_name. ' ' . $row->last_name.'</p>' ;
+                })
+
+            ->addColumn('status', function($row) {
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Sedang Di pinjam</span>' : '<span class="badge badge-pill badge-success">Tidak sedang Dipinjma</span>';
+            })
+
+            ->addColumn('last_status', function($row) {
+                return $row->last_status == 1 ? '<span class="badge badge-pill badge-danger">Belum Di kembalikan</span>' : '<span class="badge badge-pill badge-success">Sudah Di kembalikan</span>';
+            })
+
+            ->addColumn('date_borrow', function($row) {
+                return format_date_indonesia($row->date_borrow);
+                })
+
+            ->addColumn('return_date', function($row) {
+                return $row->return_date == null ? '<span class="badge badge-pill badge-danger">Belum ada tanggal pengembalian</span>' : $row->return_date;
+                })
+            ->rawColumns(['name_borrow','status','return_date','last_status'])
+            ->make(true);
+    }
+}
+
+
 }
