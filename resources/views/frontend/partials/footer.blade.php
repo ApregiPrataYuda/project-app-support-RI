@@ -2,34 +2,36 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-4 col-md-6 mb-4">
-          <h5>Tentang Kami</h5>
-          <p>Kami adalah perusahaan yang menyediakan solusi teknologi terbaik untuk pelanggan kami, terus berkembang sejak tahun XXXX.</p>
+          <h5>About Us</h5>
+          <p>Rinnai Indonesia, Pelopor Healthy Lifestyle di Indonesia
+            Rinnai Indonesia, dengan berbagai macam product lines dimulai dari kompor tanam, water heater, cooker hood, dryer, dan komport gas rumah tangga..</p>
         </div>
         
         <div class="col-lg-2 col-md-6 mb-4">
           <h5>Navigasi</h5>
           <ul class="list-unstyled">
-            <li><a href="#home" class="text-white">Home</a></li>
-            <li><a href="#about" class="text-white">Tentang Kami</a></li>
-            <li><a href="#services" class="text-white">Layanan</a></li>
-            <li><a href="#contact" class="text-white">Kontak</a></li>
+            {{-- <li><a href="#home" class="text-white">Home</a></li> --}}
+            <li><a href="{{'/'}}" class="text-white">About Us</a></li>
+            <li><a href="{{'/'}}" class="text-white">Service</a></li>
+            <li><a href="{{'/'}}" class="text-white">Contact</a></li>
           </ul>
         </div>
   
         <div class="col-lg-3 col-md-6 mb-4">
-          <h5>Kontak</h5>
+          <h5>Contact</h5>
           <ul class="list-unstyled">
-            <li>Email: info@perusahaan.com</li>
-            <li>Telepon: (021) 123-4567</li>
+            <li>Email: Yoursemail.co.id</li>
+            <li>Layanan Konsumen(Telp): 0804-1889-889</li>
+            <li>Layanan Konsumen(WA): 0815-1129-9999</li>
           </ul>
         </div>
   
         <div class="col-lg-3 col-md-6 mb-4">
-          <h5>Ikuti Kami</h5>
-          <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-          <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
+          <h5>Follow Us</h5>
+          <a href="{{'/'}}" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+          <a href="{{'/'}}" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+          <a href="{{'/'}}" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+          <a href="{{'/'}}" class="text-white"><i class="fab fa-linkedin"></i></a>
         </div>
       </div>
     </div>
@@ -38,11 +40,3 @@
     </div>
   </footer>
   
-
-
-{{-- <footer class="main-footer">
-        <div class="float-right d-none d-sm-inline">
-            Anything you want
-        </div>
-        <strong>Copyright &copy; 2024 <a href="">Developer by Apregi Pratayuda</a>.</strong> All rights reserved.
-    </footer> --}}

@@ -43,7 +43,8 @@ Route::post('/Home/get-paket-user', [Home::class, 'ambil_paket'])->name('get.pak
 // Route::get('/Home/get-item/{id}', [Home::class, 'getItemByCode'])->name('get.item.by.code');
 // Route::get('/Home/{kode}', 'HomeController@getItemByCode');
 Route::get('/Home/{kode}', [Home::class, 'getItemByCode']);
-
+Route::get('/Homes/{kode}', [Home::class, 'getNikByCode']);
+Route::post('/save-borrow', [Home::class, 'storeBorrow']);
 
 
 Route::get('/Login', [Auth::class, 'views'])->name('login');

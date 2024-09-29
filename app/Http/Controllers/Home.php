@@ -8,14 +8,22 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\visitorModel;
 use App\Models\PaketModel;
 use App\Models\MasterItemModel;
+use App\Models\EmployeModel;
+use App\Models\DivisionModel;
+use App\Models\TransactionItemModel;
+
 
 class Home extends Controller
 {
     protected $visitorModel;
     protected $PaketModel;
-    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel) {
+    protected $EmployeModel;
+    protected $DivisionModel;
+    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel , EmployeModel $EmployeModel, DivisionModel $DivisionModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
+        $this->EmployeModel = $EmployeModel;
+        $this->DivisionModel = $DivisionModel;
     }
 
 // ------------------------------------------batas-------------------------------------//
@@ -201,18 +209,110 @@ public function Announcement() {
 
 
 
+// public function getItemByCode($kode)
+// {
+//     // Assuming you have an Item model that corresponds to your items table
+//     $item = MasterItemModel::where('item_code', $kode)->first();
+           
+//      // Cek apakah status_borrow bernilai 1 (barang sedang digunakan)
+//      if ($item->status_borrow == 1) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Barang sedang digunakan',
+//             'status_borrow' => 1
+//         ]);
+//     }
+
+//     if ($item) {
+//         return response()->json([
+//             'success' => true,
+//             'name_item' => $item->name_item,// Adjust according to your item's field name
+//             'status_borrow' => $item->status_borrow // Adjust according to your item's field name
+//         ]);
+//     }
+
+//     return response()->json(['success' => false]);
+// }
+
+
 public function getItemByCode($kode)
 {
-    // Assuming you have an Item model that corresponds to your items table
+    // Cari item berdasarkan kode produk
     $item = MasterItemModel::where('item_code', $kode)->first();
 
-    if ($item) {
+    // Cek apakah item ditemukan
+    if (!$item) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Item not found'
+        ]);
+    }
+
+    // Cek apakah status_borrow bernilai 1 (barang sedang digunakan)
+    if ($item->status_borrow == 1) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Barang sedang digunakan',
+            'status_borrows' => 1
+        ]);
+    }
+
+    // Jika item ditemukan dan tidak sedang digunakan
+    return response()->json([
+        'success' => true,
+        'name_item' => $item->name_item, // Sesuaikan dengan nama field yang Anda gunakan
+        'status_borrows' => $item->status_borrows // Pastikan field ini ada di tabel
+    ]);
+}
+
+
+public function getNikByCode($nik)
+{
+  
+    // Assuming you have an Item model that corresponds to your items table
+    $employe = $this->EmployeModel->where('nik', $nik)
+    ->join('ms_divisi', 'employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
+    ->select('employees_tb.*', 'ms_divisi.divisi_name')
+    ->first();
+  
+    if ($employe) {
         return response()->json([
             'success' => true,
-            'name_item' => $item->name_item // Adjust according to your item's field name
+            'first_name' => $employe->first_name, 
+            'last_name' => $employe->last_name,
+            'divisi_name' => $employe->divisi_name,
         ]);
     }
 
     return response()->json(['success' => false]);
 }
+
+public function storeBorrow(Request $request)
+    {
+        date_default_timezone_set('Asia/Jakarta');
+        $ldate = date('Y-m-d H:i:s');
+        // Validasi data yang dikirim dari AJAX
+        $validatedData = $request->validate([
+            'nikEmploye' => 'required',
+            'kodeItems' => 'required|array',
+        ]);
+
+        // Loop melalui kode item untuk menyimpannya satu per satu (sesuai kebutuhan)
+        foreach ($validatedData['kodeItems'] as $kodeItem) {
+            TransactionItemModel::create([
+                'nik' => $validatedData['nikEmploye'],
+                'item_code' => $kodeItem,
+                'status' => 1,
+                'last_status' => 1,
+                'date_borrow' => $ldate
+            ]);
+
+            // Update field di tabel lain berdasarkan item_codeds
+            MasterItemModel::where('item_code', $kodeItem)
+                ->update(['status_borrows' => 1]);
+        }
+
+        // Berikan respons sukses ke client
+        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
+    }
 }

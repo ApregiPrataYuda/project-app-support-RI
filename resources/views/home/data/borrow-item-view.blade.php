@@ -112,28 +112,28 @@
     <!-- Kolom Kiri -->
     <div class="col-md-5">
         <div class="form-group">
-            <label for="tanggal_dipinjam"><span class="text-uppercase">Date *</span></label>
-            <input type="date" name="tanggal_dipinjam" id="tanggal_dipinjam" class="form-control" value="<?= date('Y-m-d')?>" disabled>
+            <label for="datesNow"><span class="text-uppercase">Date *</span></label>
+            <input type="text" name="datesNow" id="datesNow" class="form-control" value="{{ format_date_indonesia_old() }}" disabled>
         </div>
 
         <div class="form-group">
-            <label for="msbrg"><span class="text-uppercase">Code Item *</span></label>
-            <input type="text" id="code_item" class="form-control" placeholder="Scan or enter code item" />
+            <label for="code_item"><span class="text-uppercase">Code Item *</span></label>
+            <input type="text" id="code_item" class="form-control" placeholder="Scan your code item" />
         </div>
 
         <div class="form-group">
-            <label for="nik"><span class="text-uppercase">NIK *</span></label>
-            <input type="text" class="form-control" id="nik" name="nik" placeholder="via QR nametag">
+            <label for="number_identity_employe"><span class="text-uppercase">NIK Employe*</span></label>
+            <input type="text" class="form-control" id="number_identity_employe" name="number_identity_employe" placeholder="Scan Number Identity Employe">
         </div>
 
         <div class="form-group">
-            <label for="nama_peminjam"><span class="text-uppercase">Tool User Name *</span></label>
-            <input type="text" class="form-control" id="nama_peminjam" name="nama_peminjam" placeholder="Name Peminjam..." readonly>
+            <label for="name_borrow"><span class="text-uppercase">name of responsible employee*</span></label>
+            <input type="text" class="form-control text-uppercase" id="name_borrow" name="name_borrow" placeholder="Name of Responsible Employee..." readonly>
         </div>
 
         <div class="form-group">
-            <label for="location"><span class="text-uppercase">Location (Division) *</span></label>
-            <input type="text" class="form-control" id="location" name="location" placeholder="Division..." readonly>
+            <label for="division"><span class="text-uppercase">Division *</span></label>
+            <input type="text" class="form-control" id="division" name="division" placeholder="Division..." readonly>
         </div>
 
         <div class="form-group">
@@ -142,21 +142,6 @@
         </div>
 
     </div>
-
-
-    <!-- Kolom Kanan -->
-    <!-- <div class="col-md-7"> -->
-        <!-- Kartu untuk Menyimpan Kode -->
-        <!-- <h5 class="card-title">Daftar Kode</h5>
-        <div class="card mb-5" style="width: 100%;">
-                <div class="card-body"> -->
-                   
-                    <!-- <ul id="savedItems"  class="multi-column-list"> -->
-                        <!-- Daftar kode yang disimpan akan muncul di sini -->
-                    <!-- </ul>
-                </div>
-            </div> -->
-    <!-- </div> -->
 
     <!-- Kolom Kanan -->
 <div class="col-md-7">
@@ -168,8 +153,8 @@
                 <thead>
                     <tr class="table-primary">
                         <th>No</th>
-                        <th>Kode Produk</th>
-                        <th>Nama Item</th>
+                        <th>Code Item</th>
+                        <th>Name Item</th>
                     </tr>
                 </thead>
                 <tbody id="savedItems">
@@ -180,19 +165,10 @@
     </div>
 </div>
 
-
 </div>
-
-
-
-
-
-
-
-
         <div class="modal-footer">
-          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-          <button type="submit" id="save" name="save" class="btn btn-outline-info btn-sm ml-2"> <i class="fa fa-save"></i> save </button>
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> 
+          <button type="submit" id="processBorrow" name="save" class="btn btn-outline-primary ml-2"> <i class="fa fa-share" aria-hidden="true"></i> Process </button>
         </div>
     
       </div>
@@ -250,11 +226,6 @@
     </div>
 </div>
 
-
-
-
-
-              
         </div>
         <div class="modal-footer">
         </div>
@@ -263,126 +234,207 @@
   </div>
 
 
+
+<script>
+$(document).ready(function(){
+  let kodeItems = [];
+  let nikEmploye = [];
+  $('#code_item').val("").focus();
+  $('#number_identity_employe').val("").focus();
   
-  <script>
-    $(document).ready(function(){
-        // Inisialisasi array untuk menyimpan kode item
-        let kodeItems = [];
-        // Fokuskan pada input kode item saat halaman siap
+     // ITEM FUNCTION
+     function processScannedCode(kodeProduct) {
+    if (kodeProduct !== "") {
+        // Cek apakah kode item sudah dipindai sebelumnya
+        if (kodeItems.indexOf(kodeProduct) !== -1) {
+            Notiflix.Report.warning(
+                'Warning', // Title
+                'Kode item sudah Scan sebelumnya: ' + kodeProduct,
+                'Back'
+            );
+            $('#code_item').val("").focus();
+            return;
+        }
+
+        // AJAX request ke server untuk mendapatkan detail produk
+        $.ajax({
+            url: '/Home/' + kodeProduct,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    // Cek apakah status_borrow = 1
+                    if (response.status_borrows == 1) {
+                        Notiflix.Report.failure(
+                            'Warning', // Title
+                            'sedang dipinjam Anda Tidak Bisa Melakukan Peminjaman untuk kode Item: ' + kodeProduct,
+                            'Back'
+                        );
+                        $('#code_item').val("").focus();
+                        return;
+                    }
+
+                    // Jika tidak ada error, tambahkan ke daftar
+                    kodeItems.push(kodeProduct);
+                    $('#code_item').val("").focus();       
+                    let itemCount = $('#savedItems tr').length + 1; 
+                    $('#savedItems').append(`
+                        <tr>
+                            <td>${itemCount}</td>
+                            <td>${kodeProduct}</td>
+                            <td>${response.name_item}</td>
+                        </tr>
+                    `);
+                } else {
+                    // Tampilkan pesan jika item tidak ditemukan
+                    Notiflix.Report.failure(
+                        'Warning', // Title
+                        'Item tidak ditemukan untuk kode: ' + kodeProduct,
+                        'Back'
+                    );
+                    $('#code_item').val("").focus();
+                    return;
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan saat mengambil data item.');
+            }
+        });
+    } else {
+        // Tampilkan pesan jika kode kosong
+        Notiflix.Report.warning(
+            'Warning', // Title
+            'Silakan masukkan item kode yang valid',
+            'Back'
+        );
         $('#code_item').val("").focus();
-        
-        // Fungsi untuk memproses kode item yang dipindai
-        function processScannedCode(kodeProduct) {
-            // Periksa apakah kode tidak kosong
-            if(kodeProduct !== ""){
-                // Ambil nama item dari server menggunakan AJAX
+        return;
+    }
+}
+
+
+     // NIK FUNCTION
+     function processScanned(numberIdentityEmploye) {
+            if(numberIdentityEmploye !== ""){
                 $.ajax({
-                  url: '/Home/' + kodeProduct,
+                  url: '/Homes/' + numberIdentityEmploye,
                     type: 'GET', 
                     success: function(response) {
                         if (response.success) {
-                            // Tambahkan kode item ke array
-                            kodeItems.push(kodeProduct);
-                            // Kosongkan input setelah menyimpan
-                            $('#code_item').val("").focus();
-                            // Tampilkan array di console
-                            console.log(kodeItems);
-                            
-                            // Menampilkan kode item dan nama item di UI
-                            // let itemCount = $('#savedItems li').length + 1;
-                            // $('#savedItems').append('<li><p class="badge badge-primary ml-2 mr-2 mb-2">' + itemCount + '. ' + kodeProduct + ': ' + response.name_item + '</p></li>');
-                            let itemCount = $('#savedItems tr').length + 1; // Update the selector to count table rows
-$('#savedItems').append(`
-    <tr>
-        <td>${itemCount}</td>
-        <td>${kodeProduct}</td>
-        <td>${response.name_item}</td>
-    </tr>
-`);
+                            nikEmploye.push(numberIdentityEmploye);
+                            $('#number_identity_employe').val("").focus();
+                            $('#name_borrow').val(`${response.first_name} ${response.last_name}`);
+                            $('#division').val(`${response.divisi_name}`);
                         } else {
-                            alert('Item not found for code: ' + kodeProduct);
+                          Notiflix.Report.failure(
+                          'Warning',
+                          'tidak ditemukan untuk NIK: ' + numberIdentityEmploye,
+                          'Back',
+                      );
+                        $('#number_identity_employe').val("").focus();
+                         return;
                         }
                     },
                     error: function() {
-                        alert('Error retrieving item data.');
+                      alert('Terjadi kesalahan saat mengambil data item.');
                     }
                 });
             } else {
-                alert('Please enter a valid code.');
+                Notiflix.Report.warning(
+                          'Warning',
+                          'Silakan masukkan NIK yang valid', 
+                          'Back',
+                      );
+                        $('#number_identity_employe').val("").focus();
+                         return;
+      
             }
         }
 
-        // Menggunakan event 'input' atau 'keyup' untuk menangkap input dari scanner
-        $('#code_item').on('keyup', function(e){
+  $('#code_item').on('keypress', function(e) {
+        if (e.which === 13) { 
+            let kodeProduct = $(this).val();
+            processScannedCode(kodeProduct);
+        }
+    });
+
+    $('#number_identity_employe').on('keyup', function(e){
             let tex = $(this).val();
-            // Periksa jika tombol yang ditekan adalah 'Enter' (kode ASCII 13)
             if(e.keyCode === 13 && tex !== "") {
-                // Proses kode yang dipindai
-                processScannedCode(tex);
-                // Mencegah perilaku default
+                processScanned(tex);
                 e.preventDefault();
             }
         });
 
+
+// function save
+$('#processBorrow').click(function() {
+
+  if (!kodeItems.length) {
+        Notiflix.Report.warning(
+            'Warning', 
+            'Tidak ada item yang dipindai. Harap pindai setidaknya satu kode item!', 
+            'Back'
+        );
+        return; 
+    }
+
+    
+    if (!nikEmploye.length) {
+        Notiflix.Report.warning(
+            'Warning', 
+            'NIK belum dipindai. Harap masukkan NIK terlebih dahulu!', 
+            'Back'
+        );
+        return; 
+    }
+
+    
+
+    // Kirim data NIK dan kode item ke server melalui AJAX
+    $.ajax({
+        url: '/save-borrow',
+        type: 'POST',
+        data: {
+            nikEmploye: nikEmploye[0],  // Ambil NIK pertama yang dipindai
+            kodeItems: kodeItems,       // Kirim seluruh kode item yang sudah dipindai
+            _token: $('meta[name="csrf-token"]').attr('content') // Kirim token CSRF
+        },
+        success: function(response) {
+            if (response.success) {
+                Notiflix.Report.success(
+                    'Success',
+                    'Data berhasil disimpan!',
+                    'OK'
+                );
+                // Reset data setelah berhasil disimpan
+                nikEmploye = [];
+                kodeItems = [];
+                $('#name_borrow').val('');
+                $('#division').val('');
+                $('#savedItems').empty();
+            } else {
+                Notiflix.Report.failure(
+                    'Error',
+                    'Terjadi kesalahan dalam penyimpanan data.',
+                    'Back'
+                );
+            }
+        },
+        error: function() {
+            Notiflix.Report.failure(
+                'Error',
+                'Terjadi kesalahan dalam penyimpanan data.',
+                'Back'
+            );
+        }
     });
+});
+
+// END
+});
 </script>
 
 
-  
 
-
-<!-- <script>
-    $(document).ready(function(){
-        // Inisialisasi array untuk menyimpan kode item
-        let kodeItems = [];
-        // Fokuskan pada input kode item saat halaman siap
-        $('#code_item').val("").focus();
-        // Fungsi untuk memproses kode item yang dipindai
-        function processScannedCode(kodeProduct) {
-            // Periksa apakah kode tidak kosong
-            if(kodeProduct !== ""){
-                // Tambahkan kode item ke array
-                kodeItems.push(kodeProduct);
-                // Kosongkan input setelah menyimpan
-                $('#code_item').val("").focus();
-                // Tampilkan array di console
-                console.log(kodeItems);
-                // Menampilkan kode item yang disimpan di UI jika perlu
-                // $('#savedItems').append('<li>' + kodeProduct + '</li>');
-                let itemCount = $('#savedItems li').length + 1;
-              $('#savedItems').append('<li>' + itemCount + '. ' + kodeProduct + '</li>');
-              itemCount++;
-            } else {
-                alert('Please enter a valid code.');
-            }
-        }
-
-        // Menggunakan event 'input' atau 'keyup' untuk menangkap input dari scanner
-        $('#code_item').on('keyup', function(e){
-            let tex = $(this).val();
-            // Periksa jika tombol yang ditekan adalah 'Enter' (kode ASCII 13)
-            if(e.keyCode === 13 && tex !== "") {
-                // Proses kode yang dipindai
-                processScannedCode(tex);
-                // Mencegah perilaku default
-                e.preventDefault();
-            }
-        });
-
-    });
-</script> -->
-
-<!-- code untuk simpan -->
-<!-- $.ajax({
-    url: '/save-codes',
-    method: 'POST',
-    data: { codes: kodeItems },
-    success: function(response){
-        alert('Codes saved successfully!');
-    },
-    error: function(error){
-        console.error('Error saving codes:', error);
-    }
-}); -->
 
 @endsection
