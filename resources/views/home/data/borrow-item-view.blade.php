@@ -66,7 +66,7 @@
           <h5 class="card-title mb-4">Equipment Usage Return Form</h5>
           <br>
           <br>
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#returnsModal">
              Form Return Item
           </button>
         </div>
@@ -140,7 +140,6 @@
             <label for="description"><span class="text-uppercase">Statement *</span></label>
             <textarea name="description" id="description" cols="10" rows="2" class="form-control" placeholder="I declare responsibility for the tools I use" readonly></textarea>
         </div>
-
     </div>
 
     <!-- Kolom Kanan -->
@@ -168,7 +167,7 @@
 </div>
         <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> 
-          <button type="submit" id="processBorrow" name="save" class="btn btn-outline-primary ml-2"> <i class="fa fa-share" aria-hidden="true"></i> Process </button>
+        <button type="submit" id="processBorrow" name="save" class="btn btn-outline-primary ml-2"> <i class="fa fa-share" aria-hidden="true"></i> Process </button>
         </div>
     
       </div>
@@ -180,8 +179,8 @@
 
 
 <!-- Modal return-->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="returnsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Return Item Form</h5>
@@ -191,43 +190,44 @@
         </div>
         <div class="modal-body">
           
-       
-
-    <div class="row justify-content-center">
-
-    
+    <div class="row">
     <!-- Card 1 -->
-    <div class="col-md-6 mr-2">
-        <div class="card" style="width: 18rem;">
-            <div class="card-header">
-            <input type="text" class="form-control focus-primary" placeholder="Scan QR code" focus>
-            </div>
-        </div>
+    <div class="col-md-3 mr-2 mb-2">
+        <!-- <div class="card" style="width: 18rem;">
+            <div class="card-header"> -->
+            <input type="text" class="form-control focus-primary" id="codeItemReturn" placeholder="scan Your QR-CODE">
+            <!-- </div>
+        </div> -->
     </div>
 
-
-
-
-    <!-- Card 2 -->
-    <div class="col-md-6 mr-2">
-        <div class="card" style="width: 18rem;">
-            <div class="card-header">
-                <span class="font-weight-bold">Detail Item</span>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">Name Item: </li>
-                <li class="list-group-item">Employe Borrow: </li>
-                <li class="list-group-item">Location Usage: </li>
-                <li class="list-group-item">From Time: </li>
-                <li class="list-group-item">End Time: </li>
-                <li class="list-group-item">status: </li>
-            </ul>
+    <div class="col-md-12">
+    <h2 class="card-title font-weight-bolder">List of items to be borrowed</h2>
+    <div class="card mb-5" style="width: 100%;">
+        <div class="card-body">
+            <table class="table table-bordered" id="accommodateItemsTable">
+                <thead>
+                    <tr class="table-secondary">
+                        <th>No</th>
+                        <th>Name employe Borrow & Division</th>
+                        <th>Name Item</th>
+                        <th>Status</th>
+                        <th>Last status</th>
+                        <th>From Time(date borrow)</th>
+                        <th>End Time(date borrow)</th>
+                    </tr>
+                </thead>
+                <tbody id="accommodateItems">
+                    <!-- Daftar kode yang disimpan akan muncul di sini -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-
+</div>
         </div>
         <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button> 
+        <button type="submit" id="returnBorrows" name="return" class="btn btn-outline-primary ml-2"> <i class="fa fa-reply" aria-hidden="true"></i> Return </button>
         </div>
       </div>
     </div>
@@ -245,7 +245,7 @@ $(document).ready(function(){
      // ITEM FUNCTION
      function processScannedCode(kodeProduct) {
     if (kodeProduct !== "") {
-        // Cek apakah kode item sudah dipindai sebelumnya
+     
         if (kodeItems.indexOf(kodeProduct) !== -1) {
             Notiflix.Report.warning(
                 'Warning', // Title
@@ -256,13 +256,13 @@ $(document).ready(function(){
             return;
         }
 
-        // AJAX request ke server untuk mendapatkan detail produk
+        
         $.ajax({
             url: '/Home/' + kodeProduct,
             type: 'GET',
             success: function(response) {
                 if (response.success) {
-                    // Cek apakah status_borrow = 1
+
                     if (response.status_borrows == 1) {
                         Notiflix.Report.failure(
                             'Warning', // Title
@@ -273,7 +273,6 @@ $(document).ready(function(){
                         return;
                     }
 
-                    // Jika tidak ada error, tambahkan ke daftar
                     kodeItems.push(kodeProduct);
                     $('#code_item').val("").focus();       
                     let itemCount = $('#savedItems tr').length + 1; 
@@ -285,7 +284,7 @@ $(document).ready(function(){
                         </tr>
                     `);
                 } else {
-                    // Tampilkan pesan jika item tidak ditemukan
+                   
                     Notiflix.Report.failure(
                         'Warning', // Title
                         'Item tidak ditemukan untuk kode: ' + kodeProduct,
@@ -300,7 +299,7 @@ $(document).ready(function(){
             }
         });
     } else {
-        // Tampilkan pesan jika kode kosong
+     
         Notiflix.Report.warning(
             'Warning', // Title
             'Silakan masukkan item kode yang valid',
@@ -434,6 +433,163 @@ $('#processBorrow').click(function() {
 });
 </script>
 
+
+
+
+
+
+
+
+<!-- return code -->
+<script>
+$(document).ready(function(){ 
+    let kodeItems = [];
+    $('#codeItemReturn').val("").focus();
+    function processScannedReturn(kodeItemReturns) {
+    if (kodeItemReturns !== "") {
+     
+        if (kodeItems.indexOf(kodeItemReturns) !== -1) {
+                Notiflix.Report.warning(
+                    'Warning', // Title
+                    'Kode item sudah Scan sebelumnya: ' + kodeItemReturns,
+                    'Back',
+                    function() {
+                        setTimeout(function() {
+                            $("#codeItemReturn").val("").focus();
+                        }, 50);
+                    }
+                );
+                return;
+            }
+        $.ajax({
+            url: '/Home-return-item/' + kodeItemReturns,
+            type: 'GET',
+            success: function(response) {
+                if (response.success) {
+                    kodeItems.push(kodeItemReturns);
+                    $('#codeItemReturn').val("").focus();       
+                    let itemCount = $('#accommodateItems tr').length + 0; 
+                    $('#accommodateItems').append(`
+                        <tr>
+                            <td>${itemCount}</td>
+                            <td class="text-uppercase">${response.first_name} ${response.last_name} - ${response.divisi_name}</td>
+                            <td>${response.name_item}</td>
+                            <td>${response.status}</td>
+                            <td>${response.last_status}</td>
+                            <td>${response.date_borrow}</td>
+                            <td>${response.return_date}</td>
+                        </tr>
+                    `);
+                } else {
+                   
+                    Notiflix.Report.failure(
+                        'Warning', // Title
+                        'Item tidak ditemukan atau sedang tidak di pinjam',
+                        'Back',
+                        function() {
+                        setTimeout(function() {
+                            $("#codeItemReturn").val("").focus();
+                        }, 50);
+                     }
+                    );
+                    return;
+                }
+            },
+            error: function() {
+                alert('Terjadi kesalahan saat mengambil data item.');
+            }
+        });
+    } else {
+        Notiflix.Report.warning(
+            'Warning', // Title
+            'Silakan masukkan item kode yang valid',
+            'Back'
+        );
+        $('#codeItemReturn').val("").focus();
+        return;
+    }
+}
+
+
+//process return
+$('#returnBorrows').click(function() {
+if (!kodeItems.length) {
+      Notiflix.Report.warning(
+          'Warning', 
+          'Tidak ada item yang akan di return!', 
+          'Back'
+      );
+      return; 
+  }
+
+  $.ajax({
+        url: '/Return-item-borrow',
+        type: 'POST',
+        data: {
+            kodeItems: kodeItems,
+            _token: '{{ csrf_token() }}', // Kirim token CSRF
+        },
+        success: function(response) {
+            if (response.success) {
+                Notiflix.Report.success(
+                    'Success',
+                    'Item Success Dikembalikan!',
+                    'OK'
+                );
+                // Reset data setelah berhasil disimpan
+                kodeItems = [];
+                $('#codeItemReturn').val('').focus();
+                $('#accommodateItems').empty();
+
+            } else {
+                Notiflix.Report.failure(
+                    'Error',
+                    'Terjadi kesalahan dalam penyimpanan data.',
+                    'Back'
+                );
+            }
+        },
+        error: function() {
+            Notiflix.Report.failure(
+                'Error',
+                'Terjadi kesalahan dalam penyimpanan data.',
+                'Back'
+            );
+        }
+    });
+});
+
+
+   //scan
+    $('#codeItemReturn').on('keyup', function(e){
+            let tex = $(this).val();
+            if(e.keyCode === 13 && tex !== "") {
+                processScannedReturn(tex);
+                e.preventDefault();
+            }
+        });
+
+        
+})
+</script>
+
+
+
+<!-- auto focus -->
+<script>
+$(document).ready(function() {
+    // // Ketika modal ditampilkan
+    $('#returnsModal').on('shown.bs.modal', function () {
+        // Fokus ke inputan
+        $('#codeItemReturn').focus();
+    });
+
+    $("#codeItemReturn").val("").focus();
+                    $("#returnsModal").click(function(){
+                        $("#codeItemReturn").val("").focus();
+                    })
+});
+</script>
 
 
 

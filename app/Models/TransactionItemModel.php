@@ -32,5 +32,7 @@ class TransactionItemModel extends Model
         'last_status',
         'date_borrow',
         'return_date',
+        'created_at',
+        'updated_at',
     ];
 }

@@ -614,6 +614,8 @@ public function destroy_item($id)  {
 
 // -----------------------------------------Batas---------------------------------------------------------//
 
+//start code for transaction item module
+
 public function Transaction_item () {
     $data = [
         'title' => 'List Item In Borrow',
@@ -647,7 +649,7 @@ public function get_item_trans_data(Request $request)  {
                 })
 
             ->addColumn('status', function($row) {
-                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Sedang Di pinjam</span>' : '<span class="badge badge-pill badge-success">Tidak sedang Dipinjma</span>';
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Sedang Di pinjam</span>' : '<span class="badge badge-pill badge-success">Tidak sedang Dipinjam</span>';
             })
 
             ->addColumn('last_status', function($row) {
@@ -659,12 +661,12 @@ public function get_item_trans_data(Request $request)  {
                 })
 
             ->addColumn('return_date', function($row) {
-                return $row->return_date == null ? '<span class="badge badge-pill badge-danger">Belum ada tanggal pengembalian</span>' : $row->return_date;
+                return $row->return_date == null ? '<span class="badge badge-pill badge-danger">Belum ada tanggal pengembalian</span>' : format_date_indonesia($row->return_date);
                 })
             ->rawColumns(['name_borrow','status','return_date','last_status'])
             ->make(true);
     }
 }
-
-
+//start code for transaction item module
+// -----------------------------------------Batas---------------------------------------------------------//
 }

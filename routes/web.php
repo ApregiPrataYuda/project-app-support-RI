@@ -40,11 +40,14 @@ Route::get('/Home/Announcement', [Home::class, 'Announcement'])->name('Announcem
 Route::get('/Home/Check-paket', [Home::class, 'check_paket'])->name('check.paket');
 Route::get('/Home/List-paket', [Home::class, 'list_pakets'])->name('lists.paket');
 Route::post('/Home/get-paket-user', [Home::class, 'ambil_paket'])->name('get.paket.user');
-// Route::get('/Home/get-item/{id}', [Home::class, 'getItemByCode'])->name('get.item.by.code');
-// Route::get('/Home/{kode}', 'HomeController@getItemByCode');
+
 Route::get('/Home/{kode}', [Home::class, 'getItemByCode']);
 Route::get('/Homes/{kode}', [Home::class, 'getNikByCode']);
 Route::post('/save-borrow', [Home::class, 'storeBorrow']);
+
+Route::get('/Home-return-item/{kode}', [Home::class, 'take_the_borrowed_item']); 
+Route::post('/Return-item-borrow', [Home::class, 'ReturnBorrow']);
+
 
 
 Route::get('/Login', [Auth::class, 'views'])->name('login');
