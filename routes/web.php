@@ -130,6 +130,10 @@ Route::put('/Admin/update-item/{id}', [Admin::class, 'update_item'])->name('upda
 Route::delete('/Admin/delete-item/{id}', [Admin::class, 'destroy_item'])->name('delete.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Admin/generate-qrcode-item/{id}', [Admin::class,'generate_qr_item'])->name('qr.generate.item');
 Route::get('/Admin/download-qrcode-item/{id}', [Admin::class,'download_qr_item'])->name('qr.download.item');
+Route::get('/Admin/Master-Item-Restore', [Admin::class, 'Restore_item'])->name('item.master.restore')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/get-item-restore', [Admin::class, 'get_item_data_restore'])->name('get.item.restore')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Admin/restore-item/{id}', [Admin::class, 'restore_item_data'])->name('restore.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::delete('/Admin/delete-item-permanent/{id}', [Admin::class, 'destroy_item_permanent'])->name('delete.item.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
 // route for admin(page item borrow transaction)
 Route::get('/Admin/List-Item-borrow', [Admin::class, 'Transaction_item'])->name('list.item.borrow')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);

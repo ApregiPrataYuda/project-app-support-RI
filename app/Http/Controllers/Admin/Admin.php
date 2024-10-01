@@ -610,6 +610,99 @@ public function destroy_item($id)  {
     // Redirect atau beri respons jika berhasil
     return redirect()->route('item.master')->with('success', 'Data deleted successfully!');
 }
+
+
+public function Restore_item() {
+    $data = [
+        'title' => 'Restore Data'
+     ];
+     return view('Admin/Master-item/Restore/Data',$data);
+}
+
+public function get_item_data_restore(Request $request) {
+    if ($request->ajax()) {
+        $userData = getUserData();
+    // Memanggil nama divisi
+        $divisiID = $userData->employee->divisi->divisi_id;
+        // Mengambil data dari model dengan join
+        $data = MasterItemModel::select('item_master_borrow.*','ms_divisi.divisi_name')
+        ->leftJoin('ms_divisi','item_master_borrow.divisi_id', '=', 'ms_divisi.divisi_id')
+        ->where('item_master_borrow.divisi_id',$divisiID)
+        ->onlyTrashed();
+
+        // Cek apakah ada parameter pencarian
+        if ($request->has('search') && !empty($request->input('search')['value'])) {
+            $searchTerm = $request->input('search')['value'];
+            // Pastikan kolom fullname ada di ms_user
+            $data->where('name_item', 'LIKE', "%{$searchTerm}%");
+        }
+
+        // Menyusun DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+
+            ->addColumn('status', function($row) {
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">ACTIVE</span>' : '<span class="badge badge-pill badge-secondary">NOT ACTIVE</span>';
+            })
+
+            ->addColumn('name_item', function($row) {
+                return $row->name_item .' - '. $row->item_code;
+            })
+
+            ->addColumn('status_borrows', function($row) {
+                return $row->status_borrows == 1 ? '<span class="badge badge-danger">Sedang Di pinjam</span>' : '<span class="badge badge-success">Sedang tidak dipinjam</span>';
+            })
+
+            ->addColumn('description', function($row) {
+                return '<textarea  rows="2" cols="10" class="form-control" readonly>'.$row->description.'</textarea>';
+            })
+            ->addColumn('action', function($row) {
+                $restoreUrl = route('restore.item', Crypt::encrypt($row->item_id));
+                $btn = '';
+                $btn .= '<form action="' . $restoreUrl . '" method="POST" style="display:inline;" id="restore-form-menu-' . $row->item_id . '">
+                ' . csrf_field() . '
+                <button type="submit" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-undo"> Restore Data</i></button>
+                </form>';
+                $btn .= '<form action="' . route('delete.item.permanent', Crypt::encrypt($row->item_id)) . '" method="POST" style="display:inline;" id="delete-form-item-' . $row->item_id . '">
+                    ' . csrf_field() . '
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="button" onclick="confirmDelete(' . $row->item_id . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"> Delete Permanent</i></button>
+                    </form>';
+                return $btn;
+            })
+            ->rawColumns(['name_item','description','status_borrows','status','action'])
+            ->make(true);
+    }
+}
+
+
+
+public function restore_item_data($id)
+  {
+      // Decrypt the ID
+      $id = Crypt::decrypt($id);
+      // Cari data yang di-soft delete dan restore
+      $menu = MasterItemModel::onlyTrashed()->findOrFail($id);
+      $menu->restore();
+
+      // Redirect atau response yang sesuai
+      return redirect()->route('item.master')->with('success', 'Data Success Restore.');
+  }
+
+
+  public function destroy_item_permanent($id)
+  {
+      // Decrypt the ID
+      $id = Crypt::decrypt($id);
+      // Cari data yang dihapus secara soft delete
+      $menu = MasterItemModel::onlyTrashed()->findOrFail($id);
+      $menu->forceDelete(); // Hapus data secara permanen
+      // Redirect atau response yang sesuai
+      return redirect()->route('item.master.restore')->with('success', 'Data has been successfully deleted permanently.');
+  }
+
+
+
 //end code for item module
 
 // -----------------------------------------Batas---------------------------------------------------------//
@@ -654,7 +747,7 @@ public function get_item_trans_data(Request $request)  {
                 })
 
             ->addColumn('status', function($row) {
-                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Sedang Di pinjam</span>' : '<span class="badge badge-pill badge-success">Tidak sedang Dipinjam</span>';
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Sedang Di Pinjam(digunakan)</span>' : '<span class="badge badge-pill badge-success">Sudah kembali</span>';
             })
 
             ->addColumn('last_status', function($row) {

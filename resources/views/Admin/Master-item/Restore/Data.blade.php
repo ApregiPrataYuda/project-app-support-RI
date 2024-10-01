@@ -4,12 +4,12 @@
 <div class="container-fluid">
 <div class="row mb-2">
 <div class="col-sm-6">
-<h1><?= $title ?></h1>
+<h1>{{$title}}</h1>
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
-<!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
-<li class="breadcrumb-item active"><?= $title ?></li>
+<li class="breadcrumb-item"><a href="{{route('item.master')}}">Back</a></li>
+<li class="breadcrumb-item active">{{$title}}</li>
 </ol>
 </div>
 </div>
@@ -33,18 +33,17 @@
             </div>
           </div>
           <div class="card-body">
-          <table class="table table-bordered" id="itemBorrowTable">
+          <table class="table table-bordered" id="itemRestoreTable">
   <thead>
   <tr>
                         <th style="width: 4%;">No</th>
-                        <th>Date Borrow</th>
-                        <th>Name Borrow</th>
-                        <th>Division</th>
-                        <th>Code Item</th>
+                        
                         <th>Name Item</th>
-                        <th>Status Item Borrow Now</th>
-                        <th>Last Status</th>
-                        <th>Return Date</th>
+                        <th>Divisi</th>
+                        <th>Description</th>
+                        <th style="width: 5%;">status</th>
+                        <th style="width: 10%;">Status Item Borrow  Now</th>
+                        <th style="width: 15%;">Action</th>
   </tr>
   </thead>
   <tbody>
@@ -55,25 +54,26 @@
         <!-- /.card -->
   </section>
 <!--start view for end -->
+
+
+
 <script type="text/javascript">
     $(document).ready(function() {
-      var table = $('#itemBorrowTable').DataTable({
+      var table = $('#itemRestoreTable').DataTable({
           processing: true,
           serverSide: true,
           ajax: {
-              url: "{{ route('get.trans.item') }}",
+              url: "{{ route('get.item.restore') }}",
               type: 'GET',
           },
           columns: [
               {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-              {data: 'date_borrow', name: 'date_borrow', orderable: false, searchable: true},
-              {data: 'name_borrow', name: 'name_borrow'},
-              {data: 'divisi_name', name: 'divisi_name'},
-              {data: 'item_code', name: 'item_code'},
               {data: 'name_item', name: 'name_item'},
+              {data: 'divisi_name', name: 'divisi_name'},
+              {data: 'description', name: 'description'},
               {data: 'status', name: 'status', orderable: false, searchable: true},
-              {data: 'last_status', name: 'last_status', orderable: false, searchable: true},
-              {data: 'return_date', name: 'return_date', orderable: false, searchable: true},
+              {data: 'status_borrows', name: 'status_borrows', orderable: false, searchable: true},
+              {data: 'action', name: 'action', orderable: false, searchable: true},
           ],
           responsive: true,
           autoWidth: false,
@@ -95,7 +95,23 @@
       });
     });
 
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Form ID harus sesuai dengan ID form di PHP
+                document.getElementById('delete-form-item-' + itemId).submit();
+            }
+        });
+    }
     
   </script>
-
+  
 @endsection

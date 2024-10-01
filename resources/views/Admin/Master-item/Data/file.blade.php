@@ -24,7 +24,7 @@
         <div class="card">
           <div class="card-header bg-secondary">
             <a href="{{route('add.item')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Add Data</a>
-            <a href="" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
+            <a href="{{route('item.master.restore')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                 <i class="fas fa-minus"></i>
