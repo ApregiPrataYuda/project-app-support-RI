@@ -11,6 +11,7 @@ use App\Models\MasterItemModel;
 use App\Models\EmployeModel;
 use App\Models\DivisionModel;
 use App\Models\TransactionItemModel;
+use Illuminate\Support\Facades\Log;
 
 
 class Home extends Controller
@@ -209,37 +210,11 @@ public function Announcement() {
 
 
 
-// public function getItemByCode($kode)
-// {
-//     // Assuming you have an Item model that corresponds to your items table
-//     $item = MasterItemModel::where('item_code', $kode)->first();
-           
-//      // Cek apakah status_borrow bernilai 1 (barang sedang digunakan)
-//      if ($item->status_borrow == 1) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Barang sedang digunakan',
-//             'status_borrow' => 1
-//         ]);
-//     }
-
-//     if ($item) {
-//         return response()->json([
-//             'success' => true,
-//             'name_item' => $item->name_item,// Adjust according to your item's field name
-//             'status_borrow' => $item->status_borrow // Adjust according to your item's field name
-//         ]);
-//     }
-
-//     return response()->json(['success' => false]);
-// }
-
 // start code untuk pinjam item
 public function getItemByCode($kode)
 {
     // Cari item berdasarkan kode produk
     $item = MasterItemModel::where('item_code', $kode)->first();
-
     // Cek apakah item ditemukan
     if (!$item) {
         return response()->json([
@@ -247,7 +222,6 @@ public function getItemByCode($kode)
             'message' => 'Item not found'
         ]);
     }
-
     // Cek apakah status_borrow bernilai 1 (barang sedang digunakan)
     if ($item->status_borrow == 1) {
         return response()->json([
@@ -256,7 +230,6 @@ public function getItemByCode($kode)
             'status_borrows' => 1
         ]);
     }
-
     // Jika item ditemukan dan tidak sedang digunakan
     return response()->json([
         'success' => true,
@@ -268,13 +241,11 @@ public function getItemByCode($kode)
 
 public function getNikByCode($nik)
 {
-  
     // Assuming you have an Item model that corresponds to your items table
     $employe = $this->EmployeModel->where('nik', $nik)
     ->join('ms_divisi', 'employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
     ->select('employees_tb.*', 'ms_divisi.divisi_name')
     ->first();
-  
     if ($employe) {
         return response()->json([
             'success' => true,
@@ -283,7 +254,6 @@ public function getNikByCode($nik)
             'divisi_name' => $employe->divisi_name,
         ]);
     }
-
     return response()->json(['success' => false]);
 }
 
@@ -317,19 +287,66 @@ public function storeBorrow(Request $request)
     }
     // end code untuk pinjam item
 
+// ------------------------------------------batas-------------------------------------//
 
+    // start code untuk kembalikan  item
+//    public function take_the_borrowed_item($kode) {
+//     $item = TransactionItemModel::select('transactions_items_borrow.*', 'item_master_borrow.name_item','employees_tb.first_name','employees_tb.last_name','ms_divisi.divisi_name','item_master_borrow.divisi_id as tools_divisi','ms_divisi.divisi_alias')
+//     ->join('item_master_borrow', 'transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
+//     ->join('employees_tb', 'transactions_items_borrow.nik','=','employees_tb.nik')
+//     ->join('ms_divisi', 'employees_tb.divisi_id','=','ms_divisi.divisi_id')
+//     ->where('transactions_items_borrow.item_code', $kode)
+//     ->where('transactions_items_borrow.status', 1)
+//     ->first();
+                              
+//     // Cek apakah item ditemukan
+//     if (!$item) {
+//         return response()->json([
+//             'success' => false,
+//             'message' => 'Item not found'
+//         ]);
+//     }
 
+//     // Jika item ditemukan dan tidak sedang digunakan
+//     return response()->json([
+//         'success' => true,
+//         'name_item' => $item->name_item, 
+//         'first_name' => $item->first_name,
+//         'last_name' => $item->last_name,
+//         'divisi_name' => $item->divisi_name,
+//         'tools_divisi' => $item->divisi_alias,
+//         'date_borrow' => format_date_indonesia($item->date_borrow), 
+//         'return_date' => ($item->return_date == null ? '<span class="badge badge-danger">Belum ada tanggal pengembalian</span>' : $item->return_date), 
+//         'status' => ($item->status == 1 ? '<span class="badge badge-danger">sedang di Pinjam</span>' : '<span class="badge badge-primary">sedang tidak di Pinjam</span>'), // Pastikan field ini ada di tabel
+//         'last_status' => ($item->last_status == 1 ? '<span class="badge badge-danger">Belum Di kembalikan</span>' : '<span class="badge badge-primary">sudah Di kembalikan</span>') // Pastikan field ini ada di tabel
+//     ]);
+//     }
 
-   public function take_the_borrowed_item($kode) {
-    $item = TransactionItemModel::select('transactions_items_borrow.*', 'item_master_borrow.name_item','employees_tb.first_name','employees_tb.last_name','ms_divisi.divisi_name')
-    ->join('item_master_borrow', 'transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
-    ->join('employees_tb', 'transactions_items_borrow.nik','=','employees_tb.nik')
-    ->join('ms_divisi', 'employees_tb.divisi_id','=','ms_divisi.divisi_id')
-    ->where('transactions_items_borrow.item_code', $kode)
-    ->where('transactions_items_borrow.status', 1)
-    ->first();
+public function take_the_borrowed_item($kode) {
+    $item = TransactionItemModel::select(
+            'transactions_items_borrow.*', 
+            'item_master_borrow.name_item',
+            'item_master_borrow.divisi_id as tools_divisi_id', // Alias untuk divisi_id dari item_master_borrow
+            'employees_tb.first_name',
+            'employees_tb.last_name',
+            'employees_tb.divisi_id as employee_divisi_id', // Alias untuk divisi_id dari employees_tb
+            'ms_divisi_item.divisi_name as tools_divisi_name', // Nama divisi dari item_master_borrow
+            'ms_divisi_emp.divisi_name as employee_divisi_name', // Nama divisi dari employees_tb
+            'ms_divisi_item.divisi_alias'
+        )
+        ->join('item_master_borrow', 'transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
+        ->join('employees_tb', 'transactions_items_borrow.nik', '=', 'employees_tb.nik')
+        
+        // Join untuk mengambil divisi dari item_master_borrow
+        ->join('ms_divisi as ms_divisi_item', 'item_master_borrow.divisi_id', '=', 'ms_divisi_item.divisi_id') 
+        
+        // Join untuk mengambil divisi dari employees_tb
+        ->join('ms_divisi as ms_divisi_emp', 'employees_tb.divisi_id', '=', 'ms_divisi_emp.divisi_id')
+        
+        ->where('transactions_items_borrow.item_code', $kode)
+        ->where('transactions_items_borrow.status', 1)
+        ->first();
 
-                                  
     // Cek apakah item ditemukan
     if (!$item) {
         return response()->json([
@@ -344,55 +361,56 @@ public function storeBorrow(Request $request)
         'name_item' => $item->name_item, 
         'first_name' => $item->first_name,
         'last_name' => $item->last_name,
-        'divisi_name' => $item->divisi_name,
+        'tools_divisi_name' => $item->tools_divisi_name, // Nama divisi dari item_master_borrow
+        'employee_divisi_name' => $item->employee_divisi_name, // Nama divisi dari employees_tb
+        'tools_divisi_id' => $item->tools_divisi_id, // divisi_id dari tabel item_master_borrow
+        'employee_divisi_id' => $item->employee_divisi_id, // divisi_id dari tabel employees_tb
         'date_borrow' => format_date_indonesia($item->date_borrow), 
         'return_date' => ($item->return_date == null ? '<span class="badge badge-danger">Belum ada tanggal pengembalian</span>' : $item->return_date), 
-        'status' => ($item->status == 1 ? '<span class="badge badge-danger">sedang di Pinjam</span>' : '<span class="badge badge-primary">sedang tidak di Pinjam</span>'), // Pastikan field ini ada di tabel
-        'last_status' => ($item->last_status == 1 ? '<span class="badge badge-danger">Belum Di kembalikan</span>' : '<span class="badge badge-primary">sudah Di kembalikan</span>') // Pastikan field ini ada di tabel
+        'status' => ($item->status == 1 ? '<span class="badge badge-danger">Sedang dipinjam</span>' : '<span class="badge badge-primary">Tidak dipinjam</span>'), 
+        'last_status' => ($item->last_status == 1 ? '<span class="badge badge-danger">Belum dikembalikan</span>' : '<span class="badge badge-primary">Sudah dikembalikan</span>')
     ]);
-    }
+}
+
 
 
 
     public function ReturnBorrow(Request $request) {
         date_default_timezone_set('Asia/Jakarta');
         $ldate = date('Y-m-d H:i:s');
+    
         // Validasi data yang dikirim dari AJAX
         $validatedData = $request->validate([
             'kodeItems' => 'required|array',
         ]);
-
-
+    
         // Ambil data kode item dari request
-    $kodeItems = $validatedData['kodeItems'];
-
-    // Proses untuk memperbarui data di database
-    foreach ($kodeItems as $kodeItem) {
-        // Misalnya, jika kamu memiliki model Item
-        // Ganti Item dengan model yang sesuai
-        $item = TransactionItemModel::where('item_code', $kodeItem)->first();
-
-        if ($item) {
-            // Update status atau atribut lain yang diperlukan
-            $item->status = 0; 
-            $item->last_status = 0; 
-            $item->return_date = $ldate; 
-            $item->updated_at = $ldate; 
-            $item->save(); 
-        }
-
-         // Update field di tabel lain berdasarkan item_codeds
-            MasterItemModel::where('item_code', $kodeItem)
-                ->update(['status_borrows' => 0]);
+        $kodeItems = $validatedData['kodeItems'];
         
-    }
+        foreach ($kodeItems as $itemCode) {
+            // Ambil item berdasarkan item_code, dengan kondisi tambahan
+            $item = TransactionItemModel::where('item_code', $itemCode)
+                ->where('status', 1)  // Kondisi untuk status = 1
+                ->whereNotNull('last_status')  // Kondisi last_status tidak kosong
+                ->whereNull('return_date')  // Kondisi return_date bernilai null
+                ->first();
+            
+            if ($item) {
+                // Update status dan last_status
+                $item->status = '0';
+                $item->last_status = '0';
+                $item->return_date = $ldate;
+                $item->updated_at = now();
+                $item->save();
+            }
 
-    // Kembalikan respons JSON
-    return response()->json([
-        'success' => true,
-        'message' => 'Items returned successfully.',
-        'updated_items' => $kodeItems,
-    ]);
+            // Update field di tabel lain berdasarkan item_code
+            MasterItemModel::where('item_code', $itemCode)
+            ->update(['status_borrows' => 0]);
+        }
+        return response()->json(['success' => true, 'message' => 'Data berhasil disimpan']);
     }
+    
+    // end code untuk kembalikan  item
 
 }

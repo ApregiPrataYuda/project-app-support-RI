@@ -206,10 +206,11 @@
         <div class="card-body">
             <table class="table table-bordered" id="accommodateItemsTable">
                 <thead>
-                    <tr class="table-secondary">
+                    <tr class="table-primary">
                         <th>No</th>
                         <th>Name employe Borrow & Division</th>
                         <th>Name Item</th>
+                        <th>Item have divisions</th>
                         <th>Status</th>
                         <th>Last status</th>
                         <th>From Time(date borrow)</th>
@@ -468,12 +469,13 @@ $(document).ready(function(){
                 if (response.success) {
                     kodeItems.push(kodeItemReturns);
                     $('#codeItemReturn').val("").focus();       
-                    let itemCount = $('#accommodateItems tr').length + 0; 
+                    let itemCount = $('#accommodateItems tr').length + 1; 
                     $('#accommodateItems').append(`
                         <tr>
                             <td>${itemCount}</td>
-                            <td class="text-uppercase">${response.first_name} ${response.last_name} - ${response.divisi_name}</td>
+                            <td class="text-uppercase">${response.first_name} ${response.last_name} - ${response.employee_divisi_name}</td>
                             <td>${response.name_item}</td>
+                            <td>${response.tools_divisi_name}</td>
                             <td>${response.status}</td>
                             <td>${response.last_status}</td>
                             <td>${response.date_borrow}</td>

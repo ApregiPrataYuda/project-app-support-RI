@@ -41,22 +41,24 @@ Route::get('/Home/Check-paket', [Home::class, 'check_paket'])->name('check.paket
 Route::get('/Home/List-paket', [Home::class, 'list_pakets'])->name('lists.paket');
 Route::post('/Home/get-paket-user', [Home::class, 'ambil_paket'])->name('get.paket.user');
 
+// route for borrow item
 Route::get('/Home/{kode}', [Home::class, 'getItemByCode']);
 Route::get('/Homes/{kode}', [Home::class, 'getNikByCode']);
 Route::post('/save-borrow', [Home::class, 'storeBorrow']);
 
+//route for return item borrow
 Route::get('/Home-return-item/{kode}', [Home::class, 'take_the_borrowed_item']); 
 Route::post('/Return-item-borrow', [Home::class, 'ReturnBorrow']);
 
-
-
+//route for login Auth
 Route::get('/Login', [Auth::class, 'views'])->name('login');
 Route::post('/Login-action', [Auth::class, 'login_store'])->name('login.store');
 Route::get('/logout', [Auth::class, 'logout'])->name('logout');
 
+// route for admninistrator
+Route::get('/Administrator/DashboardIT', [Administrator::class, 'index'])->name('Administrator')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
-Route::get('/Administrator/DashboardIT', [Administrator::class, 'index'])->name('Administrator');
-
+// route for admninistrator(page menu)
 Route::get('/Administrator/List-menu', [Administrator::class, 'menu_management'])->name('menu.view')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/get-menu', [Administrator::class, 'get_menu_data'])->name('get.menu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/create-menu', [Administrator::class, 'create_menu'])->name('menu.create')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
@@ -69,6 +71,8 @@ Route::get('/Administrator/get-data-menu-restore', [Administrator::class, 'get_m
 Route::post('/Administrator/restore-menu/{id}', [Administrator::class, 'restore'])->name('restore.menu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::delete('/Administrator/delete-menu-permanent/{id}', [Administrator::class, 'destroy_menu_permanent'])->name('delete.menu.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
+
+// route for admninistrator(page submenu)
 Route::get('/Administrator/List-submenu', [Administrator::class, 'submenu_management'])->name('submenu.view')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/get-submenu', [Administrator::class, 'get_submenu_data'])->name('get.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/Create-submenu', [Administrator::class, 'create_submenu'])->name('create.submenu')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
@@ -82,6 +86,7 @@ Route::post('/Administrator/restore-submenu/{id}', [Administrator::class, 'resto
 Route::delete('/Administrator/delete-submenu-permanent/{id}', [Administrator::class, 'destroy_submenu_permanent'])->name('delete.submenu.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
 
+// route for admninistrator(page role)
 Route::get('/Administrator/Management-role', [Administrator::class, 'Role_management'])->name('role.index')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/get-role', [Administrator::class, 'get_role_data'])->name('get.role')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/create-role', [Administrator::class, 'create_role'])->name('role.create')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
@@ -97,7 +102,7 @@ Route::get('/Administrator/access-menu/{id}', [Administrator::class, 'access_men
 Route::post('/change-access-menu', [Administrator::class, 'ubahAccessmenu'])->name('change.access.menu');
 
 
-
+// route for admninistrator(page user management)
 Route::get('/Administrator/Management-user', [Administrator::class, 'Manajemen_pengguna'])->name('user.index')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/get-user', [Administrator::class, 'get_user_data'])->name('get.user')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Administrator/create-user', [Administrator::class, 'create_user'])->name('user.create')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
@@ -110,7 +115,29 @@ Route::post('change-access', [Administrator::class, 'ubahAccesssubmenu'])->name(
 
 
 
-Route::get('/Admin/Dashboard-Admin', [Admin::class, 'index'])->name('Admin');
+
+// route for admin
+Route::get('/Admin/Dashboard-Admin', [Admin::class, 'index'])->name('Admin')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+
+
+// route for admin(page master item borrow)
+Route::get('/Admin/Master-Item', [Admin::class, 'Master_item'])->name('item.master')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/get-item-master', [Admin::class, 'get_item_data'])->name('get.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/Master-item-add', [Admin::class, 'Master_item_add_view'])->name('add.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Admin/store-item-master', [Admin::class,'store_item'])->name('store.item.master');
+Route::get('/Admin/Master-item-edit/{id}', [Admin::class, 'Master_item_edit_view'])->name('edit.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::put('/Admin/update-item/{id}', [Admin::class, 'update_item'])->name('update.item');
+Route::delete('/Admin/delete-item/{id}', [Admin::class, 'destroy_item'])->name('delete.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/generate-qrcode-item/{id}', [Admin::class,'generate_qr_item'])->name('qr.generate.item');
+Route::get('/Admin/download-qrcode-item/{id}', [Admin::class,'download_qr_item'])->name('qr.download.item');
+
+// route for admin(page item borrow transaction)
+Route::get('/Admin/List-Item-borrow', [Admin::class, 'Transaction_item'])->name('list.item.borrow')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/get-item-trans', [Admin::class, 'get_item_trans_data'])->name('get.trans.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+
+
+
+// route for admin(page visitor)
 Route::get('/Admin/Data-visitors', [Admin::class, 'visitors'])->name('Admin.visitors');
 Route::get('/Admin/get-visitor', [Admin::class, 'get_visitor_data'])->name('get.visitor');
 Route::get('/Admin/Idcard-visitor/{id}', [Admin::class, 'idcard_visitor_data'])->name('idcard.visitor');
@@ -118,6 +145,7 @@ Route::get('/Admin/Idcard-visitor-print/{id}', [Admin::class, 'idcard_visitor_da
 Route::get('/Admin/Add-visitor', [Admin::class, 'Add_visitor'])->name('add.visitor');
 
 
+// route for admin(page list paket)
 Route::get('/Admin/List-Paket', [Admin::class, 'daftar_paket'])->name('Admin.paket');
 Route::get('/Admin/get-paket', [Admin::class, 'get_paket_data'])->name('get.paket');
 Route::get('/Admin/Add-paket', [Admin::class,'add_paket'])->name('add.paket');
@@ -127,18 +155,8 @@ Route::put('/Admin/update-paket/{id}', [Admin::class, 'update_paket'])->name('up
 Route::delete('/Admin/delete-paket/{id}', [Admin::class, 'destroy_paket'])->name('delete.paket');
 
 
-Route::get('/Admin/Master-Item', [Admin::class, 'Master_item'])->name('item.master');
-Route::get('/Admin/get-item-master', [Admin::class, 'get_item_data'])->name('get.item');
-Route::get('/Admin/Master-item-add', [Admin::class, 'Master_item_add_view'])->name('add.item');
-Route::post('/Admin/store-item-master', [Admin::class,'store_item'])->name('store.item.master');
-Route::get('/Admin/Master-item-edit/{id}', [Admin::class, 'Master_item_edit_view'])->name('edit.item');
-Route::put('/Admin/update-item/{id}', [Admin::class, 'update_item'])->name('update.item');
-Route::delete('/Admin/delete-item/{id}', [Admin::class, 'destroy_item'])->name('delete.item');
-Route::get('/Admin/generate-qrcode-item/{id}', [Admin::class,'generate_qr_item'])->name('qr.generate.item');
-Route::get('/Admin/download-qrcode-item/{id}', [Admin::class,'download_qr_item'])->name('qr.download.item');
-
-Route::get('/Admin/List-Item-borrow', [Admin::class, 'Transaction_item'])->name('list.item.borrow');
-Route::get('/Admin/get-item-trans', [Admin::class, 'get_item_trans_data'])->name('get.trans.item');
-
+// route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
+
+// route for logout
 Route::get('/Others/Logout', [Others::class, 'logout'])->name('logout');

@@ -497,7 +497,7 @@ public function store_item(Request $request) {
     $ItemCode = $this->generateCode();
     //get seesion
     $userData = getUserData();
-    // Memanggil nama divisi
+    // Memanggil  divisi
     $divisiID = $userData->employee->divisi->divisi_id;
     $validatedData = $request->validate([
         'name_item' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/'
@@ -625,13 +625,18 @@ public function Transaction_item () {
 
 
 public function get_item_trans_data(Request $request)  {
+     //get seesion
+     $userData = getUserData();
+     // Memanggil  divisi
+     $divisiID = $userData->employee->divisi->divisi_id;
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
         $data = $this->TransactionItemModel->select('transactions_items_borrow.*','employees_tb.first_name','employees_tb.last_name','ms_divisi.divisi_name', 'item_master_borrow.name_item')
         ->leftJoin('employees_tb','transactions_items_borrow.nik', '=', 'employees_tb.nik')
         ->leftJoin('ms_divisi','employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
         ->leftJoin('item_master_borrow','transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
-        ->orderBy('borrow_id', 'DESC')
+        ->where('item_master_borrow.divisi_id', $divisiID)
+        ->orderBy('transactions_items_borrow.borrow_id', 'DESC')
         ->get();
     
         // Cek apakah ada parameter pencarian

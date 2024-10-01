@@ -18,13 +18,11 @@ class TransactionItemModel extends Model
     // Jika primary key bukan auto-incrementing integer
     // public $incrementing = false;
     public $incrementing = true;
-
     // Jika primary key bukan integer
     // protected $keyType = 'string';
-
     // Menentukan apakah timestamps diaktifkan
     public $timestamps = true;
-
+    
     protected $fillable = [
         'nik',
         'item_code',
