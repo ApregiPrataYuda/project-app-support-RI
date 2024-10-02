@@ -272,7 +272,7 @@ $(document).ready(function(){
                         );
                         $('#code_item').val("").focus();
                         return;
-                    }
+                    } 
 
                     kodeItems.push(kodeProduct);
                     $('#code_item').val("").focus();       
@@ -433,11 +433,6 @@ $('#processBorrow').click(function() {
 // END
 });
 </script>
-
-
-
-
-
 
 
 

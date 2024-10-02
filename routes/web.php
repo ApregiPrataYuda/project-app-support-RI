@@ -159,6 +159,11 @@ Route::put('/Admin/update-paket/{id}', [Admin::class, 'update_paket'])->name('up
 Route::delete('/Admin/delete-paket/{id}', [Admin::class, 'destroy_paket'])->name('delete.paket');
 
 
+// route for admin(page management employe)
+Route::get('/Admin/Employe-Data', [Admin::class, 'Employe_management'])->name('Admin.Employe.List');
+Route::get('/Admin/gets-employes', [Admin::class, 'get_data_employe'])->name('get.employes');
+Route::get('/Admin/Add-employe', [Admin::class,'add_employe'])->name('add.employe');
+
 // route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
 

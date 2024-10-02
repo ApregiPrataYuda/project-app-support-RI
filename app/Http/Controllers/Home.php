@@ -241,8 +241,9 @@ public function getItemByCode($kode)
 
 public function getNikByCode($nik)
 {
-    // Assuming you have an Item model that corresponds to your items table
-    $employe = $this->EmployeModel->where('nik', $nik)
+    $badgeNumber = explode('|', $nik);
+    $getKodePin = $badgeNumber[2];
+    $employe = $this->EmployeModel->where('pin', $getKodePin)
     ->join('ms_divisi', 'employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
     ->select('employees_tb.*', 'ms_divisi.divisi_name')
     ->first();
@@ -289,38 +290,6 @@ public function storeBorrow(Request $request)
 
 // ------------------------------------------batas-------------------------------------//
 
-    // start code untuk kembalikan  item
-//    public function take_the_borrowed_item($kode) {
-//     $item = TransactionItemModel::select('transactions_items_borrow.*', 'item_master_borrow.name_item','employees_tb.first_name','employees_tb.last_name','ms_divisi.divisi_name','item_master_borrow.divisi_id as tools_divisi','ms_divisi.divisi_alias')
-//     ->join('item_master_borrow', 'transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
-//     ->join('employees_tb', 'transactions_items_borrow.nik','=','employees_tb.nik')
-//     ->join('ms_divisi', 'employees_tb.divisi_id','=','ms_divisi.divisi_id')
-//     ->where('transactions_items_borrow.item_code', $kode)
-//     ->where('transactions_items_borrow.status', 1)
-//     ->first();
-                              
-//     // Cek apakah item ditemukan
-//     if (!$item) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'Item not found'
-//         ]);
-//     }
-
-//     // Jika item ditemukan dan tidak sedang digunakan
-//     return response()->json([
-//         'success' => true,
-//         'name_item' => $item->name_item, 
-//         'first_name' => $item->first_name,
-//         'last_name' => $item->last_name,
-//         'divisi_name' => $item->divisi_name,
-//         'tools_divisi' => $item->divisi_alias,
-//         'date_borrow' => format_date_indonesia($item->date_borrow), 
-//         'return_date' => ($item->return_date == null ? '<span class="badge badge-danger">Belum ada tanggal pengembalian</span>' : $item->return_date), 
-//         'status' => ($item->status == 1 ? '<span class="badge badge-danger">sedang di Pinjam</span>' : '<span class="badge badge-primary">sedang tidak di Pinjam</span>'), // Pastikan field ini ada di tabel
-//         'last_status' => ($item->last_status == 1 ? '<span class="badge badge-danger">Belum Di kembalikan</span>' : '<span class="badge badge-primary">sudah Di kembalikan</span>') // Pastikan field ini ada di tabel
-//     ]);
-//     }
 
 public function take_the_borrowed_item($kode) {
     $item = TransactionItemModel::select(

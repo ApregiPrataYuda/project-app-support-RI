@@ -12,6 +12,7 @@ use App\Models\PaketModel;
 use App\Models\DivisionModel;
 use App\Models\MasterItemModel;
 use App\Models\TransactionItemModel;
+use App\Models\EmployeModel;
 use Illuminate\Support\Str;
 
 use Endroid\QrCode\Color\Color;
@@ -31,12 +32,14 @@ class Admin extends Controller
     protected $DivisionModel;
     protected $MasterItemModel;
     protected $TransactionItemModel;
-    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel, TransactionItemModel $TransactionItemModel) {
+    protected $EmployeModel;
+    public function __construct(EmployeModel $EmployeModel, visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel, TransactionItemModel $TransactionItemModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
         $this->DivisionModel = $DivisionModel;
         $this->MasterItemModel = $MasterItemModel;
         $this->TransactionItemModel = $TransactionItemModel;
+        $this->EmployeModel = $EmployeModel;
     }
 
 // -----------------------------------------Batas---------------------------------------------------------//
@@ -738,7 +741,6 @@ public function get_item_trans_data(Request $request)  {
             // Pastikan kolom fullname ada di ms_user
             $data->where('item_code', 'LIKE', "%{$searchTerm}%");
         }
-    
         // Menyusun DataTables
         return DataTables::of($data)
             ->addIndexColumn()
@@ -767,4 +769,77 @@ public function get_item_trans_data(Request $request)  {
 }
 //start code for transaction item module
 // -----------------------------------------Batas---------------------------------------------------------//
+
+
+
+//start code for  employe module
+public function Employe_management()  {
+    $data = [
+        'title' => 'Employe Data List',
+     ];
+     return view('Admin/Employe/Data/file',$data);
+}
+
+
+public function get_data_employe(Request $request)  {
+     //get seesion
+     $userData = getUserData();
+     // Memanggil  divisi
+     $divisiID = $userData->employee->divisi->divisi_id;
+    if ($request->ajax()) {
+        // Mengambil data dari model dengan join
+        $data = $this->EmployeModel->select('employees_tb.*','ms_divisi.divisi_name','branch_tb.name_alias')
+        ->leftJoin('ms_divisi','employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
+        ->leftJoin('branch_tb','employees_tb.branch_id', '=', 'branch_tb.id_branch')
+        ->where('employees_tb.divisi_id', $divisiID)
+        ->orderBy('id_employee', 'DESC')
+        ->get();
+    
+        // Cek apakah ada parameter pencarian
+        if ($request->has('search') && !empty($request->input('search')['value'])) {
+            $searchTerm = $request->input('search')['value'];
+            // Pastikan kolom fullname ada di ms_user
+            $data->where('first_name', 'LIKE', "%{$searchTerm}%");
+        }
+    
+        // Menyusun DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('status', function($row) {
+                return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Aktif</span>' : '<span class="badge badge-pill badge-success">NonAktif</span>';
+            })
+
+          
+
+            ->addColumn('action', function($row){
+                    // Jika status != 1, tampilkan tombol edit dan hapus
+                    // $editUrl = route('paket.view.data', Crypt::encrypt($row->id_employee));
+                    $btn = '<a href="" class="edit btn btn-outline-warning btn-sm mb-1"><i class="fa fa-edit"></i></a>';
+                    $btn .= '<form action="' . route('delete.paket', Crypt::encrypt($row->id_employee)) . '" method="POST" style="display:inline;" id="delete-form-paket-' . $row->id_employee . '">
+                    ' . csrf_field() . '
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="button" onclick="confirmDelete(' . $row->id_employee . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
+                    </form>';
+                    return $btn;
+                
+            })
+            ->rawColumns(['status','action'])
+            ->make(true);
+    }
+}
+
+
+public function add_employe() {
+    $divisi = $this->DivisionModel->all();
+  
+    $data = [
+        'title' => 'Employe Form Add',
+        'divisi' => $divisi
+     ];
+     return view('Admin/Employe/Form/Add',$data);
+}
+//end code for  employe module
+
+// -----------------------------------------Batas---------------------------------------------------------//
+
 }
