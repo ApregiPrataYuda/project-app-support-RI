@@ -39,11 +39,10 @@
   <thead>
   <tr>
                         <th style="width: 4%;">No</th>
-                        <th style="width: 10%;">First Name</th>
-                        <th>Last Name</th>
+                        <th style="width: 10%;">Name</th>
                         <th>Divisi</th>
                         <th style="width: 3%;">Branch</th>
-                        <th style="width: 10%;">Position</th>
+                        <th>section employees(Street)</th>
                         <th style="width: 5%;">Status</th>
                         <th style="width: 6%;">Action</th>
 </tr>
@@ -68,11 +67,10 @@
           },
           columns: [
               {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-              {data: 'first_name', name: 'first_name', orderable: false, searchable: true},
-              {data: 'last_name', name: 'last_name'},
+              {data: 'name', name: 'name', orderable: false, searchable: true},
               {data: 'divisi_name', name: 'divisi_name'},
               {data: 'name_alias', name: 'name_alias'},
-              {data: 'position', name: 'position'},
+              {data: 'street', name: 'street'},
               {data: 'status', name: 'status'},
               {data: 'action', name: 'action', orderable: false, searchable: true},
           ],

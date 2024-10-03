@@ -46,7 +46,7 @@
 @foreach ($employees as $emp)
         <option class="text-uppercase" value="{{ $emp->id_employee }}" 
         {{ old('first_name') == $emp->id_employee ? 'selected' : '' }}>
-            {{ $emp->first_name }}  {{ $emp->last_name }}  {{ $emp->nik }}
+            {{ $emp->name }}  {{ $emp->badgenumber }}
         </option>
 @endforeach
 </select>

@@ -10,7 +10,7 @@ class EmployeModel extends Model
     use HasFactory;
     use SoftDeletes;
     // Menentukan nama tabel yang terkait dengan model ini
-    protected $table = 'employees_tb';
+    protected $table = 'employees';
 
     // Menentukan primary key jika bukan 'id'
     protected $primaryKey = 'id_employee';

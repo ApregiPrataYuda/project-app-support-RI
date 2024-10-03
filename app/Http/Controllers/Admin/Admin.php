@@ -788,10 +788,10 @@ public function get_data_employe(Request $request)  {
      $divisiID = $userData->employee->divisi->divisi_id;
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
-        $data = $this->EmployeModel->select('employees_tb.*','ms_divisi.divisi_name','branch_tb.name_alias')
-        ->leftJoin('ms_divisi','employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
-        ->leftJoin('branch_tb','employees_tb.branch_id', '=', 'branch_tb.id_branch')
-        ->where('employees_tb.divisi_id', $divisiID)
+        $data = $this->EmployeModel->select('employees.*','ms_divisi.divisi_name','branch_tb.name_alias')
+        ->leftJoin('ms_divisi','employees.divisi_id', '=', 'ms_divisi.divisi_id')
+        ->leftJoin('branch_tb','employees.branch_id', '=', 'branch_tb.id_branch')
+        ->where('employees.divisi_id', $divisiID)
         ->orderBy('id_employee', 'DESC')
         ->get();
     
@@ -799,7 +799,7 @@ public function get_data_employe(Request $request)  {
         if ($request->has('search') && !empty($request->input('search')['value'])) {
             $searchTerm = $request->input('search')['value'];
             // Pastikan kolom fullname ada di ms_user
-            $data->where('first_name', 'LIKE', "%{$searchTerm}%");
+            $data->where('name', 'LIKE', "%{$searchTerm}%");
         }
     
         // Menyusun DataTables

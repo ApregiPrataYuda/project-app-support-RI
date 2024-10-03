@@ -789,12 +789,12 @@ public function get_user_data(Request $request) {
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
         $data = $this->UserModel->select('ms_user.user_id','ms_user.username', 'ms_user.image','ms_user.password',
-                                         'ms_user.is_active', 'ms_user.email', 'ms_role.role', 'employees_tb.first_name',
-                                          'employees_tb.last_name', 'employees_tb.branch_id','branch_tb.name_branch', 'ms_divisi.divisi_name')
+                                         'ms_user.is_active', 'ms_user.email', 'ms_role.role', 'employees.name',
+                                          'employees.name', 'employees.branch_id','branch_tb.name_branch', 'ms_divisi.divisi_name')
             ->leftJoin('ms_role', 'ms_user.role_id', '=', 'ms_role.role_id')
-            ->leftJoin('employees_tb', 'ms_user.id_employee', '=', 'employees_tb.id_employee')
-            ->leftJoin('branch_tb','employees_tb.branch_id','=','branch_tb.id_branch')
-            ->leftJoin('ms_divisi','employees_tb.divisi_id','=','ms_divisi.divisi_id');
+            ->leftJoin('employees', 'ms_user.id_employee', '=', 'employees.id_employee')
+            ->leftJoin('branch_tb','employees.branch_id','=','branch_tb.id_branch')
+            ->leftJoin('ms_divisi','employees.divisi_id','=','ms_divisi.divisi_id');
     
         // Cek apakah ada parameter pencarian
         if ($request->has('search') && !empty($request->input('search')['value'])) {
@@ -819,8 +819,7 @@ public function get_user_data(Request $request) {
             ->addColumn('detail', function ($row) {
                 return '<a id="sets" class="btn btn-outline-primary btn-sm" data-toggle="modal" 
                             data-target="#modals-detail"
-                            data-first_name="' . htmlspecialchars($row->first_name, ENT_QUOTES, 'UTF-8') . '"
-                            data-last_name="' . htmlspecialchars($row->last_name, ENT_QUOTES, 'UTF-8') . '"
+                            data-name="' . htmlspecialchars($row->name, ENT_QUOTES, 'UTF-8') . '"
                             data-username="' . htmlspecialchars($row->username, ENT_QUOTES, 'UTF-8') . '"
                             data-password="' . htmlspecialchars($row->password, ENT_QUOTES, 'UTF-8') . '"
                             data-email="' . htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8') . '"
@@ -903,9 +902,9 @@ public function create_user () {
     $getRole = $this->RoleModel->all();
     // $employe = $this->EmployeModel->all();
     $employees =  $this->EmployeModel
-    ->leftJoin('ms_user as a', 'employees_tb.id_employee', '=', 'a.id_employee')
+    ->leftJoin('ms_user as a', 'employees.id_employee', '=', 'a.id_employee')
     ->whereNull('a.id_employee')
-    ->select('employees_tb.*')  // Mengambil semua kolom dari employees_tb
+    ->select('employees.*')  // Mengambil semua kolom dari employees_tb
     ->get();
 
     $data = [
@@ -953,9 +952,9 @@ public function edit_user($id) {
     $userbyid = userModel::findOrFail($id_user);
     $getRole = $this->RoleModel->all();
     $employees =  $this->EmployeModel
-    ->leftJoin('ms_user as a', 'employees_tb.id_employee', '=', 'a.id_employee')
+    ->leftJoin('ms_user as a', 'employees.id_employee', '=', 'a.id_employee')
     // ->whereNull('a.id_employee')
-    ->select('employees_tb.*')  // Mengambil semua kolom dari employees_tb
+    ->select('employees.*')  // Mengambil semua kolom dari employees_tb
     ->get();
    
       $data = [

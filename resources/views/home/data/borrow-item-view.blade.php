@@ -322,7 +322,7 @@ $(document).ready(function(){
                         if (response.success) {
                             nikEmploye.push(numberIdentityEmploye);
                             $('#number_identity_employe').val("").focus();
-                            $('#name_borrow').val(`${response.first_name} ${response.last_name}`);
+                            $('#name_borrow').val(`${response.name}`);
                             $('#division').val(`${response.divisi_name}`);
                         } else {
                           Notiflix.Report.failure(

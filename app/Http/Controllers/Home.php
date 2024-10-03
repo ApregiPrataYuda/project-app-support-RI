@@ -243,20 +243,21 @@ public function getNikByCode($nik)
 {
     $badgeNumber = explode('|', $nik);
     $getKodePin = $badgeNumber[2];
-    $employe = $this->EmployeModel->where('pin', $getKodePin)
-    ->join('ms_divisi', 'employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
-    ->select('employees_tb.*', 'ms_divisi.divisi_name')
+    $employe = $this->EmployeModel->where('badgenumber', $getKodePin)
+    ->join('ms_divisi', 'employees.divisi_id', '=', 'ms_divisi.divisi_id')
+    ->select('employees.*', 'ms_divisi.divisi_name')
     ->first();
     if ($employe) {
         return response()->json([
             'success' => true,
-            'first_name' => $employe->first_name, 
-            'last_name' => $employe->last_name,
+            'name' => $employe->name, 
             'divisi_name' => $employe->divisi_name,
         ]);
     }
     return response()->json(['success' => false]);
 }
+
+
 
 public function storeBorrow(Request $request)
     {
