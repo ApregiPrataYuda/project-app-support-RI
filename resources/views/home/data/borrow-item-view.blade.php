@@ -137,6 +137,11 @@
         </div>
 
         <div class="form-group">
+            <label for="street"><span class="text-uppercase">Division Street*</span></label>
+            <input type="text" class="form-control" id="street" name="street" placeholder="Division Street..." readonly>
+        </div>
+
+        <div class="form-group">
             <label for="description"><span class="text-uppercase">Statement *</span></label>
             <textarea name="description" id="description" cols="10" rows="2" class="form-control" placeholder="I declare responsibility for the tools I use" readonly></textarea>
         </div>
@@ -324,6 +329,7 @@ $(document).ready(function(){
                             $('#number_identity_employe').val("").focus();
                             $('#name_borrow').val(`${response.name}`);
                             $('#division').val(`${response.divisi_name}`);
+                            $('#street').val(`${response.street}`);
                         } else {
                           Notiflix.Report.failure(
                           'Warning',
@@ -411,6 +417,7 @@ $('#processBorrow').click(function() {
                 kodeItems = [];
                 $('#name_borrow').val('');
                 $('#division').val('');
+                $('#street').val('');
                 $('#savedItems').empty();
             } else {
                 Notiflix.Report.failure(

@@ -160,10 +160,14 @@ Route::delete('/Admin/delete-paket/{id}', [Admin::class, 'destroy_paket'])->name
 
 
 // route for admin(page management employe)
-Route::get('/Admin/Employe-Data', [Admin::class, 'Employe_management'])->name('Admin.Employe.List');
-Route::get('/Admin/gets-employes', [Admin::class, 'get_data_employe'])->name('get.employes');
-Route::get('/Admin/Add-employe', [Admin::class,'add_employe'])->name('add.employe');
-
+Route::get('/Admin/Employe-Data', [Admin::class, 'Employe_management'])->name('Admin.Employe.List')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/gets-employes', [Admin::class, 'get_data_employe'])->name('get.employes')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/Add-employe', [Admin::class,'add_employe'])->name('add.employe')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Admin/process-employe-check', [Admin::class,'cek_pin_employe'])->name('check.employe');
+Route::post('/Admin/store-employe', [Admin::class,'store_employe'])->name('store.employe');
+Route::delete('/Admin/delete-employe/{id}', [Admin::class, 'destroy_employe'])->name('delete.employe');
+Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])->name('employe.view.data');
+Route::put('/Admin/update-employe/{id}', [Admin::class, 'update_employe'])->name('update.employe');
 // route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
 

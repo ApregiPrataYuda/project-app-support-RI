@@ -1,15 +1,19 @@
 @extends('layouts.app')
 @section('content')
+     @php
+      $user = getUserData();
+      $namediv = $user->employee->divisi->divisi_name;
+    @endphp
 <section class="content-header">
 <div class="container-fluid">
 <div class="row mb-2">
 <div class="col-sm-6">
-<h1><?= $title ?></h1>
+<h1>{{ $title }} {{ $namediv }}</h1>
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
 <!-- <li class="breadcrumb-item"><a href="#">Home</a></li> -->
-<li class="breadcrumb-item active"><?= $title ?></li>
+<li class="breadcrumb-item active">{{ $title }}</li>
 </ol>
 </div>
 </div>
@@ -24,7 +28,6 @@
         <div class="card">
           <div class="card-header bg-secondary">
             <a href="{{route('add.employe')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-plus"></i> Add Data</a>
-            <a href="{{route('item.master.restore')}}" class="btn btn-sm btn-outline-dark"> <i class="fa fa-window-restore"></i> Restore Data</a>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                 <i class="fas fa-minus"></i>
@@ -40,6 +43,8 @@
   <tr>
                         <th style="width: 4%;">No</th>
                         <th style="width: 10%;">Name</th>
+                        <th style="width: 10%;">Gender</th>
+                        <th style="width: 10%;">Status Employe</th>
                         <th>Divisi</th>
                         <th style="width: 3%;">Branch</th>
                         <th>section employees(Street)</th>
@@ -68,6 +73,8 @@
           columns: [
               {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
               {data: 'name', name: 'name', orderable: false, searchable: true},
+              {data: 'gender', name: 'gender', orderable: false, searchable: true},
+              {data: 'pager', name: 'pager', orderable: false, searchable: true},
               {data: 'divisi_name', name: 'divisi_name'},
               {data: 'name_alias', name: 'name_alias'},
               {data: 'street', name: 'street'},
@@ -93,6 +100,24 @@
           }
       });
     });
+
+    function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Form ID harus sesuai dengan ID form di PHP
+                document.getElementById('delete-form-employe-' + itemId).submit();
+            }
+        });
+    }
+    
   </script>
 
 @endsection

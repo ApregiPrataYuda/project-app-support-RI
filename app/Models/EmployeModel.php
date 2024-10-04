@@ -29,4 +29,9 @@ class EmployeModel extends Model
     {
         return $this->belongsTo(DivisionModel::class, 'divisi_id', 'divisi_id');
     }
+
+    public function branch()
+    {
+        return $this->belongsTo(BranchModel::class, 'branch_id','id_branch'); // Pastikan relasi ini ada
+    }
 }

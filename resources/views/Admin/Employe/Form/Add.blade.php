@@ -6,12 +6,12 @@
 <div class="container-fluid">
 <div class="row mb-2">
 <div class="col-sm-6">
-<h1><?= $title ?></h1>
+<h1>{{ $title }}</h1>
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
-<li class="breadcrumb-item"><a href="{{route('Admin.paket')}}">Kembali</a></li>
-<li class="breadcrumb-item active"><?= $title ?></li>
+<li class="breadcrumb-item"><a href="{{route('Admin.paket')}}">Back</a></li>
+<li class="breadcrumb-item active">{{ $title }}</li>
 </ol>
 </div>
 </div>
@@ -23,7 +23,7 @@
         <!-- Default box -->
 <div class="card">
 <div class="card-header bg-secondary">
-<h3 class="card-title"><?= $title ?></h3>
+<h3 class="card-title">{{ $title }}</h3>
 <div class="card-tools">
 <button type="button" class="btn btn-tool" data-card-widget="collapse">
 <i class="fas fa-minus"></i>
@@ -43,6 +43,13 @@
                     
                     <div class="card-body">
                         @csrf
+                        <!-- <div class="form-group">
+                                <label for="scanbadge" class="text-capitalize">Scan ID card*</label>
+                                <input type="text" class="form-control" id="scanbadge" name="scanbadge" value="{{old('scanbadge')}}" placeholder="Scan Your Badge">
+                                @error('scanbadge')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>   -->
 
                             <div class="form-group">
                                 <label for="nikEmployes" class="text-capitalize">Nik*</label>
@@ -52,44 +59,91 @@
                                 @enderror
                             </div>
 
+
                             <div class="form-group">
-                                <label for="first_name" class="text-capitalize">First Name*</label>
-                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{old('first_name')}}" placeholder="First Name">
-                                @error('first_name')
+                                <label for="name" class="text-capitalize">Name*</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{old('name')}}" placeholder="Name">
+                                @error('name')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
 
                             <div class="form-group">
-                                <label for="last_name" class="text-capitalize">Last Name <small>(opsional)</small></label>
-                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{old('last_name')}}" placeholder="Last Name">
-                                @error('first_name')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="text-capitalize">Position*</label>
-                                <select name="position" id="position" class="form-control">
+                                <label class="text-capitalize">Gender*</label>
+                                <select name="gender" id="gender" class="form-control">
                                 <option value="">-Pilih-</option>
-                                <option value="Admin" {{ old('position') == 'Admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="Operator" {{ old('position') == 'Operator' ? 'selected' : '' }}>Operator</option>
-                                <option value="Staff" {{ old('position') == 'Staff' ? 'selected' : '' }}>Staff</option>
-                                <option value="Assitant Suvervisor" {{ old('position') == 'Assitant Suvervisor' ? 'selected' : '' }}>Assitant Suvervisor</option>
-                                <option value="Suvervisor" {{ old('position') == 'Suvervisor' ? 'selected' : '' }}>Suvervisor</option>
-                                <option value="Chief" {{ old('position') == 'Chief' ? 'selected' : '' }}>Chief</option>
-                                <option value="Assistan Manager" {{ old('position') == 'Assistan Manager' ? 'selected' : '' }}>Assistan Manager</option>
-                                <option value="Manager" {{ old('position') == 'Manager' ? 'selected' : '' }}>Assistan Manager</option>
-                                <option value="Other" {{ old('position') == 'Other' ? 'selected' : '' }}>Other</option>
+                                <option value="Pria" {{ old('gender') == 'Pria' ? 'selected' : '' }}>Pria</option>
+                                <option value="Wanita" {{ old('gender') == 'Wanita' ? 'selected' : '' }}>Wanita</option>
                                 </select>
-                                @error('position')
+                                @error('gender')
                                             <div class="text-danger">{{ $message }}</div>
                                 @enderror
                                 </div>
 
-                            <button type="submit"  id="save" class="btn btn-outline-primary btn-sm"><i class="fa fa-save"></i> Save</button>
+
+
+                            <div class="form-group">
+                                <label class="text-capitalize">title*</label>
+                                <select name="title" id="title" class="form-control">
+                                <option value="">-Pilih-</option>
+                                <option value="EMPLOYEE" {{ old('title') == 'EMPLOYEE' ? 'selected' : '' }}>EMPLOYEE</option>
+                                <option value="ASS. SUPERVISOR" {{ old('title') == 'ASS. SUPERVISOR' ? 'selected' : '' }}>ASS. SUPERVISOR</option>
+                                <option value="SUPERVISOR" {{ old('title') == 'SUPERVISOR' ? 'selected' : '' }}>SUPERVISOR</option>
+                                <option value="CHIEF" {{ old('title') == 'CHIEF' ? 'selected' : '' }}>CHIEF</option>
+                                <option value="MANAGER" {{ old('title') == 'Assistan MANAGER' ? 'selected' : '' }}>MANAGER</option>
+                                <option value="ASS. MANAGER" {{ old('title') == 'ASS. MANAGER' ? 'selected' : '' }}>ASS. MANAGER</option>
+                                <option value="OTHER" {{ old('OTHER') == 'Other' ? 'selected' : '' }}>OTHER</option>
+                                </select>
+                                @error('title')
+                                            <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                </div>
+
+
+                                <div class="form-group">
+                                <label class="text-capitalize">Status Employe*</label>
+                                <select name="pager" id="pager" class="form-control">
+                                <option value="">-Pilih-</option>
+                                <option value="TETAP" {{ old('pager') == 'TETAP' ? 'selected' : '' }}>TETAP</option>
+                                <option value="KONTRAK" {{ old('pager') == 'KONTRAK' ? 'selected' : '' }}>KONTRAK</option>
+                                </select>
+                                @error('pager')
+                                            <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                </div>
+
+
+
+                                <div class="form-group">
+                                <label class="text-capitalize">Division Street*</label>
+                                <select name="street" id="street" class="form-control">
+                                <option value="">-Pilih-</option>
+                                @foreach ($divisi as $divs)
+                                        <option class="text-uppercase" value="{{ $divs->divisi_name }}" 
+                                        {{ old('street') == $divs->divisi_name ? 'selected' : '' }}>
+                                            {{ $divs->divisi_name }} 
+                                        </option>
+                                @endforeach
+                                </select>
+                                @error('street')
+                                            <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                </div>
+
+                                <div class="form-group">
+                                <label class="text-capitalize">Status*</label>
+                                <select name="status" id="status" class="form-control">
+                                <option value="">-Pilih-</option>
+                                <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>AKTIF</option>
+                                <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>NONAKTIF</option>
+                                </select>
+                                @error('status')
+                                            <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                </div>
+
+                            <button type="submit"  id="save" class="btn btn-outline-secondary btn-sm"><i class="fa fa-save"></i> Save</button>
                             <button type="reset" class="btn btn-outline-warning btn-sm"><i class="fa fa-undo"></i> Reset</button>
                     </div>
                 <!-- </div> -->
@@ -110,6 +164,7 @@
 <script type="text/javascript">
 
 
+
 $('#nikEmployes').on('keyup', function(e){
             let tex = $(this).val();
             if(e.keyCode === 13 && tex !== "") {
@@ -117,121 +172,138 @@ $('#nikEmployes').on('keyup', function(e){
             }
 });
 
-    // assetCode
     $(document).ready(function() {
-        $("#position").select2({
-           placeholder: "SELECT A POSITION",
+        $("#title").select2({
+           placeholder: "SELECT A TITLE",
            allowClear: true,
            theme: 'bootstrap4',
         });
     });
 
 
+    $(document).ready(function() {
+        $("#gender").select2({
+           placeholder: "SELECT A GENDER",
+           allowClear: true,
+           theme: 'bootstrap4',
+        });
+    });
+
+    $(document).ready(function() {
+        $("#pager").select2({
+           placeholder: "SELECT A STATUS EMPLOYE",
+           allowClear: true,
+           theme: 'bootstrap4',
+        });
+    });
+
+    $(document).ready(function() {
+        $("#street").select2({
+           placeholder: "SELECT A DIVISION STREET",
+           allowClear: true,
+           theme: 'bootstrap4',
+        });
+    });
+
     $('#save').click(function() {
     // Ambil nilai dari elemen input
     let nikEmployes = $('#nikEmployes').val();
-    let first_name = $('#first_name').val();
-    let last_name = $('#last_name').val();
-    let position = $('#position').val();
-    console.log(nikEmployes);
-    
-
+    let name = $('#name').val();
+    let title = $('#title').val();
+    let pager = $('#pager').val();
+    let street = $('#street').val();
+    let status = $('#status').val();
+    let gender = $('#gender').val();
+  
 
     // Cek apakah semua input tidak kosong
-    // if (kodeProduct !== "" && nameProduct !== "" && price !== "" && status_product !== "" && 
-    //     idSubkategori !== "" && idUnit !== "" && idSupplier !== "" && expriedProduct !== "") {
-        
-        // Cek apakah kodeProduct sudah ada
-        // $.ajax({
-        //     url: '', // Ganti dengan URL yang sesuai untuk mengecek kode produk
-        //     type: 'POST',
-        //     data: { kodeProduct: kodeProduct },
-        //     headers: {
-        //                     "X-CSRF-TOKEN": ""
-        //                 },
-        //     success: function(response) {
-        //         if (response.exists) {
-        //             // Jika kodeProduct sudah ada, tampilkan pesan
-        //             Swal.fire({
-        //                 title: "Kode produk sudah ada!",
-        //                 icon: "warning"
-        //             });
-        //             $('#kode_product').focus(); // Memfokuskan pada input kode produk
-
-        //         } else {
-                    // Jika kodeProduct tidak ada, lanjutkan proses penyimpanan
-                    // var formData = new FormData();
-                    // formData.append("kodeProduct", kodeProduct);
-                    // formData.append("nameProduct", nameProduct);
-                    // formData.append("price", price);
-                    // formData.append("idUnit", idUnit);
-                    // formData.append("idSupplier", idSupplier);
-                    // formData.append("idSubkategori", idSubkategori);
-                    // formData.append("expriedProduct", expriedProduct);
-                    // formData.append("image", image); // Menambahkan file
-                    // formData.append("noted", noted);
-                    // formData.append("status_product", status_product);
-
+    if (nikEmployes !== "" && name !== "" && title !== "" && pager !== "" && 
+      street !== "" && status !== "" && gender !== "") {
+        $.ajax({
+            url: "{{ route('check.employe') }}",// Ganti dengan URL yang sesuai untuk mengecek kode produk
+            type: 'POST',
+            data: { nikEmployes: nikEmployes },
+            headers: {
+              "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content') // Get CSRF token
+            },
+            success: function(response) {
+                if (response.exists) {
+                    // Jika kodeProduct sudah ada, tampilkan pesan
+                    Swal.fire({
+                        title: "Data Employe sudah ada!",
+                        icon: "warning"
+                    });
+                    $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+                } else {
+                    // Jika NIK tidak ada, lanjutkan proses penyimpanan
+                    var formData = new FormData();
+                    formData.append("nikEmployes", nikEmployes);
+                    formData.append("name", name);
+                    formData.append("title", title);
+                    formData.append("pager", pager);
+                    formData.append("street", street);
+                    formData.append("status", status);
+                    formData.append("gender", gender);
                     // Melakukan permintaan AJAX untuk menyimpan data
-                    // $.ajax({
-                    //     url: '',
-                    //     type: 'POST',
-                    //     data: formData,
-                    //     processData: false, // Penting untuk tidak memproses data
-                    //     contentType: false, // Penting untuk tidak mengatur konten tipe
-                    //     headers: {
-                    //         "X-CSRF-TOKEN": ""
-                    //     },
-                    //     beforeSend: function() {
-                    //         $('#message_info').html("Sedang memproses data, silahkan tunggu...");
-                    //     },
-                    //     success: function(response) {
-                    //         // Tangani respons sukses
-                    //         Swal.fire({
-                    //             position: "top-center",
-                    //             icon: "success",
-                    //             title: "Data berhasil disimpan",
-                    //             showConfirmButton: false,
-                    //             timer: 1500
-                    //         }).then(() => {
+                    $.ajax({
+                        url: "{{ route('store.employe') }}",
+                        type: 'POST',
+                        data: formData,
+                        processData: false, // Penting untuk tidak memproses data
+                        contentType: false, // Penting untuk tidak mengatur konten tipe
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content')
+                        },
+                        beforeSend: function() {
+                            $('#message_info').html("Sedang memproses data, silahkan tunggu...");
+                        },
+                        success: function(response) {
+                            // Tangani respons sukses
+                            Swal.fire({
+                                title: "top-center",
+                                icon: "success",
+                                title: "Data berhasil disimpan",
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
                                 // Refresh halaman
-    //                             location.reload();
-    //                         });
-    //                     },
-    //                     error: function(jqXHR, textStatus, errorThrown) {
-    //                         // Tangani kesalahan
-    //                         Swal.fire({
-    //                             title: "Terjadi kesalahan: " + errorThrown,
-    //                             text: "Silakan coba lagi.",
-    //                             icon: "error"
-    //                         });
-    //                         $('#kode_product').focus(); // Memfokuskan pada input kode produk
-    //                     }
-    //                 });
-    //             }
-    //         },
+                                location.reload();
+                            });
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            // Tangani kesalahan
+                            Swal.fire({
+                                title: "Terjadi kesalahan: " + errorThrown,
+                                text: "Silakan coba lagi.",
+                                icon: "error"
+                            });
+                            $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+                        }
+                    });
+                 
+                }
+            },
             
-    //         error: function(jqXHR, textStatus, errorThrown) {
-    //             // Tangani kesalahan saat melakukan pengecekan
-    //             Swal.fire({
-    //                 title: "Terjadi kesalahan saat memeriksa kode produk: " + errorThrown,
-    //                 icon: "error"
-    //             });
-    //             $('#kode_product').focus(); // Memfokuskan pada input kode produk
-    //         }
-    //     });
-    // } else {
-    //     // Jika ada input yang kosong
-    //     Swal.fire({
-    //         title: "Inputan Tidak boleh Kosong",
-    //         icon: "warning"
-    //     });
-    //     $('#kode_product').focus(); // Memfokuskan pada input kode produk
-    // }
-});
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Tangani kesalahan saat melakukan pengecekan
+                Swal.fire({
+                    title: "Terjadi kesalahan saat memeriksa NIK: " + errorThrown,
+                    icon: "error"
+                });
+                $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+            }
+        });
 
-            //end code process kirim data
-              
+
+        }else{
+            Swal.fire({
+            title: "Opps?",
+            text: "input cannot be blank?",
+            icon: "question"
+            });
+        $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+        }
+    });
 
 </script>
 

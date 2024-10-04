@@ -226,7 +226,7 @@ public function getItemByCode($kode)
     if ($item->status_borrow == 1) {
         return response()->json([
             'success' => false,
-            'message' => 'Barang sedang digunakan',
+            'message' => 'Item sedang digunakan',
             'status_borrows' => 1
         ]);
     }
@@ -251,6 +251,7 @@ public function getNikByCode($nik)
         return response()->json([
             'success' => true,
             'name' => $employe->name, 
+            'street' => ($employe->street == null ? 'unknown division' : $employe->street), 
             'divisi_name' => $employe->divisi_name,
         ]);
     }

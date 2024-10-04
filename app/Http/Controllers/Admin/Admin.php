@@ -508,7 +508,7 @@ public function store_item(Request $request) {
 
     // Cek apakah qr_item sudah ada
     if (MasterItemModel::where('item_code', $ItemCode)->exists()) {
-        return response()->json(['error' => 'QR Item sudah ada.'], 409); // Kode 409 untuk konflik
+        return response()->json(['error' => 'code Item sudah ada.'], 409); // Kode 409 untuk konflik
     }
 
     try {
@@ -781,6 +781,7 @@ public function Employe_management()  {
 }
 
 
+
 public function get_data_employe(Request $request)  {
      //get seesion
      $userData = getUserData();
@@ -805,17 +806,17 @@ public function get_data_employe(Request $request)  {
         // Menyusun DataTables
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn('gender', function($row) {
+                return $row->gender == null ? 'Tidak Diketahui' : $row->gender;
+            })
             ->addColumn('status', function($row) {
                 return $row->status == 1 ? '<span class="badge badge-pill badge-danger">Aktif</span>' : '<span class="badge badge-pill badge-success">NonAktif</span>';
             })
 
-          
-
             ->addColumn('action', function($row){
-                    // Jika status != 1, tampilkan tombol edit dan hapus
-                    // $editUrl = route('paket.view.data', Crypt::encrypt($row->id_employee));
-                    $btn = '<a href="" class="edit btn btn-outline-warning btn-sm mb-1"><i class="fa fa-edit"></i></a>';
-                    $btn .= '<form action="' . route('delete.paket', Crypt::encrypt($row->id_employee)) . '" method="POST" style="display:inline;" id="delete-form-paket-' . $row->id_employee . '">
+                    $editUrl = route('employe.view.data', Crypt::encrypt($row->id_employee));
+                    $btn = '<a href="'.$editUrl.'" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
+                    $btn .= '<form action="' . route('delete.employe', Crypt::encrypt($row->id_employee)) . '" method="POST" style="display:inline;" id="delete-form-employe-' . $row->id_employee . '">
                     ' . csrf_field() . '
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="button" onclick="confirmDelete(' . $row->id_employee . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
@@ -831,14 +832,138 @@ public function get_data_employe(Request $request)  {
 
 public function add_employe() {
     $divisi = $this->DivisionModel->all();
-  
     $data = [
         'title' => 'Employe Form Add',
         'divisi' => $divisi
      ];
      return view('Admin/Employe/Form/Add',$data);
 }
-//end code for  employe module
+
+
+public function cek_pin_employe(Request $request) {
+    // Validate the request
+    $request->validate([
+        'nikEmployes' => 'required|string',
+    ]);
+    // Get the kodeProduct from the request
+    $nikEmployes = $request->input('nikEmployes');
+    $array = explode('|', $nikEmployes);
+    $lastResult = $array[2];
+    // Remove empty elements if necessary
+    // $array = array_filter($array);
+    // print_r($array);
+    // Check if the product code exists
+    $exists = EmployeModel::where('badgenumber', $lastResult)->exists();
+    // Return a JSON response
+    return response()->json(['exists' => $exists]);
+}
+
+
+public function store_employe(Request $request)  {
+      //get seesion
+      $userData = getUserData();
+      // Memanggil  divisi
+    $divisiID = $userData->employee->divisi->divisi_id;
+    $brachID = $userData->employee->branch->id_branch;
+    $nikEmployes = $request->input('nikEmployes');
+    $array = explode('|', $nikEmployes);
+     $badgenumber = $array[2];
+     $ssn = $array[3];
+     $ssn_x = $array[4];
+
+      // Validasi data yang diterima
+        $validatedData = $request->validate([
+            // 'nikEmployes' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'gender' => 'nullable|string|max:50',
+            'title' => 'nullable|string|max:255',
+            'pager' => 'nullable|string|max:255',
+            'street' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:50',
+        ]);
+
+        try {
+            // Menyimpan data ke database
+            $employee = new EmployeModel();
+            $employee->badgenumber = $badgenumber;
+            $employee->ssn = $ssn;
+            $employee->ssn_x = $ssn_x;
+            $employee->name = $validatedData['name'];
+            $employee->gender = $validatedData['gender'];
+            $employee->divisi_id = $divisiID;
+            $employee->branch_id = $brachID;
+            $employee->title = $validatedData['title'];
+            $employee->pager = $validatedData['pager'];
+            $employee->street = $validatedData['street'];
+            $employee->status = $validatedData['status'];
+            $employee->save();
+
+            // Mengembalikan respons sukses
+            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
+        } catch (\Exception $e) {
+            // Mengembalikan respons kesalahan
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
+        public function destroy_employe ($id)  {
+        // Dekripsi ID
+        $idemp = Crypt::decrypt($id);
+        // Temukan model yang sesuai
+        $paket = $this->EmployeModel::findOrFail($idemp);
+        // Hapus data
+        $paket->delete();
+        // Redirect atau beri respons jika berhasil
+        return redirect()->route('Admin.Employe.List')->with('success', 'Data deleted successfully!');
+        }
+
+
+
+
+        public function view_data_employe($id)  {
+
+            $divisi = $this->DivisionModel->all();
+            $idemp = Crypt::decrypt($id);
+            $getdataemp = $this->EmployeModel->findOrFail($idemp);
+           
+            $data = [
+                'title' => 'Employe Form Edit',
+                'divisi' => $divisi,
+                'emp' => $getdataemp,
+                'basicid' => $id
+             ];
+             return view('Admin/Employe/Form/Edit',$data);
+        }
+
+
+        public function update_employe (Request $request, $id)  {
+            $idemp = Crypt::decrypt($id);
+            // Validasi data yang diterima
+        $validatedData = $request->validate([
+            // 'nikEmployes' => 'required|string|max:255',
+            'name' => 'required|max:255',
+            'gender' => 'required|max:255',
+            'title' => 'nullable|string|max:255',
+            'pager' => 'nullable|string|max:255',
+            'street' => 'nullable|string|max:255',
+            'status' => 'nullable|string|max:50',
+        ]);
+
+        $Employe = $this->EmployeModel::findOrFail($idemp);
+        // Perbarui data
+        $Employe->name = ucwords($validatedData['name']);
+        $Employe->gender = ucwords($validatedData['gender']);
+        $Employe->title = $request->input('title');
+        $Employe->pager = $request->input('pager');
+        $Employe->street = $request->input('street');
+        $Employe->status = $request->input('status');
+        $Employe->save();
+        // Redirect atau beri respons
+        return redirect()->route('Admin.Employe.List')->with('success', 'Data updated successfully!');
+        }
+
+
+  //end code for  employe module
 
 // -----------------------------------------Batas---------------------------------------------------------//
 
