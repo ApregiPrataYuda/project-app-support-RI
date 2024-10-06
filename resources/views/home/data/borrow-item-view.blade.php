@@ -16,6 +16,22 @@
   clear: left; /* Start a new "column" after every 5 items */
 }
 
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(0, 0, 0, 0.5); /* Tambahkan background agar lebih terlihat */
+  border-radius: 100%; /* Untuk tampilan ikon yang lebih rapi */
+  
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    border: none; /* Menghapus border */
+    background: none; /* Menghapus background jika ada */
+}
+
+
+
+
 </style>
 <div class="content-wrapper">
 <div class="content-header">
@@ -48,11 +64,11 @@
     <div class="col-sm-6">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title mb-4">Item Usage Registration Form</h5>
+          <h5 class="card-title mb-4 text-bold text-secondary">Item Usage Registration Form</h5>
           <br>
           <br>
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loanModal">
-           Form Registration Item
+          <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#loanModal">
+           Form Registration Item  <i class="fa fa-qrcode" aria-hidden="true"></i>
           </button>
           
         </div>
@@ -63,11 +79,11 @@
     <div class="col-sm-6">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title mb-4">Equipment Usage Return Form</h5>
+          <h5 class="card-title mb-4 text-bold text-secondary">Equipment Usage Return Form</h5>
           <br>
           <br>
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#returnsModal">
-             Form Return Item
+          <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#returnsModal">
+             Form Return Item <i class="fa fa-recycle" aria-hidden="true"></i>
           </button>
         </div>
       </div>
@@ -77,24 +93,38 @@
 </div>
 </div>
 
-<div class="content mb-5 d-flex justify-content-center">
+
+  <div class="content mb-5 d-flex justify-content-center">
     <div class="card bg-dark text-white" style="width: 35rem;">
-      <img src="{{ asset('assets/backend/dist/img/tools.png') }}" class="card-img" alt="...">
-      <div class="card-img-overlay">
-        
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{{ asset('assets/backend/dist/img/tools.png') }}" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="{{ asset('assets/backend/dist/img/window.png') }}" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="{{ asset('assets/backend/dist/img/enc.png') }}" class="d-block w-100" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev"  data-target="#carouselExampleIndicators" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-target="#carouselExampleIndicators" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </button>
       </div>
-    </div>
+      </div>
   </div>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+
 
   <!-- Modal loan-->
 <div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

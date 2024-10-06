@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="bg-dark text-center py-3">
-        <strong>Copyright &copy; 2024 <a href="">Developer by Apregi Pratayuda</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2024 <a href="" class="text-danger">PT Rinnai Indonesia</a>.</strong> All rights reserved.
     </div>
   </footer>
   
