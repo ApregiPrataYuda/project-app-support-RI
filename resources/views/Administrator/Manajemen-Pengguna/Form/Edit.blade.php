@@ -90,9 +90,9 @@
                         <div class="d-flex align-items-start align-items-sm-center gap-4">
                         <img
                         id="imgPreview"
-                        src="{{ asset('/assets/backend/dist/img/avatar/' . $row->image) }}"
+                        src="{{ url('/avatar/' . $row->image) }}"
                          alt="prev image" 
-                         alt="Avatar" 
+                         alt="Avatar"  
                          class="rounded-circle"
                          style="width: 100px;"
                         />

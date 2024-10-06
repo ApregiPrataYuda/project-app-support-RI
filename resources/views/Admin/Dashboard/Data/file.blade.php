@@ -26,7 +26,7 @@
     <div class="alert alert-danger alert-dismissible w-75 mx-auto">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <h5><i class="icon fas fa-meh"></i> Wellcome {{ $user->employee->first_name }}   {{ $user->employee->last_name }}!</h5>
-      Setiap hari adalah kesempatan baru untuk menciptakan keajaiban. Jangan ragu untuk mengejar impianmu, karena langkah kecil hari ini bisa membawa perubahan besar di masa depan. Semangat!
+      Every day is a new opportunity to create magic. Don't hesitate to chase your dreams, because small steps today can bring big changes in the future. Spirit!
     </div>
   </div>
 </section>

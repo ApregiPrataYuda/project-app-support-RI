@@ -10,13 +10,18 @@
 </div>
 <div class="col-sm-6">
 <ol class="breadcrumb float-sm-right">
-<li class="breadcrumb-item"><a href="{{route('Admin.paket')}}">Back</a></li>
+<li class="breadcrumb-item"><a href="{{route('Admin.Employe.List')}}">Back</a></li>
 <li class="breadcrumb-item active">{{ $title }}</li>
 </ol>
 </div>
 </div>
 </div>
 </section>
+
+<div class="alert alert-warning ml-2 mr-2" role="alert">
+    <h4 class="alert-heading">announcement!</h4>
+    <p class="mb-0">Enter employee data according to your division, to prevent data confusion.</p>
+  </div>
 
 <!--start view for user -->
 <section class="content">

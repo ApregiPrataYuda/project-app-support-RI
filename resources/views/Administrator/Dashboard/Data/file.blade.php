@@ -36,13 +36,13 @@
 
               <div class="small-box bg-info">
               <div class="inner">
-              <h3></h3>
+              <h3>{{$countMenu}}</h3>
               <p>Menu Management</p>
               </div>
               <div class="icon">
               <i class="fa fa-life-ring" aria-hidden="true"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('menu.view')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
               </div>
 
@@ -50,13 +50,13 @@
 
               <div class="small-box bg-success">
               <div class="inner">
-              <h3></h3>
+              <h3>{{$countSubMenu}}</h3>
               <p>SubMenu Management</p>
               </div>
               <div class="icon">
               <i class="fa fa-file" aria-hidden="true"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('submenu.view')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
               </div>
 
@@ -64,13 +64,13 @@
 
               <div class="small-box bg-warning">
               <div class="inner">
-              <h3></h3>
+              <h3>{{$countUser}}</h3>
               <p>User Management</p>
               </div>
               <div class="icon">
               <i class="fa fa-users" aria-hidden="true"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('user.index')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
               </div>
 
@@ -78,13 +78,13 @@
 
               <div class="small-box bg-danger">
               <div class="inner">
-              <h3></h3>
+              <h3>{{$countRole}}</h3>
               <p>Role Management</p>
               </div>
               <div class="icon">
               <i class="fa fa-user" aria-hidden="true"></i>
               </div>
-              <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{{route('role.index')}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
               </div>
 

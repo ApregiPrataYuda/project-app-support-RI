@@ -41,8 +41,17 @@ class Administrator extends Controller
     }
 
     public  function index() {
+        $countMenu =  $this->MenuModel->count();
+        $countSubMenu =  $this->SubmenuModel->count();
+        $countRole =  $this->RoleModel->count();
+        $countUser =  $this->UserModel->count();
+        
         $data = [
-            'title' => 'Administrator'
+            'title' => 'Administrator',
+             'countMenu' => $countMenu,
+             'countSubMenu' => $countSubMenu,
+             'countRole' => $countRole,
+             'countUser' => $countUser
          ];
          return view('Administrator/Dashboard/Data/file',$data);
     }
@@ -807,8 +816,14 @@ public function get_user_data(Request $request) {
         // Menyusun DataTables
         return DataTables::of($data)
             ->addIndexColumn()
+            // ->addColumn('image', function($row) {
+            //     $imageUrl = route('assets/backend/dist/img/avatar/' . $row->image); // Sesuaikan dengan path penyimpanan Anda
+            //     return '<img src="' . htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') . '" width="50" height="50" class="img-thumbnail">';
+            // })
+
             ->addColumn('image', function($row) {
-                $imageUrl = asset('assets/backend/dist/img/avatar/' . $row->image); // Sesuaikan dengan path penyimpanan Anda
+                // Menggunakan route dengan parameter filename
+                $imageUrl = route('avatar.show', ['filename' => $row->image]);
                 return '<img src="' . htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8') . '" width="50" height="50" class="img-thumbnail">';
             })
            
@@ -969,7 +984,7 @@ public function edit_user($id) {
 
 
 public function update_user(Request $request, $user_id)  {
-    $validated = $request->validate([
+    $validated = $request->validate([ 
         'id_employee' => 'required|max:255',
         'email' => [
             'required',
@@ -996,12 +1011,13 @@ public function update_user(Request $request, $user_id)  {
         // Jika ada gambar baru
         if ($newImage) {
             // Simpan gambar baru di folder 'images' dalam storage 'public'
-            $imagePath = $newImage->store('assets/backend/dist/img/avatar/', 'public');
+            // $imagePath = $newImage->store('assets/backend/dist/img/avatar/', 'public');
+            $imagePath = $newImage->store('avatar');
             $imageName = basename($imagePath);
 
             // Hapus gambar lama jika ada dan bukan gambar default
             if ($oldImage && $oldImage !== 'default.jpg') {
-                $oldImagePath = public_path('assets/backend/dist/img/avatar/' . $oldImage);
+                $oldImagePath = storage_path('app/avatar/' . $oldImage);
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }

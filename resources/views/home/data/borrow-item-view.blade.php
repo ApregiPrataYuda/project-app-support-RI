@@ -255,7 +255,7 @@ $(document).ready(function(){
         if (kodeItems.indexOf(kodeProduct) !== -1) {
             Notiflix.Report.warning(
                 'Warning', // Title
-                'Kode item sudah Scan sebelumnya: ' + kodeProduct,
+                'The item code has been scanned previously',
                 'Back'
             );
             $('#code_item').val("").focus();
@@ -272,7 +272,7 @@ $(document).ready(function(){
                     if (response.status_borrows == 1) {
                         Notiflix.Report.failure(
                             'Warning', // Title
-                            'sedang dipinjam Anda Tidak Bisa Melakukan Peminjaman untuk kode Item: ' + kodeProduct,
+                            'is being borrowed. You cannot borrow this item',
                             'Back'
                         );
                         $('#code_item').val("").focus();
@@ -293,7 +293,7 @@ $(document).ready(function(){
                    
                     Notiflix.Report.failure(
                         'Warning', // Title
-                        'Item tidak ditemukan untuk kode: ' + kodeProduct,
+                        'Item Code, not found',
                         'Back'
                     );
                     $('#code_item').val("").focus();
@@ -301,14 +301,14 @@ $(document).ready(function(){
                 }
             },
             error: function() {
-                alert('Terjadi kesalahan saat mengambil data item.');
+                alert('An error occurred while retrieving item data.');
             }
         });
     } else {
      
         Notiflix.Report.warning(
             'Warning', // Title
-            'Silakan masukkan item kode yang valid',
+            'Silakan masukkan kode item yang valid',
             'Back'
         );
         $('#code_item').val("").focus();
@@ -333,7 +333,7 @@ $(document).ready(function(){
                         } else {
                           Notiflix.Report.failure(
                           'Warning',
-                          'tidak ditemukan untuk NIK: ' + numberIdentityEmploye,
+                          'NIK, not found: ' + numberIdentityEmploye,
                           'Back',
                       );
                         $('#number_identity_employe').val("").focus();
@@ -341,13 +341,13 @@ $(document).ready(function(){
                         }
                     },
                     error: function() {
-                      alert('Terjadi kesalahan saat mengambil data item.');
+                      alert('An error occurred while retrieving nik data.');
                     }
                 });
             } else {
                 Notiflix.Report.warning(
                           'Warning',
-                          'Silakan masukkan NIK yang valid', 
+                          'Please enter a valid NIK', 
                           'Back',
                       );
                         $('#number_identity_employe').val("").focus();
@@ -378,7 +378,7 @@ $('#processBorrow').click(function() {
   if (!kodeItems.length) {
         Notiflix.Report.warning(
             'Warning', 
-            'Tidak ada item yang dipindai. Harap pindai setidaknya satu kode item!', 
+            'No items scanned. Please scan at least one item code!', 
             'Back'
         );
         return; 
@@ -388,7 +388,7 @@ $('#processBorrow').click(function() {
     if (!nikEmploye.length) {
         Notiflix.Report.warning(
             'Warning', 
-            'NIK belum dipindai. Harap masukkan NIK terlebih dahulu!', 
+            'NIK has not been scanned. Please enter your NIK first!', 
             'Back'
         );
         return; 
@@ -409,7 +409,7 @@ $('#processBorrow').click(function() {
             if (response.success) {
                 Notiflix.Report.success(
                     'Success',
-                    'Data berhasil disimpan!',
+                    'item successfully borrowed!',
                     'OK'
                 );
                 // Reset data setelah berhasil disimpan
@@ -422,7 +422,7 @@ $('#processBorrow').click(function() {
             } else {
                 Notiflix.Report.failure(
                     'Error',
-                    'Terjadi kesalahan dalam penyimpanan data.',
+                    'An error occurred in data storage.',
                     'Back'
                 );
             }
@@ -430,7 +430,7 @@ $('#processBorrow').click(function() {
         error: function() {
             Notiflix.Report.failure(
                 'Error',
-                'Terjadi kesalahan dalam penyimpanan data.',
+                'An error occurred in data storage.',
                 'Back'
             );
         }
@@ -454,7 +454,7 @@ $(document).ready(function(){
         if (kodeItems.indexOf(kodeItemReturns) !== -1) {
                 Notiflix.Report.warning(
                     'Warning', // Title
-                    'Kode item sudah Scan sebelumnya: ' + kodeItemReturns,
+                    'The item code has been scanned previously',
                     'Back',
                     function() {
                         setTimeout(function() {
@@ -488,7 +488,7 @@ $(document).ready(function(){
                    
                     Notiflix.Report.failure(
                         'Warning', // Title
-                        'Item tidak ditemukan atau sedang tidak di pinjam',
+                        'Item not found or not currently on loan',
                         'Back',
                         function() {
                         setTimeout(function() {
@@ -500,13 +500,13 @@ $(document).ready(function(){
                 }
             },
             error: function() {
-                alert('Terjadi kesalahan saat mengambil data item.');
+                alert('An error occurred while retrieving item data.');
             }
         });
     } else {
         Notiflix.Report.warning(
             'Warning', // Title
-            'Silakan masukkan item kode yang valid',
+            'Please enter a valid item code',
             'Back'
         );
         $('#codeItemReturn').val("").focus();
@@ -520,7 +520,7 @@ $('#returnBorrows').click(function() {
 if (!kodeItems.length) {
       Notiflix.Report.warning(
           'Warning', 
-          'Tidak ada item yang akan di return!', 
+          'No items will be returned!', 
           'Back'
       );
       return; 
@@ -537,7 +537,7 @@ if (!kodeItems.length) {
             if (response.success) {
                 Notiflix.Report.success(
                     'Success',
-                    'Item Success Dikembalikan!',
+                    'Item Success Returned!',
                     'OK'
                 );
                 // Reset data setelah berhasil disimpan
@@ -548,7 +548,7 @@ if (!kodeItems.length) {
             } else {
                 Notiflix.Report.failure(
                     'Error',
-                    'Terjadi kesalahan dalam penyimpanan data.',
+                    'data not found.',
                     'Back'
                 );
             }
@@ -556,7 +556,7 @@ if (!kodeItems.length) {
         error: function() {
             Notiflix.Report.failure(
                 'Error',
-                'Terjadi kesalahan dalam penyimpanan data.',
+                'data not found.',
                 'Back'
             );
         }

@@ -6,7 +6,7 @@
   <section class="py-5">
     <div class="container">
         <h2 class="text-center">About Us</h2>
-        <p class="text-center mb-5">Pada tahun 1920 berlokasi di Nagoya, Jepang , Rinnai Japan Corporation didirikan oleh Mr. Hidejiro Naito dan Mr. Kenkichi Hayashi.
+        <p class=" mb-5">Pada tahun 1920 berlokasi di Nagoya, Jepang , Rinnai Japan Corporation didirikan oleh Mr. Hidejiro Naito dan Mr. Kenkichi Hayashi.
             Pada awalnya dimulai dengan memproduksi peralatan seperti kompor gas, pemanas air, kompor tanam, dan terus berkembang hingga sekarang dengan memproduksi mesin pencuci piring, pemanggang daging, penghisap asap dan beraneka ragam produk lainnya.
             Saat ini jaringan Rinnai Japan Corporation tersebar di 15 negara di seluruh dunia, yaitu di Korea, Guangzhou, Shanghai, Taiwan, Singapura, Indonesia, Thailand, Vietnam, Malaysia, Amerika Serikat, Inggris, Brazil, Italia, Selandia Baru, dan Australia.
             Di Indonesia, produk Rinnai telah hadir sejak tahun 1979, dan pabrik pertama didirikan di Cikupa, Tangerang pada tahun 1988. Seiring dengan bertambahnya kebutuhan akan produk Rinnai, pabrik kedua diresmikan pada 3 Sept 2012 di Balaraja, Tangerang.

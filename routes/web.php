@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Home;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\Auth\Auth;
 use App\Http\Controllers\Administrator\Administrator;
 use App\Http\Controllers\Admin\Admin;
@@ -24,11 +27,26 @@ use App\Http\Middleware\CheckSubmenuAccess;
 //     return view('welcome');
 // });
 
+//Route for image
+Route::get('/avatar/{filename}', function ($filename) {
+    $path = storage_path('app/avatar/' . $filename);
+    if (!File::exists($path)) {
+        abort(404);
+    }
+    $file = File::get($path);
+    $type = File::mimeType($path);
+    $response = Response::make($file, 200);
+    $response->header("Content-Type", $type);
+    return $response;
+})->name('avatar.show');
+
+
+//Route for not access
 Route::get('/block', function () {
     return view('Err/block');
 });
 
-
+// Route for Home
 Route::get('/', [Home::class, 'About'])->name('about');
 Route::get('/Home/Form-visitor', [Home::class, 'Form_visitor'])->name('form.visitor');
 Route::post('/Home/submission-send', [Home::class, 'store_data_visit_submission'])->name('submission.store');
@@ -114,8 +132,6 @@ Route::get('/Administrator/access-user/{id}', [Administrator::class, 'access_use
 Route::post('change-access', [Administrator::class, 'ubahAccesssubmenu'])->name('change.access');
 
 
-
-
 // route for admin
 Route::get('/Admin/Dashboard-Admin', [Admin::class, 'index'])->name('Admin')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 
@@ -165,11 +181,16 @@ Route::get('/Admin/gets-employes', [Admin::class, 'get_data_employe'])->name('ge
 Route::get('/Admin/Add-employe', [Admin::class,'add_employe'])->name('add.employe')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/Admin/process-employe-check', [Admin::class,'cek_pin_employe'])->name('check.employe');
 Route::post('/Admin/store-employe', [Admin::class,'store_employe'])->name('store.employe');
-Route::delete('/Admin/delete-employe/{id}', [Admin::class, 'destroy_employe'])->name('delete.employe');
-Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])->name('employe.view.data');
+Route::delete('/Admin/delete-employe/{id}', [Admin::class, 'destroy_employe'])->name('delete.employe')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])->name('employe.view.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Admin/update-employe/{id}', [Admin::class, 'update_employe'])->name('update.employe');
 // route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
 
 // route for logout
-Route::get('/Others/Logout', [Others::class, 'logout'])->name('logout');
+Route::get('/Others/Logout', [Others::class, 'logout'])->name('logout')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Others/Change-Password', [Others::class, 'Ubah_Password_user'])->name('change.password')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::post('/Others/Change-Password', [Others::class, 'Change_password_store'])->name('Change.Password.Store')->middleware('check.session'); 
+Route::get('/Others/Change-Profile', [Others::class, 'Change_profile'])->name('Change.Profile')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::get('/Others/Change-Your-Profile', [Others::class, 'user_change_profile'])->name('Change.Your.Profile')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
+Route::put('/Others/update-profile/{id}', [Others::class, 'update_profile'])->name('update.profile');
