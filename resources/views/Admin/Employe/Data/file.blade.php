@@ -45,9 +45,10 @@
                         <th style="width: 10%;">Name</th>
                         <th style="width: 10%;">Gender</th>
                         <th style="width: 10%;">Status Employe</th>
+                        <th style="width: 10%;">Title</th>
                         <th>Divisi</th>
                         <th style="width: 3%;">Branch</th>
-                        <th>section employees(Street)</th>
+                        <th>Sub Divisi</th>
                         <th style="width: 5%;">Status</th>
                         <th style="width: 6%;">Action</th>
 </tr>
@@ -75,6 +76,7 @@
               {data: 'name', name: 'name', orderable: false, searchable: true},
               {data: 'gender', name: 'gender', orderable: false, searchable: true},
               {data: 'pager', name: 'pager', orderable: false, searchable: true},
+              {data: 'title', name: 'title', orderable: false, searchable: true},
               {data: 'divisi_name', name: 'divisi_name'},
               {data: 'name_alias', name: 'name_alias'},
               {data: 'street', name: 'street'},

@@ -107,7 +107,7 @@
 
 
                             <div class="form-group">
-                                <label class="text-capitalize">Division Street*</label>
+                                <label class="text-capitalize">SUB-Division*</label>
                                 <select name="street" id="street" class="form-control">
                                     <option value="">-Pilih-</option>
                                     @foreach ($divisi as $divs)
@@ -184,7 +184,7 @@ $('#nikEmployes').on('keyup', function(e){
 
     $(document).ready(function() {
         $("#street").select2({
-           placeholder: "SELECT A DIVISION STREET",
+           placeholder: "SELECT A SUB-DIVISION",
            allowClear: true,
            theme: 'bootstrap4',
         });
