@@ -20,7 +20,7 @@
 
 <div class="alert alert-warning ml-2 mr-2" role="alert">
     <h4 class="alert-heading">announcement!</h4>
-    <p class="mb-0">Enter employee data according to your division, to prevent data confusion.</p>
+    <p class="mb-0">"Pastikan Anda hanya memasukkan data karyawan sesuai dengan divisi Anda untuk menghindari kesalahan data."</p>
   </div>
 
 <!--start view for user -->
@@ -48,30 +48,33 @@
                     
                     <div class="card-body">
                         @csrf
-                        <!-- <div class="form-group">
-                                <label for="scanbadge" class="text-capitalize">Scan ID card*</label>
-                                <input type="text" class="form-control" id="scanbadge" name="scanbadge" value="{{old('scanbadge')}}" placeholder="Scan Your Badge">
-                                @error('scanbadge')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>   -->
+                        
 
                             <div class="form-group">
-                                <label for="nikEmployes" class="text-capitalize">Nik*</label>
-                                <input type="text" class="form-control" id="nikEmployes" name="nikEmployes" value="{{old('nikEmployes')}}" placeholder="Scan Your Badge">
+                                <label for="nikEmployes" class="text-capitalize">Scan Your Badge QR-CODE*</label>
+                                <input type="text" class="form-control" id="getNikEmployes" name="nikEmployes" value="{{old('nikEmployes')}}" placeholder="Scan Your Badge">
                                 @error('nikEmployes')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
 
+
                             <div class="form-group">
-                                <label for="name" class="text-capitalize">Name*</label>
-                                <input type="text" class="form-control" id="name" name="name" value="{{old('name')}}" placeholder="Name">
+                                <label for="name" class="text-capitalize">Name Employe*</label>
+                                <input type="text" class="form-control" id="nameEmploye" name="name" value="{{old('name')}}" placeholder="Name Employe" readonly>
                                 @error('name')
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <div class="form-group">
+                                <label for="nikFilter" class="text-capitalize">NIK Employe*</label>
+                                <input type="text" class="form-control" id="nikFilter" name="nikFilter" value="{{old('nikFilter')}}" placeholder="NIK Employe" readonly>
+                                @error('nikFilter')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div> 
 
 
                             <div class="form-group">
@@ -166,17 +169,64 @@
   </section>
 <!--start view for end -->
 
+
+
+
+
+
 <script type="text/javascript">
+ // NIK FUNCTION
+ let nikEmploye = [];
+ function processScanned(numberIdentityEmploye) {
+            if(numberIdentityEmploye !== ""){
+                $.ajax({
+                  url: '/Admin/get-data-nik/' + numberIdentityEmploye,
+                    type: 'GET', 
+                    success: function(response) {
+                        if (response.success) {
+                            nikEmploye.push(numberIdentityEmploye);
+                         
+                            $('#nameEmploye').val(`${response.name}`);
+                            let nikScan = $('#getNikEmployes').val();
+                            $('#nikFilter').val(nikScan);
+                               $('#getNikEmployes').val("").focus();
+                        } else {
+                            Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Data dengan NIK Yang Di request tidak ada. Hubungi IT!",
+                            });
+                        $('#getNikEmployes').val("").focus();
+                         return;
+                        }
+                    },
+                    error: function() {
+                      alert('An error occurred while retrieving nik data.');
+                    }
+                });
+            } else {
+                Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Please Enter Valid Nik!",
+                            });
+                        $('#getNikEmployes').val("").focus();
+                         return;
+            }
+        }
 
-
-
-$('#nikEmployes').on('keyup', function(e){
+        $('#getNikEmployes').on('keyup', function(e){
             let tex = $(this).val();
             if(e.keyCode === 13 && tex !== "") {
+                processScanned(tex);
                 e.preventDefault();
             }
-});
+        });
 
+</script>
+
+
+<script type="text/javascript">
     $(document).ready(function() {
         $("#title").select2({
            placeholder: "SELECT A TITLE",
@@ -209,10 +259,11 @@ $('#nikEmployes').on('keyup', function(e){
            theme: 'bootstrap4',
         });
     });
+  
 
     $('#save').click(function() {
     // Ambil nilai dari elemen input
-    let nikEmployes = $('#nikEmployes').val();
+    let nikEmployes = $('#nikFilter').val();
     let name = $('#name').val();
     let title = $('#title').val();
     let pager = $('#pager').val();
@@ -232,14 +283,7 @@ $('#nikEmployes').on('keyup', function(e){
               "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr('content') // Get CSRF token
             },
             success: function(response) {
-                if (response.exists) {
-                    // Jika kodeProduct sudah ada, tampilkan pesan
-                    Swal.fire({
-                        title: "Data Employe sudah ada!",
-                        icon: "warning"
-                    });
-                    $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
-                } else {
+              
                     // Jika NIK tidak ada, lanjutkan proses penyimpanan
                     var formData = new FormData();
                     formData.append("nikEmployes", nikEmployes);
@@ -282,11 +326,11 @@ $('#nikEmployes').on('keyup', function(e){
                                 text: "Silakan coba lagi.",
                                 icon: "error"
                             });
-                            $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+                            $('#getNikEmployes').focus(); // Memfokuskan pada input kode produk
                         }
                     });
                  
-                }
+                
             },
             
             error: function(jqXHR, textStatus, errorThrown) {
@@ -295,7 +339,7 @@ $('#nikEmployes').on('keyup', function(e){
                     title: "Terjadi kesalahan saat memeriksa NIK: " + errorThrown,
                     icon: "error"
                 });
-                $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+                $('#getNikEmployes').focus(); // Memfokuskan pada input kode produk
             }
         });
 
@@ -306,11 +350,10 @@ $('#nikEmployes').on('keyup', function(e){
             text: "input cannot be blank?",
             icon: "question"
             });
-        $('#nikEmployes').focus(); // Memfokuskan pada input kode produk
+        $('#getNikEmployes').focus(); // Memfokuskan pada input kode produk
         }
     });
 
 </script>
-
 @endsection
       

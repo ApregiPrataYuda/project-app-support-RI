@@ -837,7 +837,26 @@ public function add_employe() {
         'divisi' => $divisi
      ];
      return view('Admin/Employe/Form/Add',$data);
+} 
+
+
+public function getNikByCode($nik)
+{
+    $badgeNumber = explode('|', $nik);
+    $getKodePin = $badgeNumber[2];
+    $employe = $this->EmployeModel->where('badgenumber', $getKodePin)
+    ->join('ms_divisi', 'employees.divisi_id', '=', 'ms_divisi.divisi_id')
+    ->select('employees.*', 'ms_divisi.divisi_name')
+    ->first();
+    if ($employe) {
+        return response()->json([
+            'success' => true,
+            'name' => $employe->name, 
+        ]);
+    }
+    return response()->json(['success' => false]);
 }
+
 
 
 public function cek_pin_employe(Request $request) {
@@ -859,51 +878,62 @@ public function cek_pin_employe(Request $request) {
 }
 
 
+
+
+
 public function store_employe(Request $request)  {
-      //get seesion
-      $userData = getUserData();
-      // Memanggil  divisi
+      // Ambil session data
+    $userData = getUserData();
+    // Mendapatkan divisi dan branch dari session user
     $divisiID = $userData->employee->divisi->divisi_id;
-    $brachID = $userData->employee->branch->id_branch;
-    $nikEmployes = $request->input('nikEmployes');
+    $branchID = $userData->employee->branch->id_branch;
+
+    // Mengambil dan memisahkan input NIK Employees
+    $name = $request->input('name');
+    
     $array = explode('|', $nikEmployes);
-     $badgenumber = $array[2];
-     $ssn = $array[3];
-     $ssn_x = $array[4];
+    $badgenumber = $array[2];
+    $ssn = $array[3];
+    $ssn_x = $array[4];
+    
 
-      // Validasi data yang diterima
-        $validatedData = $request->validate([
-            // 'nikEmployes' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
-            'gender' => 'nullable|string|max:50',
-            'title' => 'nullable|string|max:255',
-            'pager' => 'nullable|string|max:255',
-            'street' => 'nullable|string|max:255',
-            'status' => 'nullable|string|max:50',
-        ]);
+    // Validasi input yang diterima
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'gender' => 'nullable|string|max:50',
+        'title' => 'nullable|string|max:255',
+        'pager' => 'nullable|string|max:255',
+        'street' => 'nullable|string|max:255',
+        'status' => 'nullable|string|max:50',
+    ]);
 
-        try {
-            // Menyimpan data ke database
-            $employee = new EmployeModel();
-            $employee->badgenumber = $badgenumber;
-            $employee->ssn = $ssn;
-            $employee->ssn_x = $ssn_x;
-            $employee->name = $validatedData['name'];
-            $employee->gender = $validatedData['gender'];
-            $employee->divisi_id = $divisiID;
-            $employee->branch_id = $brachID;
-            $employee->title = $validatedData['title'];
-            $employee->pager = $validatedData['pager'];
-            $employee->street = $validatedData['street'];
-            $employee->status = $validatedData['status'];
-            $employee->save();
+    try {
+        // Mencari data employee berdasarkan ID
+        // $employee = EmployeModel::findOrFail($badgenumber);
+        $employee = EmployeModel::where('badgenumber', $badgenumber)->firstOrFail();
+        // dd($employee);
+        // Update data employee dengan input yang baru
+        // $employee->badgenumber = $badgenumber;
+        // $employee->ssn = $ssn;
+        // $employee->ssn_x = $ssn_x;
+        $employee->name = $name;
+        $employee->gender = $validatedData['gender'];
+        $employee->divisi_id = $divisiID;
+        $employee->branch_id = $branchID;
+        $employee->title = $validatedData['title'];
+        $employee->pager = $validatedData['pager'];
+        $employee->street = $validatedData['street'];
+        $employee->status = $validatedData['status'];
+        
+        // Simpan perubahan ke database
+        $employee->save();
 
-            // Mengembalikan respons sukses
-            return response()->json(['success' => true, 'message' => 'Data berhasil disimpan.']);
-        } catch (\Exception $e) {
-            // Mengembalikan respons kesalahan
-            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
-        }
+        // Kembalikan respons sukses
+        return response()->json(['success' => true, 'message' => 'Data berhasil diperbarui.']);
+    } catch (\Exception $e) {
+        // Kembalikan respons jika ada kesalahan
+        return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+    }
     }
 
         public function destroy_employe ($id)  {
