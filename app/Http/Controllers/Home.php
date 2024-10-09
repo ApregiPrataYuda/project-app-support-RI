@@ -252,7 +252,7 @@ public function getNikByCode($nik)
             'success' => true,
             'name' => $employe->name, 
             'street' => ($employe->street == null ? 'unknown division' : $employe->street), 
-            'divisi_name' => $employe->divisi_name,
+            'divisi_name' => ($employe->divisi_name == null ? 'unknown division' : $employe->divisi_name)
         ]);
     }
     return response()->json(['success' => false]);

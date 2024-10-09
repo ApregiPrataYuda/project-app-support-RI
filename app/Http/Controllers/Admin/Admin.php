@@ -391,6 +391,7 @@ public function get_item_data(Request $request) {
         $data = MasterItemModel::select('item_master_borrow.*','ms_divisi.divisi_name')
         ->leftJoin('ms_divisi','item_master_borrow.divisi_id', '=', 'ms_divisi.divisi_id')
         ->where('item_master_borrow.divisi_id',$divisiID)
+        ->orderBy('item_master_borrow.item_id', 'desc')
         ->get();
     
         // Cek apakah ada parameter pencarian
@@ -503,7 +504,7 @@ public function store_item(Request $request) {
     // Memanggil  divisi
     $divisiID = $userData->employee->divisi->divisi_id;
     $validatedData = $request->validate([
-        'name_item' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/'
+        'name_item' => 'required|max:255'
     ]);
 
     // Cek apakah qr_item sudah ada
@@ -531,6 +532,12 @@ public function store_item(Request $request) {
 }
 
 public function generate_qr_item($code_item) {
+
+    //get seesion
+    $userData = getUserData();
+    // Memanggil  divisi
+    $divisi_alias = $userData->employee->divisi->divisi_alias;
+
     $builders = $this->MasterItemModel
     ->where('item_code', $code_item)->first();
     $code_item = $builders->item_code;
@@ -547,11 +554,13 @@ public function generate_qr_item($code_item) {
         ->setBackgroundColor(new Color(255, 255, 255));
     // Create generic logo
        $logo = Logo::create(public_path('rinnai.png'))
-       ->setResizeToWidth(100)
+       ->setResizeToWidth(80)
        ->setPunchoutBackground(true);
     // Create generic label
     $label = Label::create($name_item)
-    ->setTextColor(new Color(255, 0, 0));
+        ->setTextColor(new Color(255, 0, 0));
+         // Adjust the size as needed
+
     $result = $writer->write($qrCode, $logo, $label);
     // Define the file path in the storage folder
     $filePath = storage_path('app/qr_codes/' . $code_item . '.png');
@@ -589,7 +598,7 @@ public function update_item(Request $request, $id) {
     $iditem = Crypt::decrypt($id);
     // Validasi input
     $validatedData = $request->validate([
-        'name_item' => 'required|max:255|regex:/^[a-zA-Z0-9\s]+$/'
+        'name_item' => 'required|max:255'
     ]);
     // Temukan model yang sesuai
     $Item = $this->MasterItemModel::findOrFail($iditem);
@@ -896,7 +905,6 @@ public function store_employe(Request $request)  {
     $ssn = $array[3];
     $ssn_x = $array[4];
     
-
     // Validasi input yang diterima
     $validatedData = $request->validate([
         'name' => 'required|string|max:255',
