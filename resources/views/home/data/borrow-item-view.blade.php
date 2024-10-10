@@ -148,32 +148,32 @@
 
         <div class="form-group">
             <label for="code_item"><span class="text-uppercase">Code Item *</span></label>
-            <input type="text" id="code_item" class="form-control" placeholder="Scan your code item" />
+            <input type="text" id="code_item" class="form-control" placeholder="SCAN YOUR QR-CODE ITEM" />
         </div>
 
         <div class="form-group">
             <label for="number_identity_employe"><span class="text-uppercase">NIK Employe*</span></label>
-            <input type="text" class="form-control" id="number_identity_employe" name="number_identity_employe" placeholder="Scan Number Identity Employe">
+            <input type="text" class="form-control" id="number_identity_employe" name="number_identity_employe" placeholder="SCAN BADGE EMPLOYE">
         </div>
 
         <div class="form-group">
             <label for="name_borrow"><span class="text-uppercase">name of responsible employee*</span></label>
-            <input type="text" class="form-control text-uppercase" id="name_borrow" name="name_borrow" placeholder="Name of Responsible Employee..." readonly>
+            <input type="text" class="form-control text-uppercase" id="name_borrow" name="name_borrow" placeholder="NAME OF RESPONSIBLE EMPLOYEE..." readonly>
         </div>
 
         <div class="form-group">
             <label for="division"><span class="text-uppercase">Division *</span></label>
-            <input type="text" class="form-control" id="division" name="division" placeholder="Division..." readonly>
+            <input type="text" class="form-control" id="division" name="division" placeholder="DIVISION EMPLOYE..." readonly>
         </div>
 
         <div class="form-group">
-            <label for="street"><span class="text-uppercase">Division Street*</span></label>
-            <input type="text" class="form-control" id="street" name="street" placeholder="Division Street..." readonly>
+            <label for="street"><span class="text-uppercase">SUB-Division*</span></label>
+            <input type="text" class="form-control" id="street" name="street" placeholder="SUB-DIVISION EMPLOYE..." readonly>
         </div>
 
         <div class="form-group">
             <label for="description"><span class="text-uppercase">Statement *</span></label>
-            <textarea name="description" id="description" cols="10" rows="2" class="form-control" placeholder="I declare responsibility for the tools I use" readonly></textarea>
+            <textarea name="description" id="description" cols="10" rows="2" class="form-control text-bold text-dark" placeholder="I declare responsibility for the tools I use" readonly></textarea>
         </div>
     </div>
 
@@ -230,7 +230,7 @@
     <div class="col-md-3 mr-2 mb-2">
         <!-- <div class="card" style="width: 18rem;">
             <div class="card-header"> -->
-            <input type="text" class="form-control focus-primary" id="codeItemReturn" placeholder="scan Your QR-CODE">
+            <input type="text" class="form-control focus-primary" id="codeItemReturn" placeholder="SCAN QR-CODE ITEM">
             <!-- </div>
         </div> -->
     </div>
@@ -371,7 +371,12 @@ $(document).ready(function(){
                         }
                     },
                     error: function() {
-                      alert('An error occurred while retrieving nik data.');
+                        Notiflix.Report.warning(
+                          'Warning',
+                          'An error occurred while retrieving nik data.', 
+                          'Back',
+                      );
+                        $('#number_identity_employe').val("").focus();
                     }
                 });
             } else {
@@ -425,7 +430,7 @@ $('#processBorrow').click(function() {
     }
 
     
-
+ 
     // Kirim data NIK dan kode item ke server melalui AJAX
     $.ajax({
         url: '/save-borrow',
@@ -505,7 +510,7 @@ $(document).ready(function(){
                     $('#accommodateItems').append(`
                         <tr>
                             <td>${itemCount}</td>
-                            <td class="text-uppercase">${response.first_name} ${response.last_name} - ${response.employee_divisi_name}</td>
+                            <td class="text-uppercase">${response.name} - ${response.employee_divisi_name}</td>
                             <td>${response.name_item}</td>
                             <td>${response.tools_divisi_name}</td>
                             <td>${response.status}</td>
@@ -530,7 +535,12 @@ $(document).ready(function(){
                 }
             },
             error: function() {
-                alert('An error occurred while retrieving item data.');
+            Notiflix.Report.warning(
+            'Warning', // Title
+            'Error get data ',
+            'Back'
+             );
+             $('#codeItemReturn').val("").focus();
             }
         });
     } else {

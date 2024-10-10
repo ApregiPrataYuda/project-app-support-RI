@@ -24,7 +24,7 @@ class TransactionItemModel extends Model
     public $timestamps = true;
     
     protected $fillable = [
-        'nik',
+        'badgenumber',
         'item_code',
         'status',
         'last_status',

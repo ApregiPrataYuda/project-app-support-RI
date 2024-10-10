@@ -236,7 +236,7 @@ public function getItemByCode($kode)
         'name_item' => $item->name_item, // Sesuaikan dengan nama field yang Anda gunakan
         'status_borrows' => $item->status_borrows // Pastikan field ini ada di tabel
     ]);
-}
+} 
 
 
 public function getNikByCode($nik)
@@ -251,8 +251,8 @@ public function getNikByCode($nik)
         return response()->json([
             'success' => true,
             'name' => $employe->name, 
-            'street' => ($employe->street == null ? 'unknown division' : $employe->street), 
-            'divisi_name' => ($employe->divisi_name == null ? 'unknown division' : $employe->divisi_name)
+            'street' => ($employe->street == null ? 'UNKNOWN DIVISION' : $employe->street), 
+            'divisi_name' => ($employe->divisi_name == null ? 'UNKNOWN DIVISION' : $employe->divisi_name)
         ]);
     }
     return response()->json(['success' => false]);
@@ -262,6 +262,9 @@ public function getNikByCode($nik)
 
 public function storeBorrow(Request $request)
     {
+        $nikEmployes = $request->input('nikEmploye');
+        $array = explode('|', $nikEmployes);
+        $badgeEmploye = $array[2];
         date_default_timezone_set('Asia/Jakarta');
         $ldate = date('Y-m-d H:i:s');
         // Validasi data yang dikirim dari AJAX
@@ -273,7 +276,7 @@ public function storeBorrow(Request $request)
         // Loop melalui kode item untuk menyimpannya satu per satu (sesuai kebutuhan)
         foreach ($validatedData['kodeItems'] as $kodeItem) {
             TransactionItemModel::create([
-                'nik' => $validatedData['nikEmploye'],
+                'badgenumber' => $badgeEmploye,
                 'item_code' => $kodeItem,
                 'status' => 1,
                 'last_status' => 1,
@@ -298,21 +301,20 @@ public function take_the_borrowed_item($kode) {
             'transactions_items_borrow.*', 
             'item_master_borrow.name_item',
             'item_master_borrow.divisi_id as tools_divisi_id', // Alias untuk divisi_id dari item_master_borrow
-            'employees_tb.first_name',
-            'employees_tb.last_name',
-            'employees_tb.divisi_id as employee_divisi_id', // Alias untuk divisi_id dari employees_tb
+            'employees.name',
+            'employees.divisi_id as employee_divisi_id', // Alias untuk divisi_id dari employees_tb
             'ms_divisi_item.divisi_name as tools_divisi_name', // Nama divisi dari item_master_borrow
             'ms_divisi_emp.divisi_name as employee_divisi_name', // Nama divisi dari employees_tb
             'ms_divisi_item.divisi_alias'
         )
         ->join('item_master_borrow', 'transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
-        ->join('employees_tb', 'transactions_items_borrow.nik', '=', 'employees_tb.nik')
+        ->join('employees', 'transactions_items_borrow.badgenumber', '=', 'employees.badgenumber')
         
         // Join untuk mengambil divisi dari item_master_borrow
         ->join('ms_divisi as ms_divisi_item', 'item_master_borrow.divisi_id', '=', 'ms_divisi_item.divisi_id') 
         
         // Join untuk mengambil divisi dari employees_tb
-        ->join('ms_divisi as ms_divisi_emp', 'employees_tb.divisi_id', '=', 'ms_divisi_emp.divisi_id')
+        ->join('ms_divisi as ms_divisi_emp', 'employees.divisi_id', '=', 'ms_divisi_emp.divisi_id')
         
         ->where('transactions_items_borrow.item_code', $kode)
         ->where('transactions_items_borrow.status', 1)
@@ -330,8 +332,7 @@ public function take_the_borrowed_item($kode) {
     return response()->json([
         'success' => true,
         'name_item' => $item->name_item, 
-        'first_name' => $item->first_name,
-        'last_name' => $item->last_name,
+        'name' => $item->name,
         'tools_divisi_name' => $item->tools_divisi_name, // Nama divisi dari item_master_borrow
         'employee_divisi_name' => $item->employee_divisi_name, // Nama divisi dari employees_tb
         'tools_divisi_id' => $item->tools_divisi_id, // divisi_id dari tabel item_master_borrow

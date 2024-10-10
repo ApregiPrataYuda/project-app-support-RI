@@ -736,9 +736,9 @@ public function get_item_trans_data(Request $request)  {
      $divisiID = $userData->employee->divisi->divisi_id;
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
-        $data = $this->TransactionItemModel->select('transactions_items_borrow.*','employees_tb.first_name','employees_tb.last_name','ms_divisi.divisi_name', 'item_master_borrow.name_item')
-        ->leftJoin('employees_tb','transactions_items_borrow.nik', '=', 'employees_tb.nik')
-        ->leftJoin('ms_divisi','employees_tb.divisi_id', '=', 'ms_divisi.divisi_id')
+        $data = $this->TransactionItemModel->select('transactions_items_borrow.*','employees.name','ms_divisi.divisi_name', 'item_master_borrow.name_item')
+        ->leftJoin('employees','transactions_items_borrow.badgenumber', '=', 'employees.badgenumber')
+        ->leftJoin('ms_divisi','employees.divisi_id', '=', 'ms_divisi.divisi_id')
         ->leftJoin('item_master_borrow','transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
         ->where('item_master_borrow.divisi_id', $divisiID)
         ->orderBy('transactions_items_borrow.borrow_id', 'DESC')
@@ -754,7 +754,7 @@ public function get_item_trans_data(Request $request)  {
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('name_borrow', function($row) {
-                return '<p class="text-uppercase">'.$row->first_name. ' ' . $row->last_name.'</p>' ;
+                return '<p class="text-uppercase">'.$row->name.'</p>' ;
                 })
 
             ->addColumn('status', function($row) {
