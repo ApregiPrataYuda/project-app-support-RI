@@ -150,7 +150,6 @@ Route::get('/Admin/Master-Item-Restore', [Admin::class, 'Restore_item'])->name('
 Route::get('/Admin/get-item-restore', [Admin::class, 'get_item_data_restore'])->name('get.item.restore')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::post('/Admin/restore-item/{id}', [Admin::class, 'restore_item_data'])->name('restore.item')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::delete('/Admin/delete-item-permanent/{id}', [Admin::class, 'destroy_item_permanent'])->name('delete.item.permanent')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
-
 Route::get('/Admin/get-data-nik/{kode}', [Admin::class, 'getNikByCode']);
 
 // route for admin(page item borrow transaction)

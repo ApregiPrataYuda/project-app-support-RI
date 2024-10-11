@@ -363,7 +363,7 @@ $(document).ready(function(){
                         } else {
                           Notiflix.Report.failure(
                           'Warning',
-                          'NIK, not found: ' + numberIdentityEmploye,
+                          'NIK, not found Please Contack IT',
                           'Back',
                       );
                         $('#number_identity_employe').val("").focus();
