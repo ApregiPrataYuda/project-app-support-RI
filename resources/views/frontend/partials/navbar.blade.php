@@ -14,7 +14,7 @@
 
 <li class="nav-item">
 <a href="{{ url('/')}}" class="nav-link">
-    About Us</a>
+    View Analytics</a>
 </li>
 
 <li class="nav-item">

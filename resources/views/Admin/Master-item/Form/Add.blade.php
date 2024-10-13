@@ -52,6 +52,22 @@
                                 @enderror
                             </div>
 
+                            <div class="form-group">
+                                <label class="text-capitalize">ITEM FOR SUB-Division*</label>
+                                <select name="sub_division" id="sub_division" class="form-control">
+                                <option value="">-Pilih-</option>
+                                @foreach ($subdivisi as $divs)
+                                        <option class="text-uppercase" value="{{ $divs->id_subdivision }}" 
+                                        {{ old('sub_division') == $divs->id_subdivision ? 'selected' : '' }}>
+                                            {{ $divs->subdivision_name }} 
+                                        </option>
+                                @endforeach
+                                </select>
+                                @error('sub_division')
+                                            <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                                </div>
+ 
 
                             <div class="form-group">
                                 <label for="description" class="text-capitalize">Description Item</label>
@@ -60,6 +76,8 @@
                                 <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                           
 
 
 
@@ -84,8 +102,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#divisi_id").select2({
-           placeholder: "SELECT A DIVISION",
+        $("#sub_division_id").select2({
+           placeholder: "SELECT A SUB-DIVISION",
            allowClear: true,
            theme: 'bootstrap4',
         });

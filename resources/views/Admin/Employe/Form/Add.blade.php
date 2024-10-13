@@ -127,10 +127,10 @@
                                 <label class="text-capitalize">SUB-Division*</label>
                                 <select name="street" id="street" class="form-control">
                                 <option value="">-Pilih-</option>
-                                @foreach ($divisi as $divs)
-                                        <option class="text-uppercase" value="{{ $divs->divisi_name }}" 
-                                        {{ old('street') == $divs->divisi_name ? 'selected' : '' }}>
-                                            {{ $divs->divisi_name }} 
+                                @foreach ($subdivisi as $divs)
+                                        <option class="text-uppercase" value="{{ $divs->subdivision_name }}" 
+                                        {{ old('street') == $divs->subdivision_name ? 'selected' : '' }}>
+                                            {{ $divs->subdivision_name }} 
                                         </option>
                                 @endforeach
                                 </select>

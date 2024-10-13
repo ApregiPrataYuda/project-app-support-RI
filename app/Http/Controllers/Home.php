@@ -113,9 +113,9 @@ class Home extends Controller
 // ------------------------------------------batas-------------------------------------//
 
 // start code untuk about
-   public function About()  {
+   public function Analytics()  {
     $data  = [
-        'title' => 'About US Page'
+        'title' => 'Analytics Page'
      ];
      return view('home/data/about',$data);
    }

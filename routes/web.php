@@ -47,7 +47,7 @@ Route::get('/block', function () {
 });
 
 // Route for Home
-Route::get('/', [Home::class, 'About'])->name('about');
+Route::get('/', [Home::class, 'Analytics'])->name('Analytics');
 Route::get('/Home/Form-visitor', [Home::class, 'Form_visitor'])->name('form.visitor');
 Route::post('/Home/submission-send', [Home::class, 'store_data_visit_submission'])->name('submission.store');
 

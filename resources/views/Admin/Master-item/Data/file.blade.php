@@ -41,7 +41,8 @@
                         <th style="width: 4%;">No</th>
                         <th style="width: 10%;">Code QR Item</th>
                         <th>Name Item</th>
-                        <th>Divisi</th>
+                        <th>Items Have Divisions</th>
+                        <th>Items Have Sub-divisions</th>
                         <th>Description</th>
                         <th style="width: 5%;">status</th>
                         <th style="width: 10%;">Status Item Borrow  Now</th>
@@ -73,6 +74,7 @@
               {data: 'item_code', name: 'item_code'},
               {data: 'name_item', name: 'name_item'},
               {data: 'divisi_name', name: 'divisi_name'},
+              {data: 'subdivision_name', name: 'subdivision_name'},
               {data: 'description', name: 'description'},
               {data: 'status', name: 'status', orderable: false, searchable: true},
               {data: 'status_borrows', name: 'status_borrows', orderable: false, searchable: true},

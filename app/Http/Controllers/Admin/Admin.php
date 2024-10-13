@@ -13,6 +13,7 @@ use App\Models\DivisionModel;
 use App\Models\MasterItemModel;
 use App\Models\TransactionItemModel;
 use App\Models\EmployeModel;
+use App\Models\subDivisionModel;
 use Illuminate\Support\Str;
 
 use Endroid\QrCode\Color\Color;
@@ -33,13 +34,16 @@ class Admin extends Controller
     protected $MasterItemModel;
     protected $TransactionItemModel;
     protected $EmployeModel;
-    public function __construct(EmployeModel $EmployeModel, visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel, TransactionItemModel $TransactionItemModel) {
+    protected $subDivisionModel;
+    public function __construct(EmployeModel $EmployeModel, visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel,
+     TransactionItemModel $TransactionItemModel, subDivisionModel $subDivisionModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
         $this->DivisionModel = $DivisionModel;
         $this->MasterItemModel = $MasterItemModel;
         $this->TransactionItemModel = $TransactionItemModel;
         $this->EmployeModel = $EmployeModel;
+        $this->subDivisionModel = $subDivisionModel;
     }
 
 // -----------------------------------------Batas---------------------------------------------------------//
@@ -375,8 +379,14 @@ public function Master_item() {
 
 
 public function Master_item_add_view ()  {
+
+    $userData = getUserData();
+    $divisiID = $userData->employee->divisi->divisi_id;
+    $subdivisi = $this->subDivisionModel->where('divisi_id',$divisiID)->get();
+   
     $data = [
-        'title' => 'Add Master Item Borrow'
+        'title' => 'Add Master Item Borrow',
+        'subdivisi' => $subdivisi
      ];
      return view('Admin/Master-item/Form/Add',$data);
 }
@@ -388,8 +398,9 @@ public function get_item_data(Request $request) {
     // Memanggil nama divisi
         $divisiID = $userData->employee->divisi->divisi_id;
         // Mengambil data dari model dengan join
-        $data = MasterItemModel::select('item_master_borrow.*','ms_divisi.divisi_name')
+        $data = MasterItemModel::select('item_master_borrow.*','ms_divisi.divisi_name','ms_subdivision.subdivision_name')
         ->leftJoin('ms_divisi','item_master_borrow.divisi_id', '=', 'ms_divisi.divisi_id')
+        ->leftJoin('ms_subdivision','item_master_borrow.id_subdivision', '=', 'ms_subdivision.id_subdivision')
         ->where('item_master_borrow.divisi_id',$divisiID)
         ->orderBy('item_master_borrow.item_id', 'desc')
         ->get();
@@ -504,7 +515,8 @@ public function store_item(Request $request) {
     // Memanggil  divisi
     $divisiID = $userData->employee->divisi->divisi_id;
     $validatedData = $request->validate([
-        'name_item' => 'required|max:255'
+        'name_item' => 'required|max:255',
+        'sub_division' => 'required'
     ]);
 
     // Cek apakah qr_item sudah ada
@@ -518,6 +530,7 @@ public function store_item(Request $request) {
         $Item->item_code = $ItemCode;
         $Item->name_item = ucwords($validatedData['name_item']);
         $Item->divisi_id = $divisiID;
+        $Item->id_subdivision = $validatedData['sub_division'];
         $Item->description = $request->input('description');
         $Item->status = 1;
         $Item->status_borrows = 0;
@@ -584,10 +597,14 @@ public function generate_qr_item($code_item) {
 public function Master_item_edit_view ($id) {
     $iditem = Crypt::decrypt($id);
     $getdataitem = $this->MasterItemModel->findOrFail($iditem);
+    $userData = getUserData();
+    $divisiID = $userData->employee->divisi->divisi_id;
+    $subdivisi = $this->subDivisionModel->where('divisi_id',$divisiID)->get();
     $data = [
         'title' => 'Edit Master Item Borrow',
         'basicId' => $id,
-        'item' => $getdataitem
+        'item' => $getdataitem,
+        'subdivisi' => $subdivisi
      ];
      return view('Admin/Master-item/Form/Edit',$data);
 }
@@ -598,12 +615,14 @@ public function update_item(Request $request, $id) {
     $iditem = Crypt::decrypt($id);
     // Validasi input
     $validatedData = $request->validate([
-        'name_item' => 'required|max:255'
+        'name_item' => 'required|max:255', 
+        'sub_division' => 'required'
     ]);
     // Temukan model yang sesuai
     $Item = $this->MasterItemModel::findOrFail($iditem);
     // Perbarui data
     $Item->name_item = ucwords($validatedData['name_item']);
+    $Item->id_subdivision = $validatedData['sub_division'];
     $Item->description = $request->input('description');
     $Item->status = $request->input('status');
     $Item->save();
@@ -736,10 +755,11 @@ public function get_item_trans_data(Request $request)  {
      $divisiID = $userData->employee->divisi->divisi_id;
     if ($request->ajax()) {
         // Mengambil data dari model dengan join
-        $data = $this->TransactionItemModel->select('transactions_items_borrow.*','employees.name','ms_divisi.divisi_name', 'item_master_borrow.name_item')
+        $data = $this->TransactionItemModel->select('transactions_items_borrow.*','employees.name','ms_divisi.divisi_name', 'item_master_borrow.name_item','ms_subdivision.subdivision_name')
         ->leftJoin('employees','transactions_items_borrow.badgenumber', '=', 'employees.badgenumber')
         ->leftJoin('ms_divisi','employees.divisi_id', '=', 'ms_divisi.divisi_id')
         ->leftJoin('item_master_borrow','transactions_items_borrow.item_code', '=', 'item_master_borrow.item_code')
+        ->leftJoin('ms_subdivision','item_master_borrow.id_subdivision','=','ms_subdivision.id_subdivision')
         ->where('item_master_borrow.divisi_id', $divisiID)
         ->orderBy('transactions_items_borrow.borrow_id', 'DESC')
         ->get();
@@ -840,10 +860,14 @@ public function get_data_employe(Request $request)  {
 
 
 public function add_employe() {
-    $divisi = $this->DivisionModel->all();
+    // $divisi = $this->DivisionModel->all();
+    $userData = getUserData();
+    $divisiID = $userData->employee->divisi->divisi_id;
+    $subdivisi = $this->subDivisionModel->where('divisi_id',$divisiID)->get();
+   
     $data = [
         'title' => 'Employe Form Add',
-        'divisi' => $divisi
+        'subdivisi' => $subdivisi
      ];
      return view('Admin/Employe/Form/Add',$data);
 } 
@@ -960,13 +984,15 @@ public function store_employe(Request $request)  {
 
         public function view_data_employe($id)  {
 
-            $divisi = $this->DivisionModel->all();
+            $userData = getUserData();
+            $divisiID = $userData->employee->divisi->divisi_id;
+            $subdivisi = $this->subDivisionModel->where('divisi_id',$divisiID)->get();
             $idemp = Crypt::decrypt($id);
             $getdataemp = $this->EmployeModel->findOrFail($idemp);
            
             $data = [
                 'title' => 'Employe Form Edit',
-                'divisi' => $divisi,
+                'subdivisi' => $subdivisi,
                 'emp' => $getdataemp,
                 'basicid' => $id
              ];

@@ -42,6 +42,7 @@
                         <th>Division</th>
                         <th>Code Item</th>
                         <th>Name Item</th>
+                        <th>item have Division</th>
                         <th>Status Item Borrow Now</th>
                         <th>Last Status</th>
                         <th>Return Date</th>
@@ -71,6 +72,7 @@
               {data: 'divisi_name', name: 'divisi_name'},
               {data: 'item_code', name: 'item_code'},
               {data: 'name_item', name: 'name_item'},
+              {data: 'subdivision_name', name: 'subdivision_name'},
               {data: 'status', name: 'status', orderable: false, searchable: true},
               {data: 'last_status', name: 'last_status', orderable: false, searchable: true},
               {data: 'return_date', name: 'return_date', orderable: false, searchable: true},
