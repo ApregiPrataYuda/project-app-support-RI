@@ -774,7 +774,7 @@ public function get_item_trans_data(Request $request)  {
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('name_borrow', function($row) {
-                return '<p class="text-uppercase">'.$row->name.'</p>' ;
+                return '<small class="text-uppercase font-weight-bolder">'.$row->name.'</small> - <small class="text-uppercase font-weight-bolder">'.$row->divisi_name.'</small>' ; 
                 })
 
             ->addColumn('status', function($row) {

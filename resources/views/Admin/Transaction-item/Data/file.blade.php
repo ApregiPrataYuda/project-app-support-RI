@@ -38,8 +38,7 @@
   <tr>
                         <th style="width: 4%;">No</th>
                         <th>Date Borrow</th>
-                        <th>Name Borrow</th>
-                        <th>Division</th>
+                        <th>Name Borrow & Division</th>
                         <th>Code Item</th>
                         <th>Name Item</th>
                         <th>item have Division</th>
@@ -49,7 +48,6 @@
   </tr>
   </thead>
   <tbody>
-
   </tbody>
 </table>
         </div>
@@ -69,7 +67,6 @@
               {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
               {data: 'date_borrow', name: 'date_borrow', orderable: false, searchable: true},
               {data: 'name_borrow', name: 'name_borrow'},
-              {data: 'divisi_name', name: 'divisi_name'},
               {data: 'item_code', name: 'item_code'},
               {data: 'name_item', name: 'name_item'},
               {data: 'subdivision_name', name: 'subdivision_name'},
