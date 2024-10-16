@@ -1031,4 +1031,75 @@ public function store_employe(Request $request)  {
 
 // -----------------------------------------Batas---------------------------------------------------------//
 
+
+// start code for annoucement
+ public function Announcement_management() {
+    $data = [
+        'title' => 'Announcement Data List',
+     ];
+     return view('Admin/Announcement/Data/file',$data);
+ }
+
+
+ public function add_announcement ()  {
+    $divisi = $this->DivisionModel->all();
+    $data = [
+        'title' => 'Form Add Announcement',
+        'divisi' => $divisi
+     ];
+     return view('Admin/Announcement/Form/Add',$data);
+ }
+
+// PERSIAPAN STORE DATA
+//  public function store(Request $request)
+//     {
+//         // Validasi input
+//         $request->validate([
+//             'title' => 'required|string|max:255',
+//             'description' => 'nullable|string',
+//             'file' => 'required|mimes:pdf|max:2048',
+//             'status' => 'required|in:public,private',
+//             'divisions' => 'nullable|array', // Hanya wajib jika status 'private'
+//         ]);
+
+//         // Simpan file ke storage
+//         $filePath = $request->file('file')->store('public/announcements');
+
+//         // Buat pengumuman baru
+//         $announcement = new Announcement();
+//         $announcement->title = $request->title;
+//         $announcement->description = $request->description;
+//         $announcement->file_path = $filePath;
+//         $announcement->status = $request->status;
+//         $announcement->divisi_created = auth()->user()->division; // Asumsikan user terautentikasi memiliki 'division'
+//         $announcement->user_created = auth()->id();
+//         $announcement->save();
+
+//         // Jika status 'private', simpan divisi-divisi yang dipilih
+//         if ($request->status == 'private' && $request->divisions) {
+//             foreach ($request->divisions as $division) {
+//                 $announcementDivision = new AnnouncementDivision();
+//                 $announcementDivision->announcement_id = $announcement->id;
+//                 $announcementDivision->division = $division;
+//                 $announcementDivision->save();
+//             }
+//         }
+
+//         return redirect()->back()->with('success', 'Announcement created successfully!');
+//     }
+
+// Jika Ingin Menggunakan division_id (dengan Tabel divisions):
+// Jika Anda menggunakan division_id dari tabel divisions seperti yang sudah disarankan sebelumnya, pastikan di controller, Anda menyimpan division_id alih-alih division. Contoh:
+
+// php
+// Salin kode
+// if ($request->status == 'private' && $request->divisions) {
+//     foreach ($request->divisions as $divisionId) {
+//         $announcementDivision = new AnnouncementDivision();
+//         $announcementDivision->announcement_id = $announcement->id;
+//         $announcementDivision->division_id = $divisionId; // Simpan division_id dari tabel divisions
+//         $announcementDivision->save();
+//     }
+// }
+// end code for annoucement
 }

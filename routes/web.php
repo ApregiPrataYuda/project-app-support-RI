@@ -185,8 +185,16 @@ Route::post('/Admin/store-employe', [Admin::class,'store_employe'])->name('store
 Route::delete('/Admin/delete-employe/{id}', [Admin::class, 'destroy_employe'])->name('delete.employe')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])->name('employe.view.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Admin/update-employe/{id}', [Admin::class, 'update_employe'])->name('update.employe');
+
+Route::get('/Admin/Announcement', [Admin::class, 'Announcement_management'])->name('Admin.Announcement.List')->middleware('check.session');
+Route::get('/Admin/Add-Announcement', [Admin::class,'add_announcement'])->name('add.announcement')->middleware('check.session');
+
+
+
 // route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
+
+
 
 // route for logout
 Route::get('/Others/Logout', [Others::class, 'logout'])->name('logout')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
