@@ -14,7 +14,10 @@ use App\Models\MasterItemModel;
 use App\Models\TransactionItemModel;
 use App\Models\EmployeModel;
 use App\Models\subDivisionModel;
+use App\Models\AnnouncementModel;
+use App\Models\AnnouncementDivisionModel;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
@@ -35,8 +38,10 @@ class Admin extends Controller
     protected $TransactionItemModel;
     protected $EmployeModel;
     protected $subDivisionModel;
+    protected $AnnouncementModel;
+    protected $AnnouncementDivisionModel;
     public function __construct(EmployeModel $EmployeModel, visitorModel $visitorModel, PaketModel $PaketModel, DivisionModel $DivisionModel, MasterItemModel $MasterItemModel,
-     TransactionItemModel $TransactionItemModel, subDivisionModel $subDivisionModel) {
+     TransactionItemModel $TransactionItemModel, subDivisionModel $subDivisionModel, AnnouncementModel $AnnouncementModel, AnnouncementDivisionModel $AnnouncementDivisionModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
         $this->DivisionModel = $DivisionModel;
@@ -44,6 +49,8 @@ class Admin extends Controller
         $this->TransactionItemModel = $TransactionItemModel;
         $this->EmployeModel = $EmployeModel;
         $this->subDivisionModel = $subDivisionModel;
+        $this->AnnouncementModel = $AnnouncementModel;
+        $this->AnnouncementDivisionModel = $AnnouncementDivisionModel;
     }
 
 // -----------------------------------------Batas---------------------------------------------------------//
@@ -1051,55 +1058,53 @@ public function store_employe(Request $request)  {
  }
 
 // PERSIAPAN STORE DATA
-//  public function store(Request $request)
-//     {
-//         // Validasi input
-//         $request->validate([
-//             'title' => 'required|string|max:255',
-//             'description' => 'nullable|string',
-//             'file' => 'required|mimes:pdf|max:2048',
-//             'status' => 'required|in:public,private',
-//             'divisions' => 'nullable|array', // Hanya wajib jika status 'private'
-//         ]);
+ public function store_announce(Request $request)
+    {
+        $today = date('Y-m-d');
 
-//         // Simpan file ke storage
-//         $filePath = $request->file('file')->store('public/announcements');
 
-//         // Buat pengumuman baru
-//         $announcement = new Announcement();
-//         $announcement->title = $request->title;
-//         $announcement->description = $request->description;
-//         $announcement->file_path = $filePath;
-//         $announcement->status = $request->status;
-//         $announcement->divisi_created = auth()->user()->division; // Asumsikan user terautentikasi memiliki 'division'
-//         $announcement->user_created = auth()->id();
-//         $announcement->save();
+        
 
-//         // Jika status 'private', simpan divisi-divisi yang dipilih
-//         if ($request->status == 'private' && $request->divisions) {
-//             foreach ($request->divisions as $division) {
-//                 $announcementDivision = new AnnouncementDivision();
-//                 $announcementDivision->announcement_id = $announcement->id;
-//                 $announcementDivision->division = $division;
-//                 $announcementDivision->save();
-//             }
-//         }
+        $userData = getUserData();
+        $divisiID = $userData->employee->divisi->divisi_id;
+        $getIdUser = $userData->user_id;
+        // Validasi input
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'file' => 'required|mimes:pdf|max:2048',
+            'status' => 'required|in:public,private',
+            'divisions' => 'nullable|array', // Hanya wajib jika status 'private'
+        ]);
 
-//         return redirect()->back()->with('success', 'Announcement created successfully!');
-//     }
+      
+        // Simpan file ke storage
+        $filePath = $request->file('file')->store('public/announcements');
+        $fileName = basename($filePath); 
+        // Buat pengumuman baru
+        $announcement = new AnnouncementModel();
+        $announcement->title = $request->title;
+        $announcement->description = $request->description;
+        $announcement->date_created = $today;
+        $announcement->file_name = $fileName;
+        $announcement->file_path = $filePath;
+        $announcement->status = $request->status;
+        $announcement->divisi_created_id = $divisiID; 
+        $announcement->user_created_id = $getIdUser;
+        $announcement->save();
 
-// Jika Ingin Menggunakan division_id (dengan Tabel divisions):
-// Jika Anda menggunakan division_id dari tabel divisions seperti yang sudah disarankan sebelumnya, pastikan di controller, Anda menyimpan division_id alih-alih division. Contoh:
+        // Jika status 'private', simpan divisi-divisi yang dipilih
+        if ($request->status == 'private' && $request->divisions) {
+            foreach ($request->divisions as $division) {
+                $announcementDivision = new AnnouncementDivisionModel();
+                $announcementDivision->announcement_id = $announcement->id_announcements;
+                $announcementDivision->division_id = $division;
+                $announcementDivision->save();
+            }
+        }
 
-// php
-// Salin kode
-// if ($request->status == 'private' && $request->divisions) {
-//     foreach ($request->divisions as $divisionId) {
-//         $announcementDivision = new AnnouncementDivision();
-//         $announcementDivision->announcement_id = $announcement->id;
-//         $announcementDivision->division_id = $divisionId; // Simpan division_id dari tabel divisions
-//         $announcementDivision->save();
-//     }
-// }
-// end code for annoucement
+        return redirect()->route('Announcement.List')->with('success', 'successfully Created Announcements!');
+    }
+
+
 }

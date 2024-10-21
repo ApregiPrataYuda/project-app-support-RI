@@ -11,7 +11,10 @@ use App\Models\MasterItemModel;
 use App\Models\EmployeModel;
 use App\Models\DivisionModel;
 use App\Models\TransactionItemModel;
+use App\Models\AnnouncementModel;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+
 
 
 class Home extends Controller
@@ -20,11 +23,13 @@ class Home extends Controller
     protected $PaketModel;
     protected $EmployeModel;
     protected $DivisionModel;
-    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel , EmployeModel $EmployeModel, DivisionModel $DivisionModel) {
+    protected $AnnouncementModel;
+    public function __construct(visitorModel $visitorModel, PaketModel $PaketModel , EmployeModel $EmployeModel, DivisionModel $DivisionModel, AnnouncementModel $AnnouncementModel) {
         $this->visitorModel = $visitorModel;
         $this->PaketModel = $PaketModel;
         $this->EmployeModel = $EmployeModel;
         $this->DivisionModel = $DivisionModel;
+        $this->AnnouncementModel = $AnnouncementModel;
     }
 
 // ------------------------------------------batas-------------------------------------//
@@ -199,14 +204,7 @@ public function ambil_paket(Request $request) {
 // ------------------------------------------batas-------------------------------------//
 
 
-// start code untuk Announcement
-public function Announcement() {
-    $data  = [
-        'title' => 'Announcement'
-     ];
-     return view('home/data/announcement',$data);
-}
-// start code untuk Announcement
+
 
 
 
@@ -385,4 +383,90 @@ public function take_the_borrowed_item($kode) {
     
     // end code untuk kembalikan  item
 
+
+
+// start code untuk Announcement
+public function Announcement() {
+    $data  = [
+        'title' => 'Announcement'
+     ];
+     return view('home/data/announcement',$data);
+}
+
+  function list_announcement(Request $request)  {
+    if ($request->ajax()) {
+        // Mengambil data dari model dengan join
+        $data = $this->AnnouncementModel->select('announcements.*','ms_divisi.divisi_name','ms_user.username','employees.name')
+        ->join('ms_divisi','announcements.divisi_created_id', '=', 'ms_divisi.divisi_id')
+        ->join('ms_user','announcements.user_created_id', '=', 'ms_user.user_id')
+        ->join('employees','ms_user.id_employee', '=', 'employees.id_employee')
+        ->where('announcements.status', 'public')
+        ->orderBy('announcements.id_announcements', 'DESC')
+        ->get();
+       
+    
+        // Cek apakah ada parameter pencarian
+        if ($request->has('search') && !empty($request->input('search')['value'])) {
+            $searchTerm = $request->input('search')['value'];
+            $data->where('title', 'LIKE', "%{$searchTerm}%");
+        }
+        // Menyusun DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('status', function($row) {
+                return '<span class="badge badge-primary">'.$row->status.'</span>';
+            })
+
+            ->addColumn('title', function($row){
+                return ' <textarea class="form-control" cols="70" rows="2" readonly>'.$row->title.'</textarea>';
+               })
+
+            ->addColumn('date_created', function($row) {
+                return format_date_indonesia_old($row->date_created);
+            })
+
+            ->addColumn('description', function($row){
+             return ' <textarea class="form-control" cols="100" rows="2" readonly>'.$row->description.'</textarea>';
+            })
+
+            ->addColumn('file_name', function($row){
+                $btn = '<a href="#" class="seeDataFile" id="'.$row->id_announcements.'">
+                        <i class="fa fa-file-pdf text-danger"></i> <span class="text-primary">preview file</span></i> 
+                        </a>';
+                return $btn;
+            })
+            ->rawColumns(['status','title','description','file_name'])
+            ->make(true);
+    }
+  }
+    
+
+
+  public function seeFileAnnouncement(Request $request)
+{
+    // Ambil ID dari request
+    $id = $request->input('id');
+    
+    
+    // Ambil data file berdasarkan ID (sesuaikan dengan model yang Anda gunakan)
+    $announcement = AnnouncementModel::find($id);
+ 
+    // Jika file ditemukan, buat HTML untuk menampilkan file PDF
+    if ($announcement && $announcement->file_name) {
+        $fileUrl = route('file.show', ['filename' => $announcement->file_name]);
+
+ // Asumsikan file disimpan di Laravel Storage
+        //  dd($fileUrl);
+        $html = '
+        <object type="application/pdf" data="' . $fileUrl . '" width="1100" height="600"></object>
+        ';
+
+        return response($html);
+    } else {
+        // Jika file tidak ditemukan
+        return response('File not found.', 404);
+    }
+}
+
+    // end code announcement
 }

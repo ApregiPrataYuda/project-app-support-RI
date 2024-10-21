@@ -41,6 +41,19 @@ Route::get('/avatar/{filename}', function ($filename) {
 })->name('avatar.show');
 
 
+Route::get('/app/public/announcements/{filename}', function ($filename) {
+    $path = storage_path('app/public/announcements/' . $filename);
+    if (!File::exists($path)) {
+        abort(404);
+    }
+    $file = File::get($path);
+    $type = File::mimeType($path);
+    $response = Response::make($file, 200);
+    $response->header("Content-Type", $type);
+    return $response;
+})->name('file.show');
+
+
 //Route for not access
 Route::get('/block', function () {
     return view('Err/block');
@@ -53,7 +66,11 @@ Route::post('/Home/submission-send', [Home::class, 'store_data_visit_submission'
 
 Route::get('/Home/Management-Borrow-Item', [Home::class, 'view_borrow_management'])->name('borrow.management');
 
+// route for announcement
 Route::get('/Home/Announcement', [Home::class, 'Announcement'])->name('Announcement.index');
+Route::get('/Home/List-Announcement', [Home::class, 'list_announcement'])->name('lists.announcement');
+Route::post('/Home/see-Announcement-data-files', [Home::class, 'seeFileAnnouncement'])->name('get.file.announcement');
+
 
 Route::get('/Home/Check-paket', [Home::class, 'check_paket'])->name('check.paket');
 Route::get('/Home/List-paket', [Home::class, 'list_pakets'])->name('lists.paket');
@@ -67,6 +84,10 @@ Route::post('/save-borrow', [Home::class, 'storeBorrow']);
 //route for return item borrow
 Route::get('/Home-return-item/{kode}', [Home::class, 'take_the_borrowed_item']); 
 Route::post('/Return-item-borrow', [Home::class, 'ReturnBorrow']);
+
+
+
+
 
 //route for login Auth
 Route::get('/Login', [Auth::class, 'views'])->name('login');
@@ -186,9 +207,9 @@ Route::delete('/Admin/delete-employe/{id}', [Admin::class, 'destroy_employe'])->
 Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])->name('employe.view.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Admin/update-employe/{id}', [Admin::class, 'update_employe'])->name('update.employe');
 
-Route::get('/Admin/Announcement', [Admin::class, 'Announcement_management'])->name('Admin.Announcement.List')->middleware('check.session');
+Route::get('/Admin/Announcement', [Admin::class, 'Announcement_management'])->name('Announcement.List')->middleware('check.session');
 Route::get('/Admin/Add-Announcement', [Admin::class,'add_announcement'])->name('add.announcement')->middleware('check.session');
-
+Route::post('/Admin/store-Annouce', [Admin::class,'store_announce'])->name('store.announce');
 
 
 // route for user

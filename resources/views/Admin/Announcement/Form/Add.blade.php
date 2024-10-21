@@ -42,7 +42,7 @@
                 <!-- <div class="card"> -->
                     
                     <div class="card-body">
-                        <form action="{{route('store.item.master')}}" method="post" enctype="multipart/form-data">
+                        <form action="{{route('store.announce')}}" method="post" enctype="multipart/form-data">
                         @csrf
                             <div class="form-group">
                                 <label for="title" class="text-capitalize">Title Announcement*</label>
@@ -53,41 +53,17 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="description" class="text-capitalize">Description Announcement*</label>
-                                <input type="text" class="form-control" id="description" name="description" value="{{old('description')}}" placeholder="Enter description">
-                                @error('description')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="form-group">
-                                <label for="file" class="text-capitalize">Upload File (PDF)*</label>
-                                <input type="file" class="form-control" id="file" name="file" value="{{old('file')}}">
-                                @error('file')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                           
-                            <div class="form-group">
                                 <label for="status" class="text-capitalize">Status:</label>
                                 <select name="status" id="status" class="form-control" required>
                                     <option value="">SELECT</option>
                                     <option value="public">Public</option>
                                     <option value="private">Private</option>
                                 </select>
+                                @error('status')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            {{-- <div class="form-group" id="divisions-group" style="display: none;">
-                                <label for="divisions">Select Divisions (Only for Private):</label>
-                                <select name="divisions[]" id="divisions" class="form-control" multiple>
-                                    <option value="IT">IT</option>
-                                    <option value="Administration">Administration</option>
-                                    <option value="Purchasing">Purchasing</option>
-                                    <option value="Accounting">Accounting</option>
-                                    <!-- Tambahkan divisi lain sesuai kebutuhan -->
-                                </select>
-                            </div> --}}
 
                             <div class="form-group" id="divisions-group" style="display: none;">
                                 <label for="divisions">Select Divisions (Only for Private):</label>
@@ -101,9 +77,64 @@
                                     </select> 
                             </div>
 
+                            <div class="form-group">
+                                <label for="description" class="text-capitalize">Description Announcement*</label>
+                                <textarea class="form-control" name="description" id="description" cols="10" rows="3">{{old('description')}}</textarea>
+                                @error('description')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- <div class="form-group">
+                                <label for="file" class="text-capitalize">Upload File (PDF)*</label>
+                                <input type="file" class="form-control" id="file" name="file" value="{{old('file')}}" accept="application/pdf">
+                                @error('file')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
+                            
+                            <!-- Tempat untuk menampilkan preview PDF -->
+                            {{-- <label for="preview" class="text-capitalize">PDF Preview Here:</label>
+                            <div id="pdf-preview" class="mt-3" style="display: none;"> --}}
+                                {{-- <label for="preview" class="text-capitalize">PDF Preview:</label> --}}
+                                {{-- <embed id="preview" src="" type="application/pdf" width="100%" height="500px" />
+                            </div> --}}
+
+                            <div class="form-group">
+                                <label for="file" class="text-capitalize font-weight-bold">Upload File (PDF)*</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="file" name="file" value="{{ old('file') }}" accept="application/pdf">
+                                    <label class="custom-file-label" for="file">Choose PDF file</label>
+                                </div>
+                                @error('file')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <!-- Tempat untuk menampilkan preview PDF -->
+                            <div id="pdf-preview" class="mt-4" style="display: none;">
+                                <label for="preview" class="text-capitalize font-weight-bold">PDF Preview:</label>
+                                <div class="border p-3 rounded" style="background-color: #f8f9fa;">
+                                    <embed id="preview" src="" type="application/pdf" width="100%" height="500px" class="rounded" />
+                                </div>
+                            </div>
+                            
+
                            
-                            <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="fa fa-save"></i> Save</button>
-                            <button type="reset" class="btn btn-outline-warning btn-sm"><i class="fa fa-undo"></i> Reset</button>
+                        
+                            <div class="row mt-4 justify-content-end">
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="reset" class="btn btn-outline-warning btn-sm">
+                                        <i class="fa fa-undo"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                            
                         </form>
                     </div>
                 <!-- </div> -->
@@ -113,9 +144,9 @@
 </div>
 
 
-<!-- <div class="card-footer">
+<div class="card-footer">
 &copy; <?= date('Y') ?> Developer BY Apregi
-</div> -->
+</div> 
 </div>
         <!-- /.card -->
   </section>
@@ -159,6 +190,29 @@
             //    dropdownParent: $('#modalloan')
     });
    });
+
+   $(document).ready(function() {
+    $('#file').on('change', function(e) {
+        var file = e.target.files[0];
+
+        // Validasi jika file yang dipilih bukan PDF
+        if (file && file.type === 'application/pdf') {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                // Tampilkan PDF preview di elemen <embed>
+                $('#preview').attr('src', e.target.result);
+                $('#pdf-preview').show();
+            };
+
+            reader.readAsDataURL(file); // Membaca file sebagai URL Data
+        } else {
+            $('#pdf-preview').hide(); // Sembunyikan preview jika bukan PDF
+            alert("Please upload a valid PDF file.");
+        }
+    });
+});
+
 </script>
 
 
