@@ -208,6 +208,7 @@ Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])
 Route::put('/Admin/update-employe/{id}', [Admin::class, 'update_employe'])->name('update.employe');
 
 Route::get('/Admin/Announcement', [Admin::class, 'Announcement_management'])->name('Announcement.List')->middleware('check.session');
+Route::get('Admin/get-Announcement-your-created', [Admin::class, 'get_data_announcement'])->name('geting.Announcement.your.req')->middleware('check.session');
 Route::get('/Admin/Add-Announcement', [Admin::class,'add_announcement'])->name('add.announcement')->middleware('check.session');
 Route::post('/Admin/store-Annouce', [Admin::class,'store_announce'])->name('store.announce');
 

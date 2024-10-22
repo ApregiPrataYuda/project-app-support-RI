@@ -1048,6 +1048,12 @@ public function store_employe(Request $request)  {
  }
 
 
+//  code tampilkan data yang di create berdasarkan divisi
+
+
+
+
+
  public function add_announcement ()  {
     $divisi = $this->DivisionModel->all();
     $data = [
@@ -1061,10 +1067,6 @@ public function store_employe(Request $request)  {
  public function store_announce(Request $request)
     {
         $today = date('Y-m-d');
-
-
-        
-
         $userData = getUserData();
         $divisiID = $userData->employee->divisi->divisi_id;
         $getIdUser = $userData->user_id;
@@ -1102,9 +1104,46 @@ public function store_employe(Request $request)  {
                 $announcementDivision->save();
             }
         }
-
         return redirect()->route('Announcement.List')->with('success', 'successfully Created Announcements!');
     }
 
 
+    public function get_data_announcement(Request $request) {
+          //get seesion
+     $userData = getUserData();
+     // Memanggil  divisi
+     $divisiID = $userData->employee->divisi->divisi_id;
+    if ($request->ajax()) {
+        // Mengambil data dari model dengan join
+        $data = $this->AnnouncementModel->select('*')
+        ->orderBy('id_announcements', 'DESC')
+        ->get();
+    
+        // Cek apakah ada parameter pencarian
+        if ($request->has('search') && !empty($request->input('search')['value'])) {
+            $searchTerm = $request->input('search')['value'];
+            // Pastikan kolom fullname ada di ms_user
+            $data->where('title', 'LIKE', "%{$searchTerm}%");
+        }
+    
+        // Menyusun DataTables
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                    // $editUrl = route('employe.view.data', Crypt::encrypt($row->id_employee));
+                    $btn = '<a href="" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
+                    $btn .= '<form action="" method="POST" style="display:inline;" id="delete-form-employe-' . $row->id_announcements . '">
+                    ' . csrf_field() . '
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="button" onclick="confirmDelete(' . $row->id_announcements . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
+                    </form>';
+                    return $btn;
+                
+            })
+            ->rawColumns(['status','action'])
+            ->make(true);
+    }
+
+
+}
 }

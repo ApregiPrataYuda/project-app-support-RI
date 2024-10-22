@@ -41,7 +41,7 @@
             </div>
           </div>
           <div class="card-body">
-            <table class="table table-bordered" id="itemBorrowTableLeft">
+            <table class="table table-bordered" id="viewDataYourCreated">
               <thead>
                 <tr>
                   <th style="width: 4%;">No</th>
@@ -99,6 +99,50 @@
       </div>
     </div>
   </section>
+  
+
+ <script type="text/javascript">
+    $(document).ready(function() {
+      var table = $('#viewDataYourCreated').DataTable({
+          processing: true,
+          serverSide: true,
+          ajax: {
+              url: "{{ route('geting.Announcement.your.req') }}",
+              type: 'GET',
+          },
+          columns: [
+              {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+              {data: 'date_created', name: 'date_created'},
+              {data: 'title', name: 'title'},
+              {data: 'status', name: 'status'},
+              {data: 'divisi_created_id', name: 'divisi_created_id'},
+              {data: 'user_created_id', name: 'user_created_id'},
+              {data: 'description', name: 'description'},
+              {data: 'file_name', name: 'file_name'},
+              {data: 'action', name: 'action', orderable: false, searchable: true},
+          ],
+          responsive: true,
+          autoWidth: false,
+          language: {
+              processing: "Loading Data...",
+              search: "Search:",
+              lengthMenu: "Show _MENU_ entries",
+              info: "Showing _START_ to _END_ of _TOTAL_ entries",
+              infoEmpty: "No entries to show",
+              infoFiltered: "(filtered from _MAX_ total entries)",
+              paginate: {
+                  first: "First",
+                  last: "Last",
+                  next: "Next",
+                  previous: "Previous"
+              },
+              zeroRecords: "No matching records found"
+          }
+      });
+    });
+
+    
+  </script>
   
 
 @endsection
