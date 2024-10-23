@@ -447,7 +447,6 @@ public function Announcement() {
     // Ambil ID dari request
     $id = $request->input('id');
     
-    
     // Ambil data file berdasarkan ID (sesuaikan dengan model yang Anda gunakan)
     $announcement = AnnouncementModel::find($id);
  

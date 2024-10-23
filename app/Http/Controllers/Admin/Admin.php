@@ -1108,42 +1108,106 @@ public function store_employe(Request $request)  {
     }
 
 
-    public function get_data_announcement(Request $request) {
-          //get seesion
-     $userData = getUserData();
-     // Memanggil  divisi
-     $divisiID = $userData->employee->divisi->divisi_id;
+    //code untuk ambil data announcement yang di buat user
+public function get_data_announcement(Request $request) {
+    $userData = getUserData();
+    $divisiID = $userData->employee->divisi->divisi_id;
+
     if ($request->ajax()) {
-        // Mengambil data dari model dengan join
-        $data = $this->AnnouncementModel->select('*')
-        ->orderBy('id_announcements', 'DESC')
-        ->get();
-    
-        // Cek apakah ada parameter pencarian
+        $data = $this->AnnouncementModel->select('announcements.*', 
+            'created_divisi.divisi_name as name_divisi_created', 
+            'ms_user.username', 
+            'employees.name', 
+            'destination_divisi.divisi_name as name_divisi_tujuan') // Pastikan menggunakan alias
+            ->leftjoin('announcement_divisions', 'announcements.id_announcements', '=', 'announcement_divisions.announcement_id')
+            ->leftjoin('ms_divisi as created_divisi', 'announcements.divisi_created_id', '=', 'created_divisi.divisi_id')
+            ->leftjoin('ms_user', 'announcements.user_created_id', '=', 'ms_user.user_id')
+            ->leftjoin('employees', 'ms_user.id_employee', '=', 'employees.id_employee')
+            ->leftjoin('ms_divisi as destination_divisi', 'announcement_divisions.division_id', '=', 'destination_divisi.divisi_id') // Pastikan alias digunakan
+            ->where('announcements.divisi_created_id', $divisiID)
+            ->orderBy('announcements.id_announcements', 'DESC')
+            ->get();
+
+        // Cek parameter pencarian
         if ($request->has('search') && !empty($request->input('search')['value'])) {
             $searchTerm = $request->input('search')['value'];
-            // Pastikan kolom fullname ada di ms_user
             $data->where('title', 'LIKE', "%{$searchTerm}%");
         }
-    
+
         // Menyusun DataTables
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function($row){
-                    // $editUrl = route('employe.view.data', Crypt::encrypt($row->id_employee));
-                    $btn = '<a href="" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
-                    $btn .= '<form action="" method="POST" style="display:inline;" id="delete-form-employe-' . $row->id_announcements . '">
-                    ' . csrf_field() . '
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="button" onclick="confirmDelete(' . $row->id_announcements . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
-                    </form>';
-                    return $btn;
-                
+            ->addColumn('date_created', function($row) {
+                return format_date_indonesia_old($row->date_created);
             })
-            ->rawColumns(['status','action'])
+           
+            ->addColumn('description', function($row) {
+                return '<textarea rows="3" cols="50" class="form-control" readonly>'.$row->description.'</textarea>';
+            })
+            ->addColumn('divisi_created', function($row) {
+                return $row->name_divisi_created; // Menampilkan nama divisi yang dibuat
+            })
+            ->addColumn('divisi_tujuan', function($row) {
+                return $row->name_divisi_tujuan; // Menampilkan nama divisi tujuan
+            })
+            ->addColumn('file_name', function($row) {
+                return '<a href="#" class="seeDataFile" id="'.$row->id_announcements.'">
+                        <i class="fa fa-file-pdf text-danger"></i> <span class="text-primary">Preview</span></a>';
+            })
+            ->addColumn('action', function($row) {
+                $btn = '<a href="" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
+                $btn .= '<form action="" method="POST" style="display:inline;" id="delete-form-employe-' . $row->id_announcements . '">
+                ' . csrf_field() . '
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="button" onclick="confirmDelete(' . $row->id_announcements . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
+                </form>';
+                return $btn;
+            })
+            ->rawColumns(['description', 'file_name', 'action'])
             ->make(true);
     }
+}
 
 
+
+
+
+public function retrieve_data_announcement_destined_for_your_division(Request $request) {
+           //get seesion
+           $userData = getUserData();
+           // Memanggil  divisi
+           $divisiID = $userData->employee->divisi->divisi_id;
+          if ($request->ajax()) {
+              // Mengambil data dari model dengan join
+              $data = $this->AnnouncementModel->select('announcements.*','ms_divisi.divisi_name','ms_user.username','employees.name')
+              ->join('ms_divisi','announcements.divisi_created_id', '=', 'ms_divisi.divisi_id')
+              ->join('announcement_divisions', 'announcements.id_announcements' , '=' ,'announcement_divisions.announcement_id')
+              ->join('ms_user','announcements.user_created_id', '=', 'ms_user.user_id')
+              ->join('employees','ms_user.id_employee', '=', 'employees.id_employee')
+              ->where('announcements.status', 'private')
+              ->where('announcement_divisions.division_id', $divisiID)
+              ->orderBy('announcements.id_announcements', 'DESC')
+              ->get();
+              // Cek apakah ada parameter pencarian
+              if ($request->has('search') && !empty($request->input('search')['value'])) {
+                  $searchTerm = $request->input('search')['value'];
+                  // Pastikan kolom fullname ada di ms_user
+                  $data->where('title', 'LIKE', "%{$searchTerm}%");
+              }
+              // Menyusun DataTables
+              return DataTables::of($data)
+                  ->addIndexColumn()
+                  ->addColumn('description', function($row) {
+                    return '<textarea rows="3" cols="50" class="form-control" readonly>'.$row->description.'</textarea>';
+                })
+                  ->addColumn('file_name', function($row){
+                      $btn = '<a href="#" class="seeDataFile" id="'.$row->id_announcements.'">
+                              <i class="fa fa-file-pdf text-danger"></i> <span class="text-primary">See File</span></i> 
+                              </a>';
+                      return $btn;
+                  })
+                  ->rawColumns(['description','file_name','action'])
+                  ->make(true);
+}
 }
 }

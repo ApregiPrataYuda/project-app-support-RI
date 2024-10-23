@@ -211,7 +211,7 @@ Route::get('/Admin/Announcement', [Admin::class, 'Announcement_management'])->na
 Route::get('Admin/get-Announcement-your-created', [Admin::class, 'get_data_announcement'])->name('geting.Announcement.your.req')->middleware('check.session');
 Route::get('/Admin/Add-Announcement', [Admin::class,'add_announcement'])->name('add.announcement')->middleware('check.session');
 Route::post('/Admin/store-Annouce', [Admin::class,'store_announce'])->name('store.announce');
-
+Route::get('Admin/get-data-destined-your-division', [Admin::class, 'retrieve_data_announcement_destined_for_your_division'])->name('geting.Announcement.your.retrieve')->middleware('check.session');
 
 // route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
