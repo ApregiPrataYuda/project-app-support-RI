@@ -26,7 +26,7 @@
 <section class="content">
     <div class="row">
       <!-- Card Kiri -->
-      <div class="col-md-6">
+      <div class="col-md-7">
         <div class="card">
           <div class="card-header bg-secondary">
               <span>list of announcement that you created</span>
@@ -44,7 +44,7 @@
             <table class="table table-bordered" id="viewDataYourCreated">
               <thead>
                 <tr>
-                  <th style="width:6%;">No</th>
+                  <th style="width:4%;">No</th>
                   <th>Date Release</th>
                   <th>Title</th>
                   <th>status Announce</th>
@@ -52,7 +52,7 @@
                   <th>User Created Announce</th>
                   <th>sent to division</th>
                   <th>Description</th>
-                  <th>File(pdf)</th>
+                  <th>File</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -65,7 +65,7 @@
       </div>
   
       <!-- Card Kanan -->
-      <div class="col-md-6">
+      <div class="col-md-5">
         <div class="card">
           <div class="card-header bg-secondary">
             <span>list of announcements addressed to your division</span>
@@ -101,7 +101,52 @@
       </div>
     </div>
   </section>
-  
+
+  <!-- start modal for  list of announcement that you created-->
+  <div class="modal fade" id="modal-preview-created" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Preview File</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="detailCreated">
+          <!-- Konten file PDF akan dimuat di sini melalui AJAX -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end modal for  list of announcement that you created-->
+
+
+
+
+
+    <!--start list of announcements addressed to your division-->
+    <div class="modal fade" id="modal-preview-retrive" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Preview File</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="detailRetrive">
+          <!-- Konten file PDF akan dimuat di sini melalui AJAX -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!--end list of announcements addressed to your division-->
 
  <script type="text/javascript">
     $(document).ready(function() {
@@ -190,7 +235,66 @@
       });
     });
 
-    
+    //view file created
+    $(document).on('click', '.reviews', function() {
+       var id = $(this).attr("id");
+      // Ambil CSRF token dari meta tag
+         var csrfToken = $('meta[name="csrf-token"]').attr('content');
+          $.ajax({
+              url: '{{ route('get.file.announcement.created') }}',  // URL Laravel route
+              method: 'POST',  // Metode POST
+              data: {
+                  id: id,  // Kirimkan ID
+                  _token: csrfToken  // Sertakan CSRF token
+              },
+              success: function(data) {
+                  $('#detailRetrive').html(data);  // Tampilkan data dalam elemen #detail_pdf
+                  $('#modal-preview-retrive').modal('show');  // Tampilkan modal
+              },
+              error: function(xhr, status, error) {
+                  console.error(error);  // Menampilkan error jika ada
+              }
+          });
+      });
+
+       //view file sending to your div
+    $(document).on('click', '.seeDataFile', function() {
+       var id = $(this).attr("id");
+      // Ambil CSRF token dari meta tag
+         var csrfToken = $('meta[name="csrf-token"]').attr('content');
+          $.ajax({
+              url: '{{ route('get.file.announcement.retrive') }}',  // URL Laravel route
+              method: 'POST',  // Metode POST
+              data: {
+                  id: id,  // Kirimkan ID
+                  _token: csrfToken  // Sertakan CSRF token
+              },
+              success: function(data) {
+                  $('#detailCreated').html(data);  // Tampilkan data dalam elemen #detail_pdf
+                  $('#modal-preview-created').modal('show');  // Tampilkan modal
+              },
+              error: function(xhr, status, error) {
+                  console.error(error);  // Menampilkan error jika ada
+              }
+          });
+      });
+
+      function confirmDelete(itemId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Form ID harus sesuai dengan ID form di PHP
+                document.getElementById('delete-form-announcement-' + itemId).submit();
+            }
+        });
+    }
   </script>
   
 

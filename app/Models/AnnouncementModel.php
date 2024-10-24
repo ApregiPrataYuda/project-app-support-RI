@@ -23,4 +23,12 @@ class AnnouncementModel extends Model
     // protected $keyType = 'string';
     // Menentukan apakah timestamps diaktifkan
     public $timestamps = true;
+
+
+   // Relasi ke announcement_divisions
+   public function announcementDivisions() {
+     return $this->hasMany(AnnouncementDivisionModel::class, 'announcement_id', 'id_announcements');
+  }
+
+  
 }

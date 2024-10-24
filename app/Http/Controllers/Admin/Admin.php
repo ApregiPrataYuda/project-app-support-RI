@@ -18,6 +18,7 @@ use App\Models\AnnouncementModel;
 use App\Models\AnnouncementDivisionModel;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
@@ -1041,6 +1042,7 @@ public function store_employe(Request $request)  {
 
 // start code for annoucement
  public function Announcement_management() {
+    
     $data = [
         'title' => 'Announcement Data List',
      ];
@@ -1049,10 +1051,6 @@ public function store_employe(Request $request)  {
 
 
 //  code tampilkan data yang di create berdasarkan divisi
-
-
-
-
 
  public function add_announcement ()  {
     $divisi = $this->DivisionModel->all();
@@ -1151,12 +1149,15 @@ public function get_data_announcement(Request $request) {
                 return $row->name_divisi_tujuan; // Menampilkan nama divisi tujuan
             })
             ->addColumn('file_name', function($row) {
-                return '<a href="#" class="seeDataFile" id="'.$row->id_announcements.'">
-                        <i class="fa fa-file-pdf text-danger"></i> <span class="text-primary">Preview</span></a>';
+                $btn = '<a href="#" class="reviews" id="'.$row->id_announcements.'">
+                <i class="fa fa-file-pdf text-danger"></i> <span class="text-primary"></span>view file</i> 
+                </a>';
+                 return $btn;
             })
             ->addColumn('action', function($row) {
-                $btn = '<a href="" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
-                $btn .= '<form action="" method="POST" style="display:inline;" id="delete-form-employe-' . $row->id_announcements . '">
+                $editUrl = route('announcement.view.data', Crypt::encrypt($row->id_announcements));
+                $btn = '<a href="'.$editUrl.'" class="edit btn btn-outline-warning btn-sm"><i class="fa fa-edit"></i></a>';
+                $btn .= '<form action="' . route('delete.announcement', Crypt::encrypt($row->id_announcements)) . '" method="POST" style="display:inline;" id="delete-form-announcement-' . $row->id_announcements . '">
                 ' . csrf_field() . '
                 <input type="hidden" name="_method" value="DELETE">
                 <button type="button" onclick="confirmDelete(' . $row->id_announcements . ')" class="edit btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>
@@ -1171,7 +1172,7 @@ public function get_data_announcement(Request $request) {
 
 
 
-
+//ambil data yang dikirim ke divisi anda
 public function retrieve_data_announcement_destined_for_your_division(Request $request) {
            //get seesion
            $userData = getUserData();
@@ -1188,15 +1189,20 @@ public function retrieve_data_announcement_destined_for_your_division(Request $r
               ->where('announcement_divisions.division_id', $divisiID)
               ->orderBy('announcements.id_announcements', 'DESC')
               ->get();
+
               // Cek apakah ada parameter pencarian
               if ($request->has('search') && !empty($request->input('search')['value'])) {
                   $searchTerm = $request->input('search')['value'];
                   // Pastikan kolom fullname ada di ms_user
                   $data->where('title', 'LIKE', "%{$searchTerm}%");
               }
+
               // Menyusun DataTables
               return DataTables::of($data)
                   ->addIndexColumn()
+                  ->addColumn('date_created', function($row) {
+                    return format_date_indonesia_old($row->date_created);
+                })
                   ->addColumn('description', function($row) {
                     return '<textarea rows="3" cols="50" class="form-control" readonly>'.$row->description.'</textarea>';
                 })
@@ -1209,5 +1215,159 @@ public function retrieve_data_announcement_destined_for_your_division(Request $r
                   ->rawColumns(['description','file_name','action'])
                   ->make(true);
 }
+}
+
+// function tampil data view created
+public function seeFileAnnouncement(Request $request)
+{
+    // Ambil ID dari request
+    $id = $request->input('id');
+    // Ambil data file berdasarkan ID (sesuaikan dengan model yang Anda gunakan)
+    $announcement = AnnouncementModel::find($id);
+    // Jika file ditemukan, buat HTML untuk menampilkan file PDF
+    if ($announcement && $announcement->file_name) {
+        $fileUrl = route('file.show', ['filename' => $announcement->file_name]);
+ // Asumsikan file disimpan di Laravel Storage
+        $html = '
+        <object type="application/pdf" data="' . $fileUrl . '" width="1100" height="600"></object>
+        ';
+        return response($html);
+    } else {
+        // Jika file tidak ditemukan
+        return response('File not found.', 404);
+    }
+}
+
+// function tampil data view retrive
+public function seeFileAnnouncementRetrive(Request $request)
+{
+    // Ambil ID dari request
+    $id = $request->input('id');
+    // Ambil data file berdasarkan ID (sesuaikan dengan model yang Anda gunakan)
+    $announcement = AnnouncementModel::find($id);
+    // Jika file ditemukan, buat HTML untuk menampilkan file PDF
+    if ($announcement && $announcement->file_name) {
+        $fileUrl = route('file.show', ['filename' => $announcement->file_name]);
+ // Asumsikan file disimpan di Laravel Storage
+        $html = '
+        <object type="application/pdf" data="' . $fileUrl . '" width="1100" height="600"></object>
+        ';
+        return response($html);
+    } else {
+        // Jika file tidak ditemukan
+        return response('File not found.', 404);
+    }
+}
+
+
+// view data update
+public function view_data_announcement($id) {
+    $divisi = $this->DivisionModel->all();
+    $idanouncement = Crypt::decrypt($id);
+    // Ambil pengumuman beserta division_id yang terkait
+    $getdataannounce = $this->AnnouncementModel::select('announcements.*', 'announcement_divisions.division_id')
+        ->leftJoin('announcement_divisions', 'announcements.id_announcements', '=', 'announcement_divisions.announcement_id')
+        ->where('announcements.id_announcements', $idanouncement)
+        ->firstOrFail();
+
+    // Ambil semua division_id dari announcement_divisions untuk pengumuman ini
+    $divisionIds = $this->AnnouncementModel::select('announcement_divisions.division_id')
+        ->join('announcement_divisions', 'announcements.id_announcements', '=', 'announcement_divisions.announcement_id')
+        ->where('announcements.id_announcements', $idanouncement)
+        ->pluck('announcement_divisions.division_id'); // Mengambil hanya division_id
+
+    $data = [
+        'title' => 'Form Update Announcement',
+        'basicId' => $id,
+        'divisi' => $divisi,
+        'announce' => $getdataannounce,
+        'division_ids' => $divisionIds
+     ];
+     return view('Admin/Announcement/Form/Update',$data);
+}
+
+//process update
+public function update_announcement(Request $request, $id) {
+    $idanouncement = Crypt::decrypt($id);
+    $today = date('Y-m-d');
+    $userData = getUserData();
+    $divisiID = $userData->employee->divisi->divisi_id;
+    $getIdUser = $userData->user_id;
+
+    // Validasi input
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'file' => 'nullable|mimes:pdf|max:2048', // File bisa kosong untuk update
+        'status' => 'required|in:public,private',
+        'divisions' => 'nullable|array', // Hanya wajib jika status 'private'
+    ]);
+
+    // Temukan pengumuman berdasarkan ID
+    $announcement = AnnouncementModel::findOrFail($idanouncement);
+
+    // Update properti pengumuman
+    $announcement->title = $request->title;
+    $announcement->description = $request->description;
+    $announcement->date_created = $today; // Atau bisa dibiarkan jika tidak ingin mengubah tanggal
+    $announcement->status = $request->status;
+    $announcement->divisi_created_id = $divisiID; 
+    $announcement->user_created_id = $getIdUser;
+
+    // Simpan file jika diunggah
+    if ($request->hasFile('file')) {
+        // Hapus file lama dari storage jika ada
+        if ($announcement->file_path) {
+            Storage::delete($announcement->file_path);
+        }
+
+        // Simpan file baru ke storage
+        $filePath = $request->file('file')->store('public/announcements');
+        $fileName = basename($filePath);
+        $announcement->file_name = $fileName;
+        $announcement->file_path = $filePath;
+    }
+
+    // Simpan pengumuman yang diperbarui
+    $announcement->save();
+
+    // Jika status 'private', simpan divisi-divisi yang dipilih
+    if ($request->status == 'private' && $request->divisions) {
+        // Hapus divisi yang ada untuk pengumuman ini
+        AnnouncementDivisionModel::where('announcement_id', $announcement->id_announcements)->delete();
+
+        // Tambahkan divisi-divisi baru
+        foreach ($request->divisions as $division) {
+            $announcementDivision = new AnnouncementDivisionModel();
+            $announcementDivision->announcement_id = $announcement->id_announcements;
+            $announcementDivision->division_id = $division;
+            $announcementDivision->save();
+        }
+    }
+
+    return redirect()->route('Announcement.List')->with('success', 'Successfully updated the announcement!');
+}
+
+
+
+//hapus announcement
+public function destroy_announcement($id)  {
+    $idanouncement = Crypt::decrypt($id);
+    $announcement = $this->AnnouncementModel::findOrFail($idanouncement);
+    // Hapus data terkait di tabel announcement_divisions
+    $announcement->announcementDivisions()->delete();
+
+    // Cek dan hapus file jika ada
+    if ($announcement->file_path) {
+        $filePath = storage_path('app/public/announcements/' . $announcement->file_name);
+        
+        if (file_exists($filePath)) {
+            unlink($filePath); // Menghapus file dari sistem
+        }
+    }
+    // Hapus data
+    $announcement->delete();
+    // Redirect atau beri respons jika berhasil
+    return redirect()->route('Announcement.List')->with('success', 'Data deleted successfully!');
 }
 }

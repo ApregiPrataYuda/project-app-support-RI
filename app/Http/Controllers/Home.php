@@ -417,9 +417,6 @@ public function Announcement() {
                 return '<span class="badge badge-primary">'.$row->status.'</span>';
             })
 
-            ->addColumn('title', function($row){
-                return ' <textarea class="form-control" cols="70" rows="2" readonly>'.$row->title.'</textarea>';
-               })
 
             ->addColumn('date_created', function($row) {
                 return format_date_indonesia_old($row->date_created);

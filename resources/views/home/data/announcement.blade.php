@@ -132,7 +132,7 @@
       // Ambil CSRF token dari meta tag
          var csrfToken = $('meta[name="csrf-token"]').attr('content');
           $.ajax({
-              url: '{{ route('get.file.announcement') }}',  // URL Laravel route
+              url: '{{ route('get.file.announcement.retrive') }}',  // URL Laravel route
               method: 'POST',  // Metode POST
               data: {
                   id: id,  // Kirimkan ID

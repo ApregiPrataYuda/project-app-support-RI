@@ -207,11 +207,19 @@ Route::delete('/Admin/delete-employe/{id}', [Admin::class, 'destroy_employe'])->
 Route::get('/Admin/view-data-employe/{id}', [Admin::class, 'view_data_employe'])->name('employe.view.data')->middleware('check.session')->middleware(CheckMenuAccess::class)->middleware(CheckSubmenuAccess::class);
 Route::put('/Admin/update-employe/{id}', [Admin::class, 'update_employe'])->name('update.employe');
 
+
+// route for admin(page Announce employe)
 Route::get('/Admin/Announcement', [Admin::class, 'Announcement_management'])->name('Announcement.List')->middleware('check.session');
 Route::get('Admin/get-Announcement-your-created', [Admin::class, 'get_data_announcement'])->name('geting.Announcement.your.req')->middleware('check.session');
 Route::get('/Admin/Add-Announcement', [Admin::class,'add_announcement'])->name('add.announcement')->middleware('check.session');
 Route::post('/Admin/store-Annouce', [Admin::class,'store_announce'])->name('store.announce');
 Route::get('Admin/get-data-destined-your-division', [Admin::class, 'retrieve_data_announcement_destined_for_your_division'])->name('geting.Announcement.your.retrieve')->middleware('check.session');
+Route::post('/Admin/see-Announcement-your-created', [Admin::class, 'seeFileAnnouncement'])->name('get.file.announcement.created');
+Route::post('/Admin/see-Announcement-your-retrive', [Admin::class, 'seeFileAnnouncementRetrive'])->name('get.file.announcement.retrive');
+Route::delete('/Admin/delete-announcement/{id}', [Admin::class, 'destroy_announcement'])->name('delete.announcement')->middleware('check.session');
+Route::get('/Admin/view-data-announcement/{id}', [Admin::class, 'view_data_announcement'])->name('announcement.view.data')->middleware('check.session');
+Route::put('/Admin/update-announcement/{id}', [Admin::class, 'update_announcement'])->name('update.announcement');
+
 
 // route for user
 Route::get('/User/Dashboard-User', [User::class, 'index'])->name('User');
